@@ -145,11 +145,7 @@ ansiterm_init (void)
 	init_pair(3, COLOR_BLUE, -1);
 	init_pair(4, COLOR_MAGENTA, -1);
 #endif
-/*Cursor is shown instead of '@' as that is what Larn 12.0 had.
- *
- *~Gibbon
-*/
-	/*curs_set(0);*/
+	curs_set(0);
 	refresh();
 
 #if defined WINDOWS

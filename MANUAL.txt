@@ -1,6 +1,6 @@
 
 
-LARN version 14.0.0
+LARN version 14.1.2
 -------------------
 
 Table of contents
@@ -32,8 +32,10 @@ Any GNU/Linux, OSX, BSD or Windows Machine with ncurses or pdcurses.
 3. Files supplied
 -----------------
 
-README.txt		This documentation.
+MANUAL.txt		This documentation.
 docs/CHANGELOG.txt    	Changes made since LARN V12.2
+docs/HISTORY.txt    	History of this version.
+docs/LICENSE.txt    	License of Larn (Noah's License)
 
 Binaries and 'data' folder included in this directory (same as README.txt)
 
@@ -90,8 +92,12 @@ Someone made 12.4 through 12.4.2, possibly copx according to
 roguebasin. Edwin Denicholas took 12.4 alpha 2 and caressed it into
 12.4.3 for Win32.
 
-Gibbon has implemented many fixes and enhancements and taken it to 14.0.0.  Which is
+Gibbon has implemented many fixes and enhancements and taken it to 14.0.0. Which is
 multi-platform.
+
+hymie! took it to 14.1.1 with many fixes and improvements.
+
+Gibbon took it back and caressed it into 14.1.2.
 
 Other editions of Larn have been distributed by others, namely
 LARN13 and Ultra-Larn.

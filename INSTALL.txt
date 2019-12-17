@@ -1,0 +1,24 @@
+Below are instructions on how to configure, build and install Larn.  I am assuming whoever decides to compile it themselves is capable of doing it without help.
+
+On a *NIX system (BSD, OS X etc..)
+
+1. Ensure cmake is installed on your platform of choice
+2. 'cd' into the 'build' folder and type 'cmake <whatever makefile you want> -DCMAKE_BUILD_TYPE=Debug '.' (or Release)
+3. Then type 'make'
+4. Larn will be built in the 'build' folder, cleanly.
+5. 'mv' or 'cp' the 'larn' binary to ../ so it is in the same directory as the 'data' folder.
+6. './larn' to execute it and play :)
+
+On Windows
+
+You can use the CMAKE GUI on Windows or follow the *NIX instructions, replacing the commands with their Windows counterparts.
+
+1.  in the 'win' directory under src/libs copy the 2 .h files to your TDM installation directory and put them in 'include'
+2. Copy the .a library and place it in the TDM installation 'lib' directory.
+3. Configure the build (source directory is 'build' and where you want it will be the same directory that the folder 'data' is in.  Configure for whatever makefiles or build system you are using.
+4. Click on 'Generate' and then type 'mingw32-make'
+5. Double-click 'larn.exe' to play (it will be in the same directory as data anyway on Windows).
+
+You can also use the 'Larn' Visual Studio project (for those who use VS).  If you do, you'll need the .libs in the src/libs/winvc directory and the includes (in the same directory).
+
+Enjoy playing Larn!

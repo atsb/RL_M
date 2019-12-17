@@ -1,0 +1,9 @@
+This file explains the historical nature of this Larn repository.
+
+This repository contains the Larn sourcecode which can trace it's ancestry back to the original 12.0 release from 1986.
+If you check the CHANGELOG.txt, you will see the additions made throughout the decades.
+
+Since I am committed to maintaining Larn for the foreseeable future, eventually code will be rewritten and I expect
+eventually in the future that nearly none of the original code would be left.
+
+~Gibbon

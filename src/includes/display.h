@@ -1,0 +1,13 @@
+void bottomline (void);
+void bottomhp (void);
+void bottomspell (void);
+void bottomdo (void);
+void bot_linex (void);
+void bottomgold (void);
+void draws (int, int, int, int);
+void drawscreen (void);
+void showcell (int, int);
+void show1cell (int, int);
+void showplayer (void);
+int moveplayer (int);
+void seemagic (int);

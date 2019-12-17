@@ -3,8 +3,6 @@ Tue Dec 17 20:34:23 CET 2019
 1. Optimised colour outputs for dark and light terminal backgrounds.
 2. Fixed colour leakage on 'HP' stats.
 3. Implemented Larn 12.0 style objects (removed hack-style) objects.
-4. Implemented the cursor to replace the '@' for the player
-	Larn 12.0 had this and I don't know why we should copy Hack.
 
 ~Gibbon
 

@@ -701,13 +701,11 @@ parse (void)
 	      cdesc[i] = 70;
 	    }
 	  iven[0] = iven[1] = 0;
-	  /* give the ring a little boost. ~Gibbon */
-	  take (OPROTRING, 51);
-	  /* lets nerf it a little bit.
-	   * ~Gibbon */
-	  take (OGREATSWORD, 24);
+	  take (OPROTRING, 50);
+	  take (OLANCE, 25);
 	  cdesc[WIELD] = 1;
-	  cdesc[GREATSWORDDEATH] = 1;
+	  cdesc[LANCEDEATH] = 1;
+	  cdesc[WEAR] = cdesc[SHIELD] = -1;
 	  raiseexperience (6000000L);
 	  cdesc[AWARENESS] += 25000;
 	  {
@@ -905,16 +903,16 @@ wield (void)
 
 	      cdesc[WIELD] = i - 'a';
 
-	      if (iven[i - 'a'] == OGREATSWORD)
+	      if (iven[i - 'a'] == OLANCE)
 		{
 
-		  cdesc[GREATSWORDDEATH] = 1;
+		  cdesc[LANCEDEATH] = 1;
 
 		}
 	      else
 		{
 
-		  cdesc[GREATSWORDDEATH] = 0;
+		  cdesc[LANCEDEATH] = 0;
 		}
 
 	      bottomline ();

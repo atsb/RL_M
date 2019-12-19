@@ -405,7 +405,7 @@ recalc (void)
 	case OBATTLEAXE:
 	  cdesc[WCLASS] = 17 + i;
 	  break;
-	case OGREATSWORD:
+	case OLANCE:
 	  cdesc[WCLASS] = 19 + i;
 	  break;
 	case OLONGSWORD:
@@ -766,8 +766,8 @@ adjustcvalues (int itm, int arg)
     case ONOTHEFT:
       --cdesc[NOTHEFT];
       return;
-    case OGREATSWORD:
-      cdesc[GREATSWORDDEATH] = 0;
+    case OLANCE:
+      cdesc[LANCEDEATH] = 0;
       return;
     case OPOTION:
     case OSCROLL:
@@ -843,7 +843,7 @@ packweight (void)
       case ORING:
 	k += 20;
 	break;
-      case OGREATSWORD:
+      case OLANCE:
       case OSTUDLEATHER:
 	k += 15;
 	break;

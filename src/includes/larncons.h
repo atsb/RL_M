@@ -191,7 +191,7 @@
 #define MOVESMADE 57
 #define MONSTKILLED 58
 #define SPELLSCAST 59
-#define GREATSWORDDEATH 60
+#define LANCEDEATH 60
 #define SPIRITPRO 61
 #define UNDEADPRO 62
 #define SHIELD 63
@@ -278,7 +278,7 @@
 #define ODAGGER 31
 #define OBATTLEAXE 57
 #define OLONGSWORD 58
-#define OGREATSWORD 65
+#define OLANCE 65
 #define OVORPAL 90
 #define OSLAYER 91
 

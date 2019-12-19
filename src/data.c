@@ -161,7 +161,7 @@ char *objectname[] =
   "a battle axe", "a longsword", "a longsword of Hymie", "ring mail",
   "studded leather armor",
   "splint mail", "plate armor", "stainless plate armor",
-  "Great Sword of Death",
+  "a lance of death",
   "an arrow trap", "an arrow trap", "a shield", "your home",
   "gold", "gold", "gold", "a dart trap",
   "a dart trap", "a trapdoor", "a trapdoor", "the local trading post",

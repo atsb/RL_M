@@ -103,7 +103,7 @@ struct _itm dnd_item[90] = {
   {5000, OSWORD, 0, 1},
 
   /* lets make it twice as expensive. ~Gibbon */
-  {30000, OGREATSWORD, 0, 1},
+  {30000, OLANCE, 0, 1},
   {6000, OSWORDofSLASHING, 0, 0},
   {10000, OHAMMER, 0, 0},
 

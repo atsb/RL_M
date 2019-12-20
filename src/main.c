@@ -245,7 +245,7 @@ main (int argc, char *argv[])
 	     If in prompt mode, identify and prompt; else
 	     identify, never prompt.
 	   */
-	  lookforobject (TRUE, FALSE, FALSE);
+	  lookforobject (TRUE, TRUE, TRUE);
 	}
       else
 	{

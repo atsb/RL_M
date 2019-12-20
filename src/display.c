@@ -93,72 +93,44 @@ bot_linex (void)
       regen_bottom = FALSE;
       cursor (1, 18);
       if (cdesc[SPELLMAX] > 99) {
-	attron(COLOR_PAIR(3));
 	lprintf ("Spells:");
-	attroff(COLOR_PAIR(3));
 	lprintf("%3d(%3d)", (int) cdesc[SPELLS],
 		 (int) cdesc[SPELLMAX]);
       } else {
-	attron(COLOR_PAIR(1));
 	lprintf ("Spells:");
-	attroff(COLOR_PAIR(1));
 	lprintf("%3d(%2d) ", (int) cdesc[SPELLS],
 		 (int) cdesc[SPELLMAX]);
 	}
-	attron(COLOR_PAIR(1));
       	lprintf(" AC:");
-	attroff(COLOR_PAIR(1));
 	lprintf(" %-3d ",(int) cdesc[AC]);
-	attron(COLOR_PAIR(1));
 	lprintf(" WC:");
-	attroff(COLOR_PAIR(1));
 	lprintf(" %-3d ",(int) cdesc[WCLASS]);
-	attron(COLOR_PAIR(1));
 	lprintf("Level:");
-	attroff(COLOR_PAIR(1));
       if (cdesc[LEVEL] > 99) {
 	lprintf ("%3d", (int) cdesc[LEVEL]);
       } else {
 	lprintf (" %-2d", (int) cdesc[LEVEL]);
 	}
       /*debugtmp = cdesc[LEVEL]; */
-	attron(COLOR_PAIR(1));
       lprintf (" Exp:");
-	attroff(COLOR_PAIR(1));
 	 lprintf(" %-9d %s\n", (int) cdesc[EXPERIENCE],
 	       classname[cdesc[LEVEL] - 1]);
 	 /*This is sill here to initially show the health stats. ~Gibbon*/
-		 attron(COLOR_PAIR(1));
 		 lprintf("HP:");
-		 attroff(COLOR_PAIR(1));
 		 lprintf(" %3d(%3d)", (int)cdesc[HP], (int)cdesc[HPMAX]);
-	attron(COLOR_PAIR(1));
 	lprintf(" STR:");
-	attroff(COLOR_PAIR(1));
 	lprintf("%-2d ",(int) (cdesc[STRENGTH] + cdesc[STREXTRA]));
-	attron(COLOR_PAIR(1));
 	lprintf("INT:");
-	attroff(COLOR_PAIR(1));
 	lprintf("%-2d ",(int) cdesc[INTELLIGENCE]);
-	attron(COLOR_PAIR(1));
       	lprintf ("WIS:");
-	attroff(COLOR_PAIR(1));
 	lprintf("%-2d ",(int) cdesc[WISDOM]);
-	attron(COLOR_PAIR(1));
 	lprintf("CON:");
-	attroff(COLOR_PAIR(1));
 	lprintf("%-2d ",(int) cdesc[CONSTITUTION]);
-	attron(COLOR_PAIR(1));
 	lprintf("DEX:");
-	attroff(COLOR_PAIR(1));
 	lprintf("%-2d ",(int) cdesc[DEXTERITY]);
-	attron(COLOR_PAIR(1));
 	lprintf("CHA:");
-	attroff(COLOR_PAIR(1));
 	lprintf("%-2d ",(int) cdesc[CHARISMA]);
-	attron(COLOR_PAIR(1));
 	lprintf("LV:");
-	attroff(COLOR_PAIR(1));
 
       if ((level == 0) || (wizard))
 	cdesc[TELEFLAG] = 0;
@@ -166,9 +138,7 @@ bot_linex (void)
 	lprcat (" ?");
       else
 	lprcat (levelname[level]);
-	attron(COLOR_PAIR(1));
       lprintf ("  Gold:  ");
-	attroff(COLOR_PAIR(1));
 	lprintf("%-6d", (int) cdesc[GOLD]);
       always = 1;
       botside ();
@@ -246,25 +216,10 @@ called in monster.c hitplayer() and spattack()
 static void
 bot_hpx (void)
 {
-	/*This is added to update the color when hit.
-	 *It's redrawing over the top (1,19) ~Gibbon
-	 */
-	if (cdesc[HP] < 10) {
 		cursor(1, 19);
-		attron(COLOR_PAIR(1));
 		lprintf("HP:");
-		attroff(COLOR_PAIR(1));
-		attron(COLOR_PAIR(2));
 		lprintf(" %3d", (int)cdesc[HP]);
-		attroff(COLOR_PAIR(2));
-	}
-	else {
-		cursor(1, 19);
-		attron(COLOR_PAIR(1));
-		lprintf("HP:");
-		attroff(COLOR_PAIR(1));
-		lprintf(" %3d", (int)cdesc[HP]);
-	}
+		
   if (cdesc[EXPERIENCE] != cbak[EXPERIENCE])
     {
       recalc ();
@@ -273,7 +228,6 @@ bot_hpx (void)
   else
     botsub (HP, 5, 19, "%3d");
 }
-
 
 
 /*
@@ -520,9 +474,7 @@ drawscreen (void)
 
 	      if (i == playerx && j == playery)
 		{
-		  attron(COLOR_PAIR(1));
 		  nlprc ('@');
-		  attroff(COLOR_PAIR(1));
 		  continue;
 		}
 
@@ -727,9 +679,7 @@ showplayer (void)
 {
   show1cell (oldx, oldy);
   cursor (playerx + 1, playery + 1);
-  attron(COLOR_PAIR(1));
   lprc ('@');
-  attroff(COLOR_PAIR(1));
   cursor (playerx + 1, playery + 1);
   oldx = playerx;
   oldy = playery;

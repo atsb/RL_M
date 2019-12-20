@@ -431,9 +431,7 @@ speldamage (int x)
 	  return;
 	}
       lprcat (" The");
-      attron(COLOR_PAIR(2));
       lprcat(" demon ");
-      attroff(COLOR_PAIR(2));
       lprcat("turned on you and vanished!");
       i = rnd (40) + 30;
       lastnum = 277;

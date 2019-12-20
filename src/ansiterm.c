@@ -128,23 +128,6 @@ ansiterm_init (void)
 	intrflush(stdscr, FALSE);
 	start_color();
 	keypad(stdscr, TRUE);
-
-/* this is so the terminal does not display in nasty grey'ish color ~Gibbon */
-	use_default_colors();
-
-#if defined TERM_DARK_BACKGROUND
-/*Colors for a black terminal background*/
-	init_pair(1, COLOR_CYAN, -1);	/*stat bar text*/
-	init_pair(2, COLOR_RED, -1);	/*monster text and health drops*/
-	init_pair(3, COLOR_YELLOW, -1); /*store texts like gold pieces */
-	init_pair(4, COLOR_CYAN, -1);	/*inventory text*/
-#else
-/*Colors for a white/light terminal background*/
-	init_pair(1, COLOR_MAGENTA, -1);
-	init_pair(2, COLOR_RED, -1);
-	init_pair(3, COLOR_BLUE, -1);
-	init_pair(4, COLOR_MAGENTA, -1);
-#endif
 	curs_set(0);
 	refresh();
 

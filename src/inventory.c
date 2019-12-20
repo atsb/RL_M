@@ -547,9 +547,7 @@ show1 (int idx)
    */
   if (iven[idx] != 0)
     {
-    	attron(COLOR_PAIR(4));
       lprintf ("%c) ",idx + 'a');
-      attroff(COLOR_PAIR(4));
       lprintf("%s", objectname[iven[idx]]);
     }
 
@@ -601,9 +599,7 @@ show2 (int index)
     default:
       lprc ('\n');
       cltoeoln ();
-      attron(COLOR_PAIR(4));
       lprintf ("%c) ",index + 'a');
-      attroff(COLOR_PAIR(4));
       lprintf("%s",objectname[iven[index]]);
       if (ivenarg[index] > 0)
 	lprintf (" + %d", (long) ivenarg[index]);

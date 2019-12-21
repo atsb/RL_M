@@ -126,7 +126,6 @@ ansiterm_init (void)
 	noecho();
 	nonl();
 	intrflush(stdscr, FALSE);
-	start_color();
 	keypad(stdscr, TRUE);
 	curs_set(0);
 	refresh();
@@ -357,7 +356,7 @@ ansiterm_putchar (int c)
     {
       int y, x;
       getyx(stdscr, y, x);
-      move(y + 1, 0);
+      move(y + 1, x = 0);
       return;
     }
   if (c == '\t')

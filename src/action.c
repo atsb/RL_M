@@ -50,7 +50,7 @@ act_open_door           open a door
 #include "includes/moreobj.h"
 #include "includes/object.h"
 #include "includes/scores.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 
 static void volshaft_climbed (int);
 static void act_prayer_heard (void);

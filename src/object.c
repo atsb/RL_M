@@ -18,7 +18,7 @@
 #include "includes/regen.h"
 #include "includes/scores.h"
 #include "includes/spells.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 
 static void ostairs (int);
 

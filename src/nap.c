@@ -1,6 +1,8 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include "includes/larnfunc.h"
 #include "includes/io.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 
 #if defined WINDOWS
 #include <windows.h>

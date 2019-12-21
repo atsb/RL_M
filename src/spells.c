@@ -33,7 +33,7 @@ genmonst()         Function to ask for monster and genocide from game
 #include "includes/scores.h"
 #include "includes/spells.h"
 #include "includes/spheres.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 
 /* used for altar reality */
 struct isave

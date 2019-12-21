@@ -55,7 +55,7 @@
 #include "includes/io.h"
 #include "includes/monster.h"
 #include "includes/spells.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 
 static int cgood (int, int, int, int);
 

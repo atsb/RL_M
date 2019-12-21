@@ -19,7 +19,7 @@
 *  getplid(name)       Function to get players id # from id file
 */
 
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS
 #include <io.h>
 #endif
 
@@ -37,7 +37,7 @@
 #include "includes/larn.h"
 #include "includes/inventory.h"
 #include "includes/scores.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 #include "includes/io.h"
 
 struct scofmt			/*  This is the structure for the scoreboard        */

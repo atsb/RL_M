@@ -16,7 +16,7 @@
 #include "includes/monster.h"
 #include "includes/scores.h"
 #include "includes/spheres.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 
 static void sphboom (int x, int y);
 

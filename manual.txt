@@ -99,7 +99,4 @@ hymie! took it to 14.1.1 with many fixes and improvements.
 
 Gibbon took it back and caressed it into 14.1.2.
 
-Other editions of Larn have been distributed by others, namely
-LARN13 and Ultra-Larn.
-
 I hope you enjoy this version of LARN.

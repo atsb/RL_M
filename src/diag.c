@@ -14,7 +14,7 @@
 #include "includes/savelev.h"
 #include "includes/scores.h"
 #include "includes/store.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 #include "includes/create.h"
 #include "includes/diag.h"
 
@@ -176,7 +176,7 @@ diagdrawscreen (void)
     /*  for the east west walls of this line    */
     {
       for (j = 0; j < MAXX; j++)
-	if (k = mitem[j][i])
+	if ((k = mitem[j][i]))
 	  lprc (monstnamelist[k]);
 	else
 	  lprc (objnamelist[item[j][i]]);

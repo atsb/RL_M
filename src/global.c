@@ -44,7 +44,7 @@
 #include "includes/io.h"
 #include "includes/monster.h"
 #include "includes/scores.h"
-#include "includes/sysdep.h"
+#include "includes/nap.h"
 
 /*
 * raiselevel()

@@ -1,7 +1,7 @@
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 DEP = $(OBJ:.o=.d)
-CFLAGS = -pipe -Wall -fomit-frame-pointer -std=c18 -DNIX -DMULTIPLE_SCORE_ENTRY -DEXTRA
+CFLAGS = -Wall -Werror -std=c99 -pedantic -DNIX -DMULTIPLE_SCORE_ENTRY -DEXTRA
 LDFLAGS = -lm -lncurses
 
 larn: $(OBJ)

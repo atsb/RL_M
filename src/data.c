@@ -153,7 +153,7 @@ char *objectname[] =
   "device of theft prevention", "a brilliant diamond", "a ruby",
   "an enchanting emerald", "a sparkling sapphire", "the dungeon entrance",
   "a volcanic shaft leaning downward", "the base of a volcanic shaft",
-  "a battle axe", "a longsword", "a longsword of Hymie", "ring mail",
+  "a battle axe", "a longsword", "a longsword of slashing", "ring mail",
   "studded leather armor",
   "splint mail", "plate armor", "stainless plate armor",
   "a lance of death",

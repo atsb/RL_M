@@ -590,7 +590,7 @@ makeobject (int j)
 	{
 	  froom (3, OSWORD, 3);	/* sunsword + 3         */
 	  froom (5, O2SWORD, rnd (4));	/* a two handed sword */
-	  froom (5, OHSWORD, rnd (4));	/* a longsword of Hymie     */
+	  froom (5, OHSWORD, rnd (4));	/* a longsword of slashing */
 	  froom (3, OBELT, 4);	/* belt of striking     */
 	  froom (3, OENERGYRING, 3);	/* energy ring          */
 	  froom (4, OPLATE, 5);	/* platemail + 5        */

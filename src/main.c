@@ -894,7 +894,7 @@ wield (void)
 	  else if (cdesc[SHIELD] != -1 && iven[i - 'a'] == OHSWORD)
 	    {
 
-	      lprcat ("\nA longsword of Hymie cannot be used while a shield is equipped!");
+	      lprcat ("\nA longsword of slashing cannot be used while a shield is equipped!");
 	      return;
 
 	    }
@@ -1006,7 +1006,7 @@ wear (void)
 		  }
 		  if (iven[cdesc[WIELD]] == OHSWORD)
 		  {
-		    lprcat("\nYou are holding a longsword of Hymie!");
+		    lprcat("\nYou are holding a longsword of slashing!");
 			return;
 		  }
 		cdesc[SHIELD] = i - 'a';

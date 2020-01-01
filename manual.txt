@@ -1,6 +1,6 @@
 
 
-LARN version 14.1.2
+LARN version 14.1.3
 -------------------
 
 Table of contents
@@ -97,6 +97,6 @@ multi-platform.
 
 hymie! took it to 14.1.1 with many fixes and improvements.
 
-Gibbon took it back and caressed it into 14.1.2.
+Gibbon took it back and caressed it into 14.1.3.
 
 I hope you enjoy this version of LARN.

@@ -1,3 +1,13 @@
+Wed  1 Jan 08:37:44 CET 2020
+
+1. Changed colour to only show on the '@' player.
+2. Removed the Longsword of Hymie and replaced with the
+	Longsword of Slashing.
+
+~Gibbon
+
+=============================================================================
+
 Tue Dec 17 20:34:23 CET 2019
 
 1. Optimised colour outputs for dark and light terminal backgrounds.

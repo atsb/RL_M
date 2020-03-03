@@ -171,8 +171,8 @@ lookforobject (char do_ident, char do_pickup, char do_action)
       if (do_ident)
 	lprcat ("\nThere is a circular staircase here");
       if (do_action)
-	ostairs(1);
-	refresh();
+		  ostairs(1);
+	  refresh();
       break;
 
     case OFOUNTAIN:
@@ -257,10 +257,10 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 
     case OSTAIRSDOWN:		/* down */
       if (do_ident)
-	lprcat ("\nThere is a circular staircase here");
+		  lprcat ("\nThere is a circular staircase here");
       if (do_action)
-	ostairs(-1);
-	refresh();
+		  ostairs(-1);
+	  refresh();
       break;
 
     case OOPENDOOR:

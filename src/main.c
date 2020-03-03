@@ -21,15 +21,7 @@
 #include "includes/spheres.h"
 
 		/* needed for hack fix to handle endwin()
-				   not being called after process commandline */
-
-#define SCORENAME	"data/scorefile.dat"
-#define LOGFNAME	"data/logfile.log"
-#define FORTSNAME	"data/forts.txt"
-#define PLAYERIDS	"data/playerid.txt"
-#define DIAGFILE	"data/diagfile.txt"
-#define SAVEFILE	"data/savefile.dat"
-#define LEVELSNAME	"data/mazefile.txt"
+				   not being called after process commandline */	
 
 static void parse (void);
 
@@ -102,15 +94,27 @@ main (int argc, char *argv[])
   if ((lpbuf == 0) || (inbuffer == 0))
     died (-285);		/* malloc() failure */
 
-  strcpy (savefilename, SAVEFILE);
-  strcpy (scorefile, SCORENAME);	/* the larn scoreboard filename */
-  strcpy (logfile, LOGFNAME);	/* larn activity logging filename */
-  strcpy (fortfile, FORTSNAME);	/* the fortune data file name */
-  strcpy (playerids, PLAYERIDS);	/* the playerid data file name */
-  strcpy (mazefile, LEVELSNAME);
+  strcpy(savefilename,getenv("HOME"));
+  strcat(savefilename,"/.larn/larnsavefile");
+
+  strcpy(scorefile,getenv("HOME"));
+  strcat(scorefile,"/.larn/larnscorefile");
+
+  strcpy(logfile,getenv("HOME"));
+  strcat(logfile,"/.larn/larnlogfile");
+
+  strcpy(fortfile,getenv("HOME"));
+  strcat(fortfile,"/.larn/larnforts");
+
+  strcpy(playerids,getenv("HOME"));
+  strcat(playerids,"/.larn/larnplayerid");
+
+  strcpy(mazefile,getenv("HOME"));
+  strcat(mazefile,"/.larn/larnmazefile");
 
 #ifdef EXTRA
-  strcpy (diagfile, DIAGFILE);
+  strcpy(diagfile,getenv("HOME"));
+  strcat(diagfile,"/.larn/larndiagfile");
 #endif
 
 

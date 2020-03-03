@@ -19,3 +19,9 @@ clean:
 .PHONY: cleandep
 cleandep:
 	rm -f $(DEP)
+
+.PHONY: prep
+prep:
+	mkdir ~/.larn
+	cp ./larnmazefile ~/.larn
+	cp ./larnforts ~/.larn

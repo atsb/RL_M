@@ -52,6 +52,7 @@ Open the install directory in a command window and type "larn", or double
 click .exe file inside the directory. If you are using Windows Explorer.
 
 If you're using *nix systems then cd into the directory and ./larn
+configuration, savefiles, logfiles etc..  are saved into your unix ~ in .larn/
 
 6. Command line options
 -----------------------

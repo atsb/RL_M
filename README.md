@@ -1,10 +1,14 @@
 # RL_M
 Larn - maintained and developed for modern systems
 
+# COVID-19 Notes
+
+* As I am based in the EU with emergency measures, I must use my Windows machine on a daily basis for working from home.  This means that temporarily I will only be doing Windows builds.  Switching between systems constantly is a no-go for me, however I'll be making sure that the Windows version gets the same attention that the Linux version got.
+
 # Supported Systems
 
-* GNU/Linux 64bit only (compiled on CentOS8)
-* Windows 64bit (compiled on MinGW 64bit)
+* GNU/Linux 64bit only (compiled on CentOS8) - on hold
+* Windows 64bit (compiled on W10 64bit with MSVC)
 
 # Changes
 

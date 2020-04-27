@@ -94,6 +94,29 @@ main (int argc, char *argv[])
   if ((lpbuf == 0) || (inbuffer == 0))
     died (-285);		/* malloc() failure */
 
+#ifdef WINDOWS
+  strcpy(savefilename,getenv("APPDATA"));
+  strcat(savefilename,"/Larn/larnsavefile");
+
+  strcpy(scorefile,getenv("APPDATA"));
+  strcat(scorefile,"/Larn/larnscorefile");
+
+  strcpy(logfile,getenv("APPDATA"));
+  strcat(logfile,"/Larn/larnlogfile");
+
+  strcpy(fortfile,getenv("APPDATA"));
+  strcat(fortfile,"/Larn/larnforts");
+
+  strcpy(playerids,getenv("APPDATA"));
+  strcat(playerids,"/Larn/larnplayerid");
+
+  strcpy(mazefile,getenv("APPDATA"));
+  strcat(mazefile,"/Larn/larnmazefile");
+#ifdef EXTRA
+  strcpy(diagfile,getenv("APPDATA"));
+  strcat(diagfile,"/Larn/larndiagfile");
+#endif
+#else
   strcpy(savefilename,getenv("HOME"));
   strcat(savefilename,"/.larn/larnsavefile");
 
@@ -111,12 +134,11 @@ main (int argc, char *argv[])
 
   strcpy(mazefile,getenv("HOME"));
   strcat(mazefile,"/.larn/larnmazefile");
-
 #ifdef EXTRA
   strcpy(diagfile,getenv("HOME"));
   strcat(diagfile,"/.larn/larndiagfile");
 #endif
-
+#endif
 
 
   /*

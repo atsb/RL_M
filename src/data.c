@@ -88,7 +88,7 @@ int stealth[MAXX][MAXY];	/*  0=sleeping 1=awake monst */
 char lastmonst[40];		/*  this has the name of the current monster    */
 int beenhere[MAXLEVEL + MAXVLEVEL];	/*  1 if have been on this level */
 int VERSION = VER;		/*  this is the present version # of the program    */
-int SUBVERSION = SUBVER;
+int SUBVERSION = SUB_VERSION;
 int predostuff = 0;		/*  2 means that the trap handling routines must do a
 				   showplayer() after a trap.  0 means don't showplayer()
 				   0 - we are in create player screen

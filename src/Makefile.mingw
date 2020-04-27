@@ -2,8 +2,8 @@ SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 DEP = $(OBJ:.o=.d)
 CC = gcc
-CFLAGS = -Wall -Werror -std=c99 -pedantic -DWINDOWS -DMULTIPLE_SCORE_ENTRY -DEXTRA
-LDFLAGS = -lm -lncurses
+CFLAGS = -Wall -Werror -std=gnu17 -pedantic -DWINDOWS -DMULTIPLE_SCORE_ENTRY -DEXTRA
+LDFLAGS = -lm -lpdcurses
 
 larn: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
@@ -15,14 +15,5 @@ larn: $(OBJ)
 
 .PHONY: clean
 clean:
-	del $(OBJ) mygame
-
-.PHONY: cleandep
-cleandep:
+	del $(OBJ)
 	del $(DEP)
-
-.PHONY: prep
-prep:
-	mkdir "%USERPROFILE%/.larn"
-	copy larnmazefile "%USERPROFILE%/.larn"
-	copy larnforts "%USERPROFILE%/.larn"

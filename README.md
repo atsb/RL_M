@@ -25,5 +25,10 @@ Afterwards, ./larn will run the game and all files are saved into your user ~/.l
 
 * For Windows, MinGW is a requirement, the same process applies.
 
-# Notes
-On macOS, as I am not part of the Developer Program, I cannot sign the binary to allow gatekeeper to execute it.  You will need admin rights on your mac to allow for 'unidentified developers'.
+# Future
+
+I am still active and am refactoring a huge amount of the source code.  To continue developing it for modern systems, a lot of the cruft that has accumulated over the past 30 years needs desperate attention.  Most notably the input/output code and the display code.
+
+There is no time frame for this and no releases will be done until it is finished.  Think nethack, which underwent a similar thing.
+
+Thanks for the understanding.

@@ -118,7 +118,12 @@ qshowstr (char select_allowed)
 	      {
 		itemselect = show2 (j);
 		if (itemselect && select_allowed)
-		  goto quitit;
+		{
+		  if (select_allowed)
+    			return ((itemselect > 0) ? itemselect : 0);
+  		else
+    			return 0;
+		}
 	      }
 	k = 0;
       }
@@ -127,11 +132,7 @@ qshowstr (char select_allowed)
   lprintf ("\nElapsed time is %d.  You have %d mobuls left", gtime / 100,
 	   (TIMELIMIT - gtime) / 100);
   itemselect = more (select_allowed);
-quitit:
-  if (select_allowed)
-    return ((itemselect > 0) ? itemselect : 0);
-  else
-    return (0);
+  return 0;
 }
 
 

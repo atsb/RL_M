@@ -15,7 +15,6 @@
 *  recalc()            function to recalculate the armor class of the player
 *  quit()              subroutine to ask if the player really wants to quit
 *  more()
-*  take()
 *  drop_object()
 *  enchantarmor()
 *  enchweapon()

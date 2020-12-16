@@ -94,7 +94,7 @@ main (int argc, char *argv[])
   if ((lpbuf == 0) || (inbuffer == 0))
     died (-285);		/* malloc() failure */
 
-#ifdef WINDOWS
+#if defined WINDOWS || WINDOWS_VS
   strcpy(savefilename,getenv("APPDATA"));
   strcat(savefilename,"/Larn/larnsavefile");
 

@@ -2,9 +2,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <time.h>
+#if defined WINDOWS || WINDOWS_VS
+#include <io.h>
+#endif
+#if defined NIX
+#include <unistd.h>
+#endif
 
 #include "includes/larncons.h"
 #include "includes/larndata.h"
@@ -49,8 +54,12 @@ diag (void)
       lprcat ("\ndiagnostic failure\n");
       return (-1);
     }
-
+#if defined WINDOWS || WINDOWS_VS
+  _write(1, "\nDiagnosing . . .\n", 18);
+#endif
+#if defined NIX
   write (1, "\nDiagnosing . . .\n", 18);
+#endif
   lprcat ("\n\nBeginning of DIAG diagnostics ----------\n");
 
   /*  for the character attributes    */

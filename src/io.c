@@ -1038,7 +1038,12 @@ flush_buf (void)
 	}
       else
 	{
-	  write(lfd, outbuf, io_index);
+#if defined WINDOWS || WINDOWS_VS
+		_write(lfd, outbuf, io_index);
+#endif
+#if defined NIX
+		write(lfd, outbuf, io_index);
+#endif
 	}
     }
     io_index = 0;
@@ -1064,7 +1069,7 @@ flush_buf (void)
 void
 lflushall (void)
 {
-  while (kbhit())
+  while (_kbhit())
     {
       _getch();
     }

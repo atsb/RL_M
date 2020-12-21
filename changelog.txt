@@ -1,3 +1,22 @@
+Mon  21 Dec 18:17:12 CET 2020
+
+1. Added some 'size_t' over 'int' to help with some 64bit - 32bit comparisons
+2. Removed WINDOWS build variable (only MSVC now for Windows)
+3. Cleaned up some files
+4. Removed Fred Fish's atgoto implementation and added my own from tgoto.c in libtermlib
+
+~Gibbon
+
+=============================================================================
+
+Mon  15 Oct 13:26:54 CET 2020
+
+1. Fixed a bug where prompt would not appear on objects, leading to a duplication of inventory
+
+~Gibbon
+
+=============================================================================
+
 Wed  1 Jan 08:37:44 CET 2020
 
 1. Changed colour to only show on the '@' player.

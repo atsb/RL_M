@@ -25,6 +25,8 @@ Afterwards, ./larn will run the game and all files are saved into your user ~/.l
 
 * For Windows, an MSVC solution is present (MingW is not supported).
 
+NOTE: I'm starting the deprecation of older C compilers.  Next commits will not be compilable anymore on anything less than a C17 compatible compiler.
+
 # Future
 
 I am still active and am refactoring a huge amount of the source code.  To continue developing it for modern systems, a lot of the cruft that has accumulated over the past 30 years needs desperate attention.  Most notably the input/output code and the display code.

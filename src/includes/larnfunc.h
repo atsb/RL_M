@@ -63,12 +63,12 @@
 #define rnd(x)  ((int)(rand() % (x)) + 1)
 #define rund(x) ((int)(rand() % (x)))
 
-/* min/max */
-#ifndef min
-#define min(x,y) (((x)>(y))?(y):(x))
+/* min_math_larn/max_math_larn */
+#ifndef min_math_larn
+#define min_math_larn(x,y) (((x)>(y))?(y):(x))
 #endif
-#ifndef max
-#define max(x,y) (((x)>(y))?(x):(y))
+#ifndef max_math_larn
+#define max_math_larn(x,y) (((x)>(y))?(x):(y))
 #endif
 
 
@@ -79,6 +79,6 @@
 *
 */
 
-#ifndef WINDOWS
+#ifndef WINDOWS_VS
 #define _getch ansiterm_getch
 #endif

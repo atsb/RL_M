@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 #include <io.h>
 #endif
 #if defined NIX
@@ -54,7 +54,7 @@ diag (void)
       lprcat ("\ndiagnostic failure\n");
       return (-1);
     }
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
   _write(1, "\nDiagnosing . . .\n", 18);
 #endif
 #if defined NIX
@@ -117,11 +117,11 @@ diag (void)
       dam = 16 - cdesc[HARDGAME];
       lprintf ("\n%20s   %2d/%2d/%2d       %2d/%2d/%2d       %2d/%2d/%2d",
 	       monster[i].name,
-	       (int) (hit / 2), (int) max (0, dam + 2),
+	       (int) (hit / 2), (int) max_math_larn (0, dam + 2),
 	       (int) (monster[i].hitpoints / (dam + 2) + 1),
-	       (int) ((hit + 2) / 2), (int) max (0, dam + 10),
+	       (int) ((hit + 2) / 2), (int) max_math_larn (0, dam + 10),
 	       (int) (monster[i].hitpoints / (dam + 10) + 1),
-	       (int) ((hit + 5) / 2), (int) max (0, dam + 20),
+	       (int) ((hit + 5) / 2), (int) max_math_larn (0, dam + 20),
 	       (int) (monster[i].hitpoints / (dam + 20) + 1));
     }
 

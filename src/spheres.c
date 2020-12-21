@@ -172,8 +172,8 @@ sphboom (int x, int y)
     cdesc[HOLDMONST] = 1;
   if (cdesc[CANCELLATION])
     cdesc[CANCELLATION] = 1;
-  for (j = max (1, x - 2); j < min (x + 3, MAXX - 1); j++)
-    for (i = max (1, y - 2); i < min (y + 3, MAXY - 1); i++)
+  for (j = max_math_larn (1, x - 2); j < min_math_larn (x + 3, MAXX - 1); j++)
+    for (i = max_math_larn (1, y - 2); i < min_math_larn (y + 3, MAXY - 1); i++)
       {
 	item[j][i] = mitem[j][i] = 0;
 	show1cell (j, i);
@@ -233,7 +233,7 @@ movsphere (void)
 	  rmsphere (x, y);	/* delete sphere */
 	  continue;
 	}
-      switch (rnd ((int) max (7, cdesc[INTELLIGENCE] >> 1)))	/* time to move the sphere */
+      switch (rnd ((int) max_math_larn (7, cdesc[INTELLIGENCE] >> 1)))	/* time to move the sphere */
 	{
 	case 1:
 	case 2:		/* change direction to a random one */

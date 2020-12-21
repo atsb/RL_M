@@ -57,7 +57,7 @@
 #include <time.h>
 #include <ctype.h>
 
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 #include <io.h>
 #include <conio.h>
 #endif
@@ -283,6 +283,7 @@ lprint (int x)
   *lpnt++ = 255 & (x >> 8);
   *lpnt++ = 255 & (x >> 16);
   *lpnt++ = 255 & (x >> 24);
+
 }
 
 
@@ -364,7 +365,7 @@ lgetc (void)
     return (inbuffer[ipoint++]);
   if (iepoint != MAXIBUF)
     return (0);
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 	if ((i = _read(fd, inbuffer, MAXIBUF)) <= 0)
 #endif
 #if defined NIX
@@ -428,7 +429,7 @@ lrfill (char *adr, int num)
 	{
 	  if (num > 5)		/* fast way */
 	    {
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 	if (_read(fd, adr, num) != num)
 #endif
 #if defined NIX
@@ -541,9 +542,6 @@ lcreat (char *str)
   lpend = lpbuf + BUFBIG;
   if (str == NULL)
     return (lfd = 1);
-#if defined WINDOWS
-	if ((lfd = _creat(str, _S_IWRITE)) < 0)
-#endif
 #if defined WINDOWS_VS
 		if ((lfd = _creat(str, S_IWRITE)) < 0)
 #endif
@@ -556,7 +554,7 @@ lcreat (char *str)
 		lflush();
 		return(-1);
 	}
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
   _setmode (lfd, O_BINARY);
 #endif
   return lfd;
@@ -578,7 +576,7 @@ lopen (char *str)
 
   if (str == NULL)
     return (fd = 0);
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 	if ((fd = _open(str, 0)) < 0)
 #endif
 #if defined NIX
@@ -590,7 +588,7 @@ lopen (char *str)
       lpnt = lpbuf;
       return (-1);
     }
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
   _setmode (fd, O_BINARY);
 #endif
   return fd;
@@ -612,7 +610,7 @@ lappend (char *str)
   lpend = lpbuf + BUFBIG;
   if (str == NULL)
     return (lfd = 1);
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 	if ((lfd = _open(str, 2)) < 0)
 #endif
 #if defined NIX
@@ -622,7 +620,7 @@ lappend (char *str)
       lfd = 1;
       return (-1);
     }
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
   _setmode (lfd, O_BINARY);
   _lseek (lfd, 0L, 2);		/* seek to end of file */
 #endif
@@ -642,7 +640,7 @@ lrclose (void)
 {
   if (fd > 0)
     {
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 		_close(fd);
 #endif
 #if defined NIX
@@ -664,7 +662,7 @@ lwclose (void)
   lflush();
   if (lfd > 2)
     {
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 		_close(lfd);
 #endif
 #if defined NIX
@@ -895,7 +893,7 @@ lflush (void)
 
 	  /* Catch write errors on save files
 	   */
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
  	if (_write(lfd, lpbuf, lpoint) != lpoint)
 #endif
 #if defined NIX
@@ -1038,7 +1036,7 @@ flush_buf (void)
 	}
       else
 	{
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 		_write(lfd, outbuf, io_index);
 #endif
 #if defined NIX
@@ -1065,7 +1063,7 @@ flush_buf (void)
 *  ~Gibbon
 */
 
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 void
 lflushall (void)
 {

@@ -260,10 +260,7 @@ makemonst (int lev)
     }
   else
     {
-      tmp =
-	rnd ((x =
-	      monstlevel[lev - 1] - monstlevel[lev - 4]) ? x : 1) +
-	monstlevel[lev - 4];
+      tmp = rnd ((x = monstlevel[lev - 1] - monstlevel[lev - 4]) ? x : 1) + monstlevel[lev - 4];
     }
   while (monster[tmp].genocided && tmp < MAXMONST)
     {

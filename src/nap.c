@@ -4,7 +4,7 @@
 #include "includes/io.h"
 #include "includes/nap.h"
 
-#if defined WINDOWS
+#if defined WINDOWS_VS
 #include <windows.h>
 #endif
 
@@ -14,7 +14,7 @@
 
 void nap(int milliseconds)
 {
-#if defined WINDOWS
+#if defined WINDOWS_VS
     Sleep(milliseconds);
 #endif
 

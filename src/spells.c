@@ -287,10 +287,10 @@ speldamage (int x)
       return;
 
     case 20:
-      xh = min (playerx + 1, MAXX - 2);
-      yh = min (playery + 1, MAXY - 2);
-      for (i = max (playerx - 1, 1); i <= xh; i++)	/* vaporize rock */
-	for (j = max (playery - 1, 1); j <= yh; j++)
+      xh = min_math_larn (playerx + 1, MAXX - 2);
+      yh = min_math_larn (playery + 1, MAXY - 2);
+      for (i = max_math_larn (playerx - 1, 1); i <= xh; i++)	/* vaporize rock */
+	for (j = max_math_larn (playery - 1, 1); j <= yh; j++)
 	  {
 	    kn = &know[i][j];
 	    pm = &mitem[i][j];
@@ -344,7 +344,7 @@ speldamage (int x)
       return;
 
     case 23:
-      i = min (cdesc[HP] - 1, cdesc[HPMAX] / 2);	/* drain life */
+      i = min_math_larn (cdesc[HP] - 1, cdesc[HPMAX] / 2);	/* drain life */
       direct (x, i + i, "", 0);
       cdesc[HP] -= i;
       return;

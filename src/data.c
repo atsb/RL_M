@@ -125,7 +125,7 @@ char *levelname[] =
   "V2", "V3"
 };
 
-char objnamelist[MAXOBJECT + 37] = ".AT_P<_F&^+M=>_$$f*OD#~][[)))(((||||||||{?!BC}o:;,@@@@EVV))([[]]](^.[H***.^^.S.tsTLc_____________________________________________";
+char objnamelist[MAXOBJECT + 37] = ".AT_P<_F&^CMD>_$Bf*OD#~][[)))(((||||||||{?!BC}o:;,@@@@EVV))([[]]](^.[H***.^^.S.tsTLc";
 char monstnamelist[] = ".BGHJKOScjtAELNQRZabhiCTYdegmvzFWflorXV.pqsyUkMwDDPxnDDuD........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
 char floorc = '.';
@@ -162,8 +162,7 @@ char *objectname[] =
   "a dart trap", "a trapdoor", "a trapdoor", "the local trading post",
   "a teleport trap", "a massive throne",
   "a sphere of annihilation", "a handsome jewel encrusted throne",
-  "the Larn Revenue Service", "a fortune cookie", "", "", "", "", "", "",
-	"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+  "the Larn Revenue Service", "a fortune cookie"
 };
 
 /*

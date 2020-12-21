@@ -19,8 +19,9 @@
 *  getplid(name)       Function to get players id # from id file
 */
 
-#if defined WINDOWS
+#if defined WINDOWS_VS 
 #include <io.h>
+#include <fcntl.h>
 #endif
 
 #ifdef NIX
@@ -980,13 +981,6 @@ getplid (char *nam)
   sprintf (name, "%s\n", nam);	/* append a \n to name */
   if (lopen (playerids) < 0)	/* no file, make it */
     {
-#if defined WINDOWS
-      if ((fd7 = _open(playerids, _S_IWUSR)) < 0)
-      {
-        return (-1);		/* can't make it */
-      }
-      _close (fd7);
-#endif
 #if defined WINDOWS_VS
       if ((fd7 = _open(playerids, _S_IREAD)) < 0)
       {

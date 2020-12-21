@@ -94,7 +94,7 @@ main (int argc, char *argv[])
   if ((lpbuf == 0) || (inbuffer == 0))
     died (-285);		/* malloc() failure */
 
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
   strcpy(savefilename,getenv("APPDATA"));
   strcat(savefilename,"/Larn/larnsavefile");
 
@@ -304,7 +304,7 @@ main (int argc, char *argv[])
 	viewflag = 0;
 
       if (hit3flag)
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 lflushall();
 #endif
 
@@ -320,7 +320,7 @@ fflush(NULL);
       while (nomove)
 	{
 	  if (hit3flag)
-#if defined WINDOWS || WINDOWS_VS
+#if defined WINDOWS_VS
 lflushall();
 #endif
 

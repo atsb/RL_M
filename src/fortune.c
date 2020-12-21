@@ -1,6 +1,7 @@
 /* fortune.c */
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -33,8 +34,6 @@ outfortune (void)
   msdosfortune ();
 }
 
-
-
 /* 
 * Rumors has been entirely rewritten to be disk based.  This is marginally
 * slower, but requires no mallocked memory.  Notice this in only valid for
@@ -43,7 +42,7 @@ outfortune (void)
 static void
 msdosfortune (void)
 {
-  int status, i;
+  size_t status, i;
   FILE *fp;
   char buf[BUFSIZ], ch;
 

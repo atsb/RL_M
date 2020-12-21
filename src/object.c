@@ -937,10 +937,10 @@ read_scroll (int typ)
 
     case 2:
       lprcat ("\nYou have been granted enlightenment!");
-      yh = min (playery + 7, MAXY);
-      xh = min (playerx + 25, MAXX);
-      yl = max (playery - 7, 0);
-      xl = max (playerx - 25, 0);
+      yh = min_math_larn (playery + 7, MAXY);
+      xh = min_math_larn (playerx + 25, MAXX);
+      yl = max_math_larn (playery - 7, 0);
+      xl = max_math_larn (playerx - 25, 0);
       for (i = yl; i < yh; i++)
 	for (j = xl; j < xh; j++)
 	  know[j][i] = KNOWALL;

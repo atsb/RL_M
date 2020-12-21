@@ -133,7 +133,7 @@ ansiterm_init (void)
 	curs_set(0);
 	refresh();
 
-#if defined WINDOWS
+#if defined WINDOWS_VS
   PDC_save_key_modifiers (1);
 #endif
 }
@@ -175,7 +175,7 @@ llgetch (void)
   int key;
   key = wgetch(stdscr);
 
-#ifdef WINDOWS
+#ifdef WINDOWS_VS
   if (PDC_get_key_modifiers () & PDC_KEY_MODIFIER_SHIFT)
     {
       switch (key)
@@ -211,7 +211,7 @@ llgetch (void)
       return 'h';
     case KEY_RIGHT:
       return 'l';
-#ifdef WINDOWS
+#ifdef WINDOWS_VS
     case KEY_A2:
       return 'k';
     case KEY_B1:

@@ -23,7 +23,7 @@ Larn - maintained and developed for modern systems
 * For GNU/Linux systems, go into the 'src' directory and type 'make prep' and the 'make'.
 Afterwards, ./larn will run the game and all files are saved into your user ~/.larn directory.
 
-* For Windows, an MSVC solution is present.
+* For Windows, an MSVC solution is present (MingW is not supported).
 
 # Future
 

@@ -4,6 +4,7 @@ Mon  21 Dec 18:17:12 CET 2020
 2. Removed WINDOWS build variable (only MSVC now for Windows)
 3. Cleaned up some files
 4. Removed Fred Fish's atgoto implementation and added my own from tgoto.c in libtermlib
+5. Added better letters for DND Store and Bank of Larn on the home level
 
 ~Gibbon
 

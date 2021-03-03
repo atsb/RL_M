@@ -1,8 +1,9 @@
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 DEP = $(OBJ:.o=.d)
-CFLAGS = -Wall -g -Werror -std=c99 -pedantic -DNIX -DMULTIPLE_SCORE_ENTRY -DEXTRA
-LDFLAGS = -lm -lncurses
+NCURSES = $(shell pkg-config --libs ncurses)
+CFLAGS = -Wall -g -Werror -std=gnu99 -pedantic -DNIX -DMULTIPLE_SCORE_ENTRY -DEXTRA
+LDFLAGS = -lm $(NCURSES)
 
 larn: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)

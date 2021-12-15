@@ -15,11 +15,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: brew install ncurses
-    - name: Move into src directory
-      run: cd src
     - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      run: make -f src/Makefile

@@ -29,6 +29,8 @@ NOTE: I'm starting the deprecation of older C compilers.  Next commits will not 
 
 # Future
 
+Update: 14/12/2021 - Yes I am still active and yes it is getting updates in a private repository.
+
 I am still active and am refactoring a huge amount of the source code.  To continue developing it for modern systems, a lot of the cruft that has accumulated over the past 30 years needs desperate attention.  Most notably the input/output code and the display code.
 
 There is no time frame for this and no releases will be done until it is finished.  Think nethack, which underwent a similar thing.

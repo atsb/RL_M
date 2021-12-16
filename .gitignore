@@ -62,3 +62,5 @@ src/.vs/Larn/v17/.suo
 *.iobj
 src/x64/Release/Larn.vcxproj.FileListAbsolute.txt
 src/x64/Release/Larn.exe.recipe
+docs/.DS_Store
+.DS_Store

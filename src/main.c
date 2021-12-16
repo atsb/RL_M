@@ -75,7 +75,9 @@ MAIN PROGRAM
 #if defined WINDOWS_VS
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	PSTR lpCmdLine, INT nCmdShow)
-#else
+#endif
+
+#if defined NIX
 int
 main (int argc, char *argv[])
 #endif

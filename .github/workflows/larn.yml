@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
-      run: brew install ncurses
+      run: brew install ncurses sdl2
     - name: make
       run: make -f src/Makefile

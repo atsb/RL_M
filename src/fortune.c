@@ -52,7 +52,11 @@ msdosfortune (void)
       return;
     }
 
+#ifdef WINDOWS_VS
+  fopen_s(&fp, fortfile, "r");
+#else
   fp = fopen (fortfile, "r");
+#endif
 
   if (fp == 0)
     {

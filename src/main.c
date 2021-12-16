@@ -1,4 +1,9 @@
 /* main.c */
+#if defined WINDOWS_VS
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#include <Windows.h>
+#endif
 #include <stdio.h>
 
 #include "includes/larn.h"
@@ -67,8 +72,13 @@ signed int save_mode = 0;	/* 1 if doing a save game */
 MAIN PROGRAM
 ************
 */
+#if defined WINDOWS_VS
+INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR lpCmdLine, INT nCmdShow)
+#else
 int
 main (int argc, char *argv[])
+#endif
 {
   int i;
   int hard = -1;
@@ -151,13 +161,33 @@ main (int argc, char *argv[])
   else
     fclose (pFile);
 
+#if defined WINDOWS_VS
+  LPWSTR* szArgList;
+  int argCount;
+
+  szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
+  if (szArgList == NULL)
+  {
+	  MessageBox(NULL, L"Cannot parse command line argument(s)", L"ERROR", MB_OK);
+		  return 10;
+  }
+#endif
   /*
    *  now process the command line arguments 
    */
+#if defined WINDOWS_VS
+  for (i = 1; i < argCount; i++)
+#else
   for (i = 1; i < argc; i++)
+#endif
     {
+#if defined WINDOWS_VS
+	  if (szArgList[i][0] == '-')
+		  switch (szArgList[i][1])
+#else
       if (argv[i][0] == '-')
-	switch (argv[i][1])
+		  switch (argv[i][1])
+#endif
 	  {
 	  case 's':		/* show scoreboard   */
 	    showscores ();
@@ -183,18 +213,28 @@ main (int argc, char *argv[])
 	  case '7':
 	  case '8':
 	  case '9':		/* for hardness */
-	    hard = atoi (&argv[i][1]);
+#if defined WINDOWS_VS
+		  hard = atol(&szArgList[i][1]);
+#else
+		  hard = atol(&argv[i][1]);
+#endif
 	    break;
 
 	  case 'h':		/* print out command line arguments */
 	  case '?':
 	    ansiterm_clean_up ();
 	    puts (cmdhelp);
-	    exit (EXIT_SUCCESS);
+		lprcat("Press any key to exit...");
+		ttgetch();
+		exit (EXIT_SUCCESS);
 
 	  default:
 	    ansiterm_clean_up ();
-	    printf ("Unknown option <%s>\n", argv[i]);
+#if defined WINDOWS_VS
+		MessageBox(NULL, L"Unknown command line argument!\n", L"WARNING", MB_OK);
+#else
+		printf("Unknown option <%s>\n", argv[i]);
+#endif
 	    puts (cmdhelp);
 	    exit (EXIT_SUCCESS);
 	  };
@@ -338,6 +378,9 @@ fflush(NULL);
 	    fillmonst (makemonst (level));
 	  }
     }
+#if defined WINDOWS_VS
+  return 0;
+#endif
 }
 
 /*

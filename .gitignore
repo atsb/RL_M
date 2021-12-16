@@ -50,3 +50,15 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+src/.vs/Larn/v17/.suo
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.ipch
+*.tlog
+*.log
+*.ipdb
+*.iobj
+src/x64/Release/Larn.vcxproj.FileListAbsolute.txt
+src/x64/Release/Larn.exe.recipe

@@ -16,4 +16,4 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install libncurses-dev
     - name: make
-      run: make -f src/Makefile
+      run: make

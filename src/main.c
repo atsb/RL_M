@@ -168,12 +168,8 @@ main (int argc, char *argv[])
   int argCount;
 
   szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
-  if (szArgList == NULL)
-  {
-	  MessageBox(NULL, L"Cannot parse command line argument(s)", L"ERROR", MB_OK);
-		  return 10;
-  }
 #endif
+
   /*
    *  now process the command line arguments 
    */
@@ -224,16 +220,19 @@ main (int argc, char *argv[])
 
 	  case 'h':		/* print out command line arguments */
 	  case '?':
+#if defined WINDOWS_VS
+		  MessageBox(NULL, L"-s = Show scores\n-i = Show all scores (including inventory at time of death)\n-0 to -9 = Difficulty setting\n-h or -? = This help text", L"HELP TEXT", MB_OK);
+#else
 	    ansiterm_clean_up ();
 	    puts (cmdhelp);
 		lprcat("Press any key to exit...");
 		ttgetch();
+#endif
 		exit (EXIT_SUCCESS);
-
 	  default:
 	    ansiterm_clean_up ();
 #if defined WINDOWS_VS
-		MessageBox(NULL, L"Unknown command line argument!\n", L"WARNING", MB_OK);
+		MessageBox(NULL, L"Unknown command line option.  Use -h or -? for help.\n", L"UNKNOWN OPTION", MB_OK);
 #else
 		printf("Unknown option <%s>\n", argv[i]);
 #endif

@@ -9,11 +9,11 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
-      run: brew install ncurses
+      run: sudo apt-get install libncurses-dev
     - name: make
       run: make -f src/Makefile

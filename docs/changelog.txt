@@ -1,3 +1,17 @@
+=============================================================================
+
+Fri  17 Dec 10:28:12 CET 2021
+
+1. Implemented WIN32 API code to the windows build to give it more of a native feel
+2. Implemented a Launcher so it is easier to use command line arguments and launch Larn
+3. Removed 'pounds' and added 'units' to the weight to make it more universal
+4. Added a check after being slain to prevent the player from accidentally skipping it
+	by pressing a key
+
+~Gibbon
+
+=============================================================================
+
 Mon  21 Dec 18:17:12 CET 2020
 
 1. Added some 'size_t' over 'int' to help with some 64bit - 32bit comparisons

@@ -32,7 +32,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <ctype.h>
 
 #include "includes/larncons.h"
@@ -163,8 +162,9 @@ losehp (int x)
 #else
       lprcat ("\nYou have been slain.");
       nap (NAPTIME);
-      lprcat("\nPress z to continue.");
-      scanf("%[Z]s");
+      lprcat("\nPress ESC to continue.");
+      while (i != '\33')
+          i = ttgetch();
 #endif
       died (lastnum);
     }

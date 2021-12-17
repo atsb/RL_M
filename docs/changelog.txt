@@ -2,11 +2,13 @@
 
 Fri  17 Dec 10:28:12 CET 2021
 
-1. Implemented WIN32 API code to the windows build to give it more of a native feel
-2. Implemented a Launcher so it is easier to use command line arguments and launch Larn
-3. Removed 'pounds' and added 'units' to the weight to make it more universal
-4. Added a check after being slain to prevent the player from accidentally skipping it
-	by pressing a key
+1. APPDATA (roaming) is used for system files (please use the bat file for this).
+2. gnu17 (for c17 standard) is default.
+3. SUBVER was changed to avoid conflicts with the windows.h 'SUBVER'.
+4. Implemented WIN32 API code to the windows build to give it more of a native feel
+5. Implemented a Launcher so it is easier to use command line arguments and launch Larn
+6. Removed 'pounds' and added 'units' to the weight to make it more universal
+7. Added a check after being slain to prevent the player from accidentally skipping it by pressing a key
 
 ~Gibbon
 

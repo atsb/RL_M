@@ -489,7 +489,7 @@ quit (void)
 
   cursors ();
   strcpy (lastmonst, "");
-  lprcat ("\nDo you really want to quit (all progress will be lost)?");
+  lprcat ("\nDo you really want to quit (all progress will be lost. Yy/Nn)?");
   for (;;)
     {
       i = ttgetch ();

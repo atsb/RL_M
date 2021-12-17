@@ -1,6 +1,6 @@
 
 
-LARN version 14.1.3
+LARN version 14.1.4
 -------------------
 
 Table of contents
@@ -28,6 +28,8 @@ past two years. This version is for OSX, BSD, GNU/LINUX and WINDOWS environments
 ----------------------
 
 Any GNU/Linux, OSX, BSD or Windows Machine with ncurses or pdcurses.
+
+Note for Windows.  Larn now uses the SDL2 build of pdcurses.  Use this on Windows.
 
 3. Files supplied
 -----------------
@@ -98,6 +100,10 @@ multi-platform.
 
 hymie! took it to 14.1.1 with many fixes and improvements.
 
-Gibbon took it back and caressed it into 14.1.3.
+Gibbon took it back and caressed it into 14.1.4 with again many enhancements, improvements and a launcher!
 
 I hope you enjoy this version of LARN.
+
+
+The official maintainer
+~Gibbon

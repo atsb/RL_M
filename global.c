@@ -160,6 +160,7 @@ losehp (int x)
 #if defined WINDOWS_VS
       MessageBox(NULL, L"You have been slain.", L"GAME OVER", MB_OK);
 #else
+      char i = 0;
       lprcat ("\nYou have been slain.");
       nap (NAPTIME);
       lprcat("\nPress ESC to continue.");

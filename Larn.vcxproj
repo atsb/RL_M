@@ -211,6 +211,14 @@
     <ClInclude Include="includes\tgoto.h" />
     <ClInclude Include="includes\tok.h" />
     <ClInclude Include="includes\larnwin32.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="larn.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Larn.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

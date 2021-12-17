@@ -1,8 +1,8 @@
 #pragma once
 
 /*
-    Sprinkled Launcher - a minimalist WIN32 API launcher for Doom Source Ports
-    Copyright (C) 2021  Adam Bilbrough
+    Sprinkled Launcher - a minimalist WIN32 API launcher for Larn
+    Copyright (C) 2021  Gibbon
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

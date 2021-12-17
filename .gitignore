@@ -68,3 +68,8 @@ x64/Release/Larn.vcxproj.FileListAbsolute.txt
 x64/Release/Larn.exe.recipe
 utils/LarnLauncher/LarnLauncher.vcxproj.user
 .vs/Larn/v17/.suo
+utils/LarnLauncher/.vs/LarnLauncher/v17/.suo
+*.recipe
+*.res
+utils/LarnLauncher/x64/Debug/LarnLauncher.vcxproj.FileListAbsolute.txt
+x64/Release/RCa25752

@@ -16,4 +16,4 @@ jobs:
     - name: Install dependencies
       run: brew install ncurses
     - name: make
-      run: make -f src/Makefile
+      run: make

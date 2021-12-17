@@ -37,7 +37,7 @@ void term_conversion(void) {
 	case 'd':
 		sprintf(rp, "%d", args[numval++]);
 		numval = (numval + incr) % 1000;
-		rp = &ret[strnlen(ret, 24)];
+		rp = &ret[strlen(ret)];
 		if (numval > 99) {
 			*rp++ = '0' + (numval / 100);
 		}

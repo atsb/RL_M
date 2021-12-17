@@ -64,3 +64,7 @@ src/x64/Release/Larn.vcxproj.FileListAbsolute.txt
 src/x64/Release/Larn.exe.recipe
 docs/.DS_Store
 .DS_Store
+x64/Release/Larn.vcxproj.FileListAbsolute.txt
+x64/Release/Larn.exe.recipe
+utils/LarnLauncher/LarnLauncher.vcxproj.user
+.vs/Larn/v17/.suo

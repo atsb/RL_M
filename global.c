@@ -37,6 +37,9 @@
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"
+#if defined WINDOWS_VS
+#include "includes/larnwin32.h"
+#endif
 #include "includes/display.h"
 #include "includes/global.h"
 #include "includes/inventory.h"
@@ -154,8 +157,14 @@ losehp (int x)
 {
   if ((cdesc[HP] -= x) <= 0)
     {
+#if defined WINDOWS_VS
+      MessageBox(NULL, L"You have been slain.", L"GAME OVER", MB_OK);
+#else
       lprcat ("\nYou have been slain.");
       nap (NAPTIME);
+      lprcat("\nPress z to continue.");
+      scanf("%[Z]s");
+#endif
       died (lastnum);
     }
 }

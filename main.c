@@ -1,11 +1,8 @@
 /* main.c */
-#if defined WINDOWS_VS
-#define SDL_MAIN_HANDLED
-#include <SDL.h>
-#include <Windows.h>
-#endif
 #include <stdio.h>
-
+#if defined WINDOWS_VS
+#include "includes/larnwin32.h"
+#endif
 #include "includes/larn.h"
 #include "includes/tok.h"
 #include "includes/create.h"

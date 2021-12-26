@@ -309,7 +309,7 @@ main (int argc, char *argv[])
 	     If in prompt mode, identify and prompt; else
 	     identify, never prompt.
 	   */
-	  lookforobject (TRUE, FALSE, TRUE);
+	  lookforobject (TRUE, FALSE, FALSE);
 	}
       else
 	{
@@ -703,6 +703,11 @@ parse (void)
 	  yrepcount = 0;
 	  down_stairs ();
 	  return;
+            
+    case ',':        /* pick up an object_identification */
+      yrepcount = 0; /* pickup, don't identify or prompt for action */
+      lookforobject (FALSE, TRUE, FALSE);
+      return;
 
 	case ':':		/* look at object */
 	  yrepcount = 0;

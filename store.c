@@ -469,9 +469,9 @@ sch_hed (void)
   lprc ('\n');
   if (course[7] == 0)
     lprcat ("\t\th)  History of Larn              5 mobuls");
-
+  
   lprcat ("\n\n\t\tAll courses cost 250 gold pieces.");
-  cursor (1, 19);
+  cursor (1, 18);
   lprcat ("You are presently carrying ");
 }
 

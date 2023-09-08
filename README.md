@@ -1,7 +1,7 @@
 # RL_M
 Larn - maintained and developed for modern systems
 
-I am the official maintainer of Larn.
+Forked from https://github.com/atsb/RL_M
 
 # Supported Systems
 

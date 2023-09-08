@@ -85,23 +85,6 @@ main (int argc, char *argv[])
   FILE *pFile;
 	
   
-  /*
-   *  first task is to identify the player
-   */
-  /*init curses ~Gibbon */
-  init_term ();			/* setup the terminal (find out what type) for termcap */
-  scbr ();
-  /*
-   *  second task is to prepare the pathnames the player will need
-   */
-
-
-  /* Set up the input and output buffers.
-   */
-  lpbuf = (char *) malloc ((5 * BUFBIG) >> 2);	/* output buffer */
-  inbuffer = (char *) malloc ((5 * MAXIBUF) >> 2);	/* output buffer */
-  if ((lpbuf == 0) || (inbuffer == 0))
-    died (-285);		/* malloc() failure */
 
 #if defined WINDOWS_VS
   strcpy(savefilename,getenv("APPDATA"));
@@ -148,8 +131,9 @@ if (datei == NULL) {
 
 	// Zeichenketten aus der Datei lesen und anzeigen
 	while (fgets(buffer, sizeof(buffer), datei) != NULL) {
+		buffer[strcspn(buffer, "\n")] = '\0';
     	printf("%s", buffer);
-		if (zaehlervariable_saveinfo%2 == 0) printf("\n");
+		if (zaehlervariable_saveinfo%2 != 0) printf("\n");
 		else printf("\t");
 		strcpy(savespaceinfo[zaehlervariable_saveinfo/2][zaehlervariable_saveinfo%2], buffer);
 		zaehlervariable_saveinfo++;
@@ -159,7 +143,7 @@ if (datei == NULL) {
 }
 
 // ENTER THE NUMBER
-printf("Enter number and press ENTER: ");
+printf("\nEnter number and press ENTER: ");
 if (scanf("%d", &savespace)!=1) {
 	printf("\n\nFehler bei der Eingabe!!!!\nABBRUCH...");
 	return -27;
@@ -174,7 +158,7 @@ while (1==1){
 		strcpy(savespaceinfo[laufvar+1][0],"the end");
 		strcpy(savespaceinfo[laufvar][0],str_savespace);
 
-		printf("Enter commentary to this game you want to start. Then press ENTER.\nCommentary: ");
+		printf("\nEnter commentary(1 word) to this game you want to start. Then press ENTER.\nCommentary: ");
 		char temparr[100];
 		scanf("%99s",temparr);
 		strcpy(savespaceinfo[laufvar][1],temparr);
@@ -228,6 +212,25 @@ fclose(datei);
   strcat(diagfile,"/.larn/larndiagfile");
 #endif
 #endif
+
+
+  /*
+   *  first task is to identify the player
+   */
+  /*init curses ~Gibbon */
+  init_term ();			/* setup the terminal (find out what type) for termcap */
+  scbr ();
+  /*
+   *  second task is to prepare the pathnames the player will need
+   */
+
+
+  /* Set up the input and output buffers.
+   */
+  lpbuf = (char *) malloc ((5 * BUFBIG) >> 2);	/* output buffer */
+  inbuffer = (char *) malloc ((5 * MAXIBUF) >> 2);	/* output buffer */
+  if ((lpbuf == 0) || (inbuffer == 0))
+    died (-285);		/* malloc() failure */
 
 
   /*

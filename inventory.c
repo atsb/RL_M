@@ -132,7 +132,7 @@ qshowstr (char select_allowed)
   lprintf ("\nElapsed time is %d.  You have %d mobuls left", gtime / 100,
 	   (TIMELIMIT - gtime) / 100);
   itemselect = more (select_allowed);
-  return 0;
+  return itemselect;
 }
 
 

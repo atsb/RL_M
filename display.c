@@ -215,11 +215,7 @@ called in monster.c hitplayer() and spattack()
 */
 static void
 bot_hpx (void)
-{
-		cursor(1, 19);
-		lprintf("HP:");
-		lprintf(" %3d", (int)cdesc[HP]);
-		
+{		
   if (cdesc[EXPERIENCE] != cbak[EXPERIENCE])
     {
       recalc ();

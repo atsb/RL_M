@@ -128,8 +128,8 @@
 
 
 
-/*  
-* defines for the character attribute array   cdesc[] 
+/*
+* defines for the character attribute array   cdesc[]
 */
 #define STRENGTH 0		/* characters physical strength not due to objects */
 #define INTELLIGENCE 1
@@ -225,10 +225,10 @@
 #define MAXPOTION 35		/* maximum number of potions that are possible */
 #define MAXPOTIONNAME	32
 
-#define MAXOBJ 93		/* the maximum number of objects   n < MAXOBJ */
+#define MAXOBJ 94		/* the maximum number of objects   n < MAXOBJ */
 
 /*  defines for the objects in the game     */
-#define MAXOBJECT  92
+#define MAXOBJECT  93
 
 #define OALTAR 1
 #define OTHRONE 2
@@ -333,4 +333,5 @@
 #define OSPHTAILSMAN 87		/* tailsman of the sphere */
 #define OWWAND 88		/* wand of wonder */
 #define OPSTAFF 89		/* staff of power */
+#define OPUDDLE 93		/* puddle object */
 /* used up to 93. ~Gibbon */

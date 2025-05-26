@@ -775,39 +775,37 @@ if direction=0, don't move--just show where he is */
 
     if (i == OPUDDLE)
     {
+        lprcat("\nYou step into a puddle of water."); // New message
+
+        // Existing rusting logic for worn armor
         int worn_armor_idx = cdesc[WEAR];
-        int shield_idx = cdesc[SHIELD];
-        int rusted = 0;
-
-        if (worn_armor_idx != -1 && is_metal_armor(iven[worn_armor_idx]))
-        {
-            if (ivenarg[worn_armor_idx] > -10)
-            {
+        int rusted_something = 0; // To track if recalc/bottomline is needed
+        if (worn_armor_idx != -1 && is_metal_armor(iven[worn_armor_idx])) {
+            if (ivenarg[worn_armor_idx] > -10) {
                 ivenarg[worn_armor_idx] -= 2;
-                if (ivenarg[worn_armor_idx] < -10)
-                    ivenarg[worn_armor_idx] = -10;
+                if (ivenarg[worn_armor_idx] < -10) ivenarg[worn_armor_idx] = -10;
                 lprcat("\nYour armor rusts in the murky water!");
-                rusted = 1;
+                rusted_something = 1;
             }
         }
 
-        if (shield_idx != -1 && is_metal_armor(iven[shield_idx]))
-        {
-            if (ivenarg[shield_idx] > -10)
-            {
+        // Existing rusting logic for shield
+        int shield_idx = cdesc[SHIELD];
+        if (shield_idx != -1 && is_metal_armor(iven[shield_idx])) {
+            if (ivenarg[shield_idx] > -10) {
                 ivenarg[shield_idx] -= 2;
-                if (ivenarg[shield_idx] < -10)
-                    ivenarg[shield_idx] = -10;
+                if (ivenarg[shield_idx] < -10) ivenarg[shield_idx] = -10;
                 lprcat("\nYour shield rusts in the murky water!");
-                rusted = 1;
+                rusted_something = 1;
             }
         }
 
-        if (rusted == 1)
-        {
+        if (rusted_something) {
             recalc();
             bottomline();
         }
+
+        return (yrepcount = 0); // Must be last in this block
     }
 
     if (i && i != OTRAPARROWIV && i != OIVTELETRAP && i != OIVDARTRAP

@@ -1,4 +1,7 @@
 /* create.c */
+
+// #define PUDDLE_TEST // Uncomment or define via compiler flags to enable debug puddle
+
 #include "includes/create.h"
 #include "includes/larn.h"
 #include "includes/global.h"
@@ -569,6 +572,25 @@ makeobject(int j)
         fillroom(OHOME, 0);	/*  the players home & family   */
         fillroom(OTRADEPOST, 0);	/*  the trading post            */
         fillroom(OLRS, 0);	/*  the larn revenue service    */
+
+#ifdef PUDDLE_TEST
+        // Add a debug puddle in town
+        int debug_puddle_x = 20;
+        int debug_puddle_y = 5;
+        int debug_puddle_size = 3;
+        int x, y;
+
+        for (y = debug_puddle_y; y < debug_puddle_y + debug_puddle_size; ++y) {
+            for (x = debug_puddle_x; x < debug_puddle_x + debug_puddle_size; ++x) {
+                if (x < MAXX - 1 && y < MAXY - 1) { // Boundary checks
+                    item[x][y] = OPUDDLE;
+                    iarg[x][y] = 0; // Default argument
+                    mitem[x][y] = 0; // Ensure no monster there
+                    know[x][y] = KNOWALL; // Make it visible for debug
+                }
+            }
+        }
+#endif // PUDDLE_TEST
 
         return;
     }

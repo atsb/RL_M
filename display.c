@@ -775,8 +775,6 @@ if direction=0, don't move--just show where he is */
 
     if (i == OPUDDLE)
     {
-        lprcat("\nYou step into a puddle of water."); // New message
-
         // Existing rusting logic for worn armor
         int worn_armor_idx = cdesc[WEAR];
         int rusted_something = 0; // To track if recalc/bottomline is needed

@@ -388,6 +388,11 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 	prompt_enter ();
       return;
 
+    case OPUDDLE:
+      if (do_ident)
+          lprcat("\nYou step into a puddle of water.");
+      return;
+
     case OWALL:
       break;
 
@@ -418,6 +423,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 	    case OORBOFDRAGON:
 	    case OCUBEofUNDEAD:
 	    case ONOTHEFT:
+        case OPUDDLE:
 	      break;
 
 	    default:

@@ -125,7 +125,7 @@ char* levelname[] =
 "V2", "V3"
 };
 
-char objnamelist[MAXOBJECT + 37] = ".AT_P<_F&^CMD>_$Bf*OD#~][[)))(((||||||||{?!BC}o:;,@@@@EVV))([[]]](^.[H***.^^.S.tsTLc`ulhatwpVSe~";
+char objnamelist[MAXOBJECT + 37] = ".AT_P<_F&^CMD>_$Bf*OD#~][[)))(((||||||||{?!BC}o:;,@@@@EVV))([[]]](^.[H***.^^.S.tsTLc`ulhatwpV~";
 char monstnamelist[] = ".BGHJKOScjtAELNQRZabhiCTYdegmvzFWflorXV.pqsyUkMwDDPxnDDuD........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
 char floorc = '.';

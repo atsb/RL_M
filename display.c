@@ -684,6 +684,7 @@ showplayer(void)
     lprc('@');
     attroff(COLOR_PAIR(1));
     cursor(playerx + 1, playery + 1);
+    *lpnt++ = CURSOR_BLOCK;
     oldx = playerx;
     oldy = playery;
     refresh();

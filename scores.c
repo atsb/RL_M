@@ -746,6 +746,7 @@ void
 died (int x)
 {
   int f, win;
+  char i = 0;
   /*char ch, *mod;
      time_t zzz; */
 
@@ -781,8 +782,9 @@ died (int x)
     }
 
   cursors ();
-  lprcat ("\nPress any key to continue. ");
-  ttgetch ();
+  lprcat("\nPress 'x' to continue.\n");
+  while ((i = getch()) != 'x')
+      i = ttgetch();
 
 invalid:
   /*clearvt100(); */
@@ -857,7 +859,7 @@ diedsub (int x)
 {
   char ch, *mod;
 
-  lprintf ("Score: %ld, Diff: %ld,  %s ", cdesc[GOLD], cdesc[HARDGAME],
+  lprintf ("\nScore: %ld, Diff: %ld,  %s ", cdesc[GOLD], cdesc[HARDGAME],
 	   logname);
 
   if (x < 256)
@@ -877,7 +879,7 @@ diedsub (int x)
 	  mod = "a";
 	}
 
-      lprintf ("killed by %s %s", mod, monster[x].name);
+      lprintf ("\nkilled by %s %s", mod, monster[x].name);
 
     }
   else

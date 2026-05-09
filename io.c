@@ -101,6 +101,7 @@ static void tputs (const char *);
 
 static void flush_buf (void);
 
+
 /*
 *  Subroutine to set up terminal in correct mode for game
 *
@@ -173,7 +174,6 @@ ttgetch (void)
 void
 scbr (void)
 {
-	curs_set(0);
   /* 
    * Set up to use the direct console input call which may
    * read from the keypad;
@@ -191,7 +191,6 @@ scbr (void)
 void
 sncbr (void)
 {
-	curs_set(1);
   /* 
    * Set up to use the direct console input call with echo, getche()
    */
@@ -694,17 +693,14 @@ lprcat (char *str)
 /*
 * cursor(x,y)    Put cursor at specified coordinates staring at [1,1] (termcap)
 */
-void
-cursor (int x, int y)
+void cursor(int x, int y)
 {
-	curs_set(1);
-  if (lpnt >= lpend)
-    {
-      lflush();
-    }
-  *lpnt++ = CURSOR;
-  *lpnt++ = (char) x;
-  *lpnt++ = (char) y;
+	if (lpnt >= lpend)
+		lflush();
+
+	*lpnt++ = CURSOR;
+	*lpnt++ = (char)x;
+	*lpnt++ = (char)y;
 }
 
 /*
@@ -941,6 +937,22 @@ lflush (void)
 		cury = *++str - 1;
 		tputs (atgoto (CM, curx, cury));
 		break;
+
+		  case CURSOR_BLOCK:
+		  {
+			  /* Restore cursor */
+			  tputs(atgoto(CM, curx, cury));
+
+			  /* Draws the player block */
+			  tputs(SO);
+			  ttputch('@');
+			  tputs(SE);
+
+			  /* Restore cursor */
+			  tputs(atgoto(CM, curx, cury));
+
+			  break;
+		  }
 
 	      case '\n':
 		if ((cury == 23) && enable_scroll)

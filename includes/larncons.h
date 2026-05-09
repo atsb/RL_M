@@ -19,7 +19,7 @@
 #define T_END    8
 #define CL_DOWN 14
 #define CURSOR  15
-
+#define CURSOR_BLOCK  16
 
 
 #define KNOWNOT   0x00
@@ -214,7 +214,6 @@
 
 /* nap related */
 #define NAPTIME 1000
-
 
 /*
 * object related constants

@@ -44,7 +44,7 @@ ansiterm_out (const char *output_buffer, int n_chars)
 
 	  j = 0;
 
-	  while (!isalpha (output_buffer[i]))
+	  while (!isalpha((unsigned char)output_buffer[i]))
 	    {
 
 	      ansi_param[j] = output_buffer[i];

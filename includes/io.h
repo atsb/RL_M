@@ -56,8 +56,6 @@ void set_score_output (void);
 
 void lflush (void);
 
-void lflushall (void);
-
 char *tmcapcnv (char *, char *);
 
 void enter_name (void);

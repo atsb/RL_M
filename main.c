@@ -341,14 +341,8 @@ main (int argc, char *argv[])
       else
 	viewflag = 0;
 
-      if (hit3flag)
-#if defined WINDOWS_VS
-lflushall();
-#endif
-
-#if defined NIX
-fflush(NULL);
-#endif 
+	  if (hit3flag)
+		  flushinp();
       hitflag = hit3flag = 0;
       bot_linex ();		/* update bottom line */
 
@@ -358,13 +352,7 @@ fflush(NULL);
       while (nomove)
 	{
 	  if (hit3flag)
-#if defined WINDOWS_VS
-lflushall();
-#endif
-
-#if defined NIX
-fflush(NULL);
-#endif 
+		  flushinp();
 	  nomove = 0;
 	  parse ();
 	}

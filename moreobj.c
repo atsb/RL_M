@@ -887,6 +887,7 @@ specify_obj_cursor (void)
 	  break;
 	}
     }
+	curs_set(0);
 }
 
 
@@ -894,7 +895,7 @@ specify_obj_cursor (void)
 static void
 move_cursor (int *xx, int *yy, int cdir)
 {
-
+	curs_set(1);
   *xx += diroffx[cdir];
   *yy += diroffy[cdir];
 

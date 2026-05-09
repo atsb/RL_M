@@ -446,13 +446,7 @@ hitplayer (int x, int y)
       {
 	if (spattack (monster[mster].attack, x, y))
 	  {
-#if defined WINDOWS_VS
-lflushall();
-#endif
-
-#if defined NIX
-fflush(NULL);
-#endif
+        flushinp();
 	    return;
 	  }
 	tmp = 1;
@@ -472,13 +466,7 @@ fflush(NULL);
 	{
 	  losehp (dam);
 	  bottomhp ();
-#if defined WINDOWS_VS
-lflushall();
-#endif
-
-#if defined NIX
-fflush(NULL);
-#endif
+      flushinp();
 	}
     }
   if (tmp == 0)

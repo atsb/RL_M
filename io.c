@@ -173,7 +173,7 @@ ttgetch (void)
 void
 scbr (void)
 {
-
+	curs_set(0);
   /* 
    * Set up to use the direct console input call which may
    * read from the keypad;
@@ -191,7 +191,7 @@ scbr (void)
 void
 sncbr (void)
 {
-
+	curs_set(1);
   /* 
    * Set up to use the direct console input call with echo, getche()
    */
@@ -302,7 +302,6 @@ lprc (char ch)
 
       lflush ();
     }
-    lflush();
 }
 
 
@@ -698,6 +697,7 @@ lprcat (char *str)
 void
 cursor (int x, int y)
 {
+	curs_set(1);
   if (lpnt >= lpend)
     {
       lflush();
@@ -1047,33 +1047,6 @@ flush_buf (void)
     io_index = 0;
 }
 
-/*
-*  flushall()  Function to flush all type-ahead in the input buffer
-*  
-*  I've fixed this mess.  I don't know who implemented this
-*  but kbhit is Windows only.  I'm guessing they never
-*  used a BSD or GNU/Linux system or never read a manpage.
-*  
-*  I prefer declaring each individually as it is safer
-*  and also prevent them from being compiled
-*  when not used by the systems defs.
-*
-*  Nowadays we can do a fflush(NULL) on Unix-like systems.
-*
-*  ~Gibbon
-*/
-
-#if defined WINDOWS_VS
-void
-lflushall (void)
-{
-  while (_kbhit())
-    {
-      _getch();
-    }
-}
-#endif
-
 
 /*
 *  char *tmcapcnv(sd,ss)  Routine to convert VT100 escapes to termcap format
@@ -1105,7 +1078,7 @@ tmcapcnv (char *sd, char *ss)
 	  tmstate++;
 	  break;
 	case 2:
-	  if (isdigit (*ss))
+		if (isdigit((unsigned char)*ss))
 	    {
 	      tmdigit = *ss - '0';
 	      tmstate++;

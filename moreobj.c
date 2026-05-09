@@ -23,6 +23,7 @@ pray_at_altar()
 */
 #include <stdlib.h>
 #include "includes/action.h"
+#include "includes/ansiterm.h"
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"

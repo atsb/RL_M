@@ -1,3 +1,5 @@
+#include <curses.h>
+
 void ansiterm_init (void);
 void ansiterm_clean_up (void);
 

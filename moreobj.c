@@ -728,6 +728,7 @@ specify_obj_nocurs (void)
   char i;
   int j, flag;
 
+  curs_set(0);
   lprcat ("\nType object character:");
   switch (i = ttgetch ())
     {
@@ -779,6 +780,7 @@ specify_obj_cursor (void)
   int objx, objy;
   int i;
 
+  curs_set(1);
   lprcat ("\nMove the cursor to an unknown item.");
   lprcat ("\n(For instructions type a ?)");
 

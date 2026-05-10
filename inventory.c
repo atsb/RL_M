@@ -66,12 +66,12 @@ init_inventory (void)
      We can sort the inventory right away because a dagger is 'later' than
      leather armor.
    */
-  if (cdesc[HARDGAME] <= 0)
+  if (c[HARDGAME] <= 0)
     {
       iven[0] = OLEATHER;
       iven[1] = ODAGGER;
-      ivenarg[0] = ivenarg[1] = cdesc[WEAR] = ivensort[0] = 0;
-      ivensort[1] = cdesc[WIELD] = 1;
+      ivenarg[0] = ivenarg[1] = c[WEAR] = ivensort[0] = 0;
+      ivensort[1] = c[WIELD] = 1;
     }
 }
 
@@ -104,9 +104,9 @@ qshowstr (char select_allowed)
 
   srcount = 0;
 
-  if (cdesc[GOLD])
+  if (c[GOLD])
     {
-      lprintf (".)   %d gold pieces", (int) cdesc[GOLD]);
+      lprintf (".)   %d gold pieces", (int) c[GOLD]);
       srcount++;
     }
   for (k = (MAXINVEN - 1); k >= 0; k--)
@@ -608,9 +608,9 @@ show2 (int index)
 	lprintf (" %d", (long) ivenarg[index]);
       break;
     }
-  if (cdesc[WIELD] == index)
+  if (c[WIELD] == index)
     lprcat (" (weapon in hand)");
-  if ((cdesc[WEAR] == index) || (cdesc[SHIELD] == index))
+  if ((c[WEAR] == index) || (c[SHIELD] == index))
     lprcat (" (being worn)");
   if (++srcount >= 22)
     {
@@ -632,7 +632,7 @@ take (int itm, int arg)
   int i, limit;
 
   /*  cursors(); */
-  if ((limit = 15 + (cdesc[LEVEL] >> 1)) > MAXINVEN)
+  if ((limit = 15 + (c[LEVEL] >> 1)) > MAXINVEN)
     limit = MAXINVEN;
   for (i = 0; i < limit; i++)
     if (iven[i] == 0)
@@ -648,38 +648,38 @@ take (int itm, int arg)
 	    limit = 1;
 	    break;
 	  case ODEXRING:
-	    cdesc[DEXTERITY] += ivenarg[i] + 1;
+	    c[DEXTERITY] += ivenarg[i] + 1;
 	    limit = 1;
 	    break;
 	  case OSTRRING:
-	    cdesc[STREXTRA] += ivenarg[i] + 1;
+	    c[STREXTRA] += ivenarg[i] + 1;
 	    limit = 1;
 	    break;
 	  case OCLEVERRING:
-	    cdesc[INTELLIGENCE] += ivenarg[i] + 1;
+	    c[INTELLIGENCE] += ivenarg[i] + 1;
 	    limit = 1;
 	    break;
 	  case OHAMMER:
-	    cdesc[DEXTERITY] += 10;
-	    cdesc[STREXTRA] += 10;
-	    cdesc[INTELLIGENCE] -= 10;
+	    c[DEXTERITY] += 10;
+	    c[STREXTRA] += 10;
+	    c[INTELLIGENCE] -= 10;
 	    limit = 1;
 	    break;
 
 	  case OORBOFDRAGON:
-	    cdesc[SLAYING]++;
+	    c[SLAYING]++;
 	    break;
 	  case OSPIRITSCARAB:
-	    cdesc[NEGATESPIRIT]++;
+	    c[NEGATESPIRIT]++;
 	    break;
 	  case OCUBEofUNDEAD:
-	    cdesc[CUBEofUNDEAD]++;
+	    c[CUBEofUNDEAD]++;
 	    break;
 	  case ONOTHEFT:
-	    cdesc[NOTHEFT]++;
+	    c[NOTHEFT]++;
 	    break;
 	  case OSWORDofSLASHING:
-	    cdesc[DEXTERITY] += 5;
+	    c[DEXTERITY] += 5;
 	    limit = 1;
 	    break;
 	  };
@@ -727,12 +727,12 @@ drop_object (int k)
   show3 (k);			/* show what item you dropped */
   know[playerx][playery] = 0;
   iven[k] = 0;
-  if (cdesc[WIELD] == k)
-    cdesc[WIELD] = -1;
-  if (cdesc[WEAR] == k)
-    cdesc[WEAR] = -1;
-  if (cdesc[SHIELD] == k)
-    cdesc[SHIELD] = -1;
+  if (c[WIELD] == k)
+    c[WIELD] = -1;
+  if (c[WEAR] == k)
+    c[WEAR] = -1;
+  if (c[SHIELD] == k)
+    c[SHIELD] = -1;
   adjustcvalues (itm, ivenarg[k]);
   dropflag = 1;			/* say dropped an item so wont ask to pick it up right away */
   return (0);
@@ -747,7 +747,7 @@ pocketfull (void)
 {
   int i, limit;
 
-  limit = MIN_LIMIT + (cdesc[LEVEL] >> 1);
+  limit = MIN_LIMIT + (c[LEVEL] >> 1);
 
   if (limit > MAXINVEN)
     {

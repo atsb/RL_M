@@ -64,11 +64,11 @@ diag (void)
 
   /*  for the character attributes    */
 
-  lprintf ("\n\nPlayer attributes:\n\nHit points: %2d(%2d)", (int) cdesc[HP],
-	   (int) cdesc[HPMAX]);
+  lprintf ("\n\nPlayer attributes:\n\nHit points: %2d(%2d)", (int) c[HP],
+	   (int) c[HPMAX]);
   lprintf
     ("\ngold: %d  Experience: %d  Character level: %d  Level in caverns: %d",
-     (int) cdesc[GOLD], (int) cdesc[EXPERIENCE], (int) cdesc[LEVEL],
+     (int) c[GOLD], (int) c[EXPERIENCE], (int) c[LEVEL],
      (int) level);
   lprintf ("\nTotal types of monsters: %d", (int) MAXMONST + 8);
 
@@ -104,7 +104,7 @@ diag (void)
   lprcat ("\n     and that the players dexterity and strength are 16.");
   lprcat
     ("\n    to hit: if (rnd(22) < (2[monst AC] + your level + dex + WC/8 -1)/2) then hit");
-  lprcat ("\n    damage = rund(8) + WC/2 + STR - cdesc[HARDGAME] - 4");
+  lprcat ("\n    damage = rund(8) + WC/2 + STR - c[HARDGAME] - 4");
   lprcat ("\n    to hit:  if rnd(22) < to hit  then player hits\n");
   lprcat
     ("\n    Each entry is as follows:  to hit / damage / number hits to kill\n");
@@ -114,7 +114,7 @@ diag (void)
   for (i = 0; i <= MAXMONST + 8; i++)
     {
       hit = 2 * monster[i].armorclass + 2 * monster[i].level + 16;
-      dam = 16 - cdesc[HARDGAME];
+      dam = 16 - c[HARDGAME];
       lprintf ("\n%20s   %2d/%2d/%2d       %2d/%2d/%2d       %2d/%2d/%2d",
 	       monster[i].name,
 	       (int) (hit / 2), (int) max_math_larn (0, dam + 2),
@@ -142,12 +142,12 @@ diag (void)
       lprintf (" %21s  %s\n", spelname[j], speldescript[j]);
     }
 
-  lprcat ("\n\nFor the cdesc[] array:\n");
+  lprcat ("\n\nFor the c[] array:\n");
   for (j = 0; j < 100; j += 10)
     {
       lprintf ("\nc[%2d] = ", (int) j);
       for (i = 0; i < 9; i++)
-	lprintf ("%5d ", (int) cdesc[i + j]);
+	lprintf ("%5d ", (int) c[i + j]);
     }
 
   lprcat ("\n\nTest of random number generator ----------------");
@@ -229,7 +229,7 @@ savegame (char *fname)
 		sizeof (struct cel) * MAXY * MAXX);
     }
 
-  lwrite ((char *) &cdesc[0], 100 * sizeof (long));
+  lwrite ((char *) &c[0], 100 * sizeof (long));
 
   lwrite ((char *) &gtime, 1 * sizeof (long));
   lprint (level);
@@ -303,7 +303,7 @@ restoregame (char *fname)
       lcreat ((char *) 0);
       lprintf ("\nCan't open file <%s>to restore game\n", fname);
       nap (NAPTIME);
-      cdesc[GOLD] = cdesc[BANKACCOUNT] = 0;
+      c[GOLD] = c[BANKACCOUNT] = 0;
       died (-265);
       return;
     }
@@ -320,10 +320,10 @@ restoregame (char *fname)
 	      sizeof (struct cel) * MAXY * MAXX);
     }
 
-  lrfill ((char *) &cdesc[0], 100 * sizeof (long));
+  lrfill ((char *) &c[0], 100 * sizeof (long));
 
   lrfill ((char *) &gtime, 1 * sizeof (long));
-  level = cdesc[CAVELEVEL] = larint ();
+  level = c[CAVELEVEL] = larint ();
   playerx = larint ();
   playery = larint ();
 
@@ -359,7 +359,7 @@ restoregame (char *fname)
   for (i = 0; i < MAXMONST; i++)
     monster[i].genocided = larint ();	/* genocide info */
 
-  for (sp = 0, i = 0; i < cdesc[SPHCAST]; i++)
+  for (sp = 0, i = 0; i < c[SPHCAST]; i++)
     {
       sp2 = sp;
       sp = (struct sphere *) malloc (sizeof (struct sphere));
@@ -400,7 +400,7 @@ restoregame (char *fname)
       lprcat ("Sorry, But your save file is for an older version of larn\n");
       lflush ();
       nap (NAPTIME);
-      cdesc[GOLD] = cdesc[BANKACCOUNT] = 0;
+      c[GOLD] = c[BANKACCOUNT] = 0;
       died (-266);
       return;
     }
@@ -409,7 +409,7 @@ restoregame (char *fname)
 
   oldx = oldy = 0;
 
-  if (cdesc[HP] < 0)
+  if (c[HP] < 0)
     {
       died (284);
       return;
@@ -419,18 +419,18 @@ restoregame (char *fname)
   if (_unlink (fname) < 0)
     fcheat ();
   for (k = 0; k < 6; k++)
-    if (cdesc[k] > 99)
+    if (c[k] > 99)
       greedy ();
-  if (cdesc[HPMAX] > 999 || cdesc[SPELLMAX] > 125)
+  if (c[HPMAX] > 999 || c[SPELLMAX] > 125)
     greedy ();
 #endif
 
   /* if patch up lev 25 player */
-  if (cdesc[LEVEL] == 25 && cdesc[EXPERIENCE] > skill[24])
+  if (c[LEVEL] == 25 && c[EXPERIENCE] > skill[24])
     {
       long tmp;
-      tmp = cdesc[EXPERIENCE] - skill[24];	/* amount to go up */
-      cdesc[EXPERIENCE] = skill[24];
+      tmp = c[EXPERIENCE] - skill[24];	/* amount to go up */
+      c[EXPERIENCE] = skill[24];
       raiseexperience (tmp);
     }
   getlevel ();
@@ -464,7 +464,7 @@ greedy (void)
   lprcat ("to continue.\n");
 
   nap (5000);
-  cdesc[GOLD] = cdesc[BANKACCOUNT] = 0;
+  c[GOLD] = c[BANKACCOUNT] = 0;
   died (-267);
 }
 
@@ -510,7 +510,7 @@ fcheat (void)
   lprcat ("cannot let you play this game.\n");
 
   nap (5000);
-  cdesc[GOLD] = cdesc[BANKACCOUNT] = 0;
+  c[GOLD] = c[BANKACCOUNT] = 0;
   died (-268);
 }
 

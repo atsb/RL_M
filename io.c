@@ -147,7 +147,7 @@ ttgetch (void)
   char byt;
 
 #ifdef EXTRA
-  cdesc[BYTESIN]++;
+  c[BYTESIN]++;
 #endif
 
   lflush ();			/* be sure output buffer is flushed */
@@ -205,7 +205,7 @@ newgame (void)
 {
   long *p, *pe;
 
-  for (p = cdesc, pe = cdesc + 100; p < pe; p++)
+  for (p = c, pe = c + 100; p < pe; p++)
     *p = 0;
 
   time (&initialtime);
@@ -324,7 +324,7 @@ lwrite (char *buf, int len)
   if (len > 399)		/* don't copy data if can just write it */
     {
 #ifdef EXTRA
-      cdesc[BYTESOUT] += len;
+      c[BYTESOUT] += len;
 #endif
 
       for (str = buf; len > 0; --len)
@@ -879,7 +879,7 @@ lflush (void)
   if ((lpoint = lpnt - lpbuf) > 0)
     {
 #ifdef EXTRA
-      cdesc[BYTESOUT] += lpoint;
+      c[BYTESOUT] += lpoint;
 #endif
       if (enable_scroll <= -1)
 	{

@@ -264,7 +264,7 @@ main (int argc, char *argv[])
     }
 
   setupvt100 ();		/*  setup the terminal special mode             */
-  if (cdesc[HP] == 0)		/* create new game */
+  if (c[HP] == 0)		/* create new game */
     {
       predostuff = 1;		/* tell signals that we are in the welcome screen */
       welcome ();		/* welcome the player to the game */
@@ -320,15 +320,15 @@ main (int argc, char *argv[])
          update game time, move spheres, move walls, move monsters
          all the stuff affected by TIMESTOP and HASTESELF
        */
-      if (cdesc[TIMESTOP] <= 0)
-	if (cdesc[HASTESELF] == 0 || (cdesc[HASTESELF] & 1) == 0)
+      if (c[TIMESTOP] <= 0)
+	if (c[HASTESELF] == 0 || (c[HASTESELF] & 1) == 0)
 	  {
 	    gtime++;
 	    movsphere ();
 
 	    if (hitflag == 0)
 	      {
-		if (cdesc[HASTEMONST])
+		if (c[HASTEMONST])
 		  movemonst ();
 		movemonst ();
 	      }
@@ -357,7 +357,7 @@ main (int argc, char *argv[])
 	  parse ();
 	}
       regen ();			/*  regenerate hp and spells            */
-      if (cdesc[TIMESTOP] == 0)
+      if (c[TIMESTOP] == 0)
 	if (--rmst <= 0)
 	  {
 	    rmst = 120 - (level << 2);
@@ -377,7 +377,7 @@ randmonst (void)
 {
 
   /*  don't make monsters if time is stopped  */
-  if (cdesc[TIMESTOP])
+  if (c[TIMESTOP])
     {
 
       return;
@@ -470,13 +470,13 @@ parse (void)
 
 	case 'd':
 	  yrepcount = 0;
-	  if (cdesc[TIMESTOP] == 0)
+	  if (c[TIMESTOP] == 0)
 	    dropobj ();
 	  return;		/*  to drop an object   */
 
 	case 'e':
 	  yrepcount = 0;
-	  if (cdesc[TIMESTOP] == 0)
+	  if (c[TIMESTOP] == 0)
 	    if (!floor_consume (OCOOKIE, "eat"))
 	      consume (OCOOKIE, "eat", showeat);
 	  return;		/*  to eat a fortune cookie */
@@ -501,19 +501,19 @@ parse (void)
 
 	case 'q':		/* quaff a potion */
 	  yrepcount = 0;
-	  if (cdesc[TIMESTOP] == 0)
+	  if (c[TIMESTOP] == 0)
 	    if (!floor_consume (OPOTION, "quaff"))
 	      consume (OPOTION, "quaff", showquaff);
 	  return;
 
 	case 'r':
 	  yrepcount = 0;
-	  if (cdesc[BLINDCOUNT])
+	  if (c[BLINDCOUNT])
 	    {
 	      cursors ();
 	      lprcat ("\nYou can't read anything when you're blind!");
 	    }
-	  else if (cdesc[TIMESTOP] == 0)
+	  else if (c[TIMESTOP] == 0)
 	    if (!floor_consume (OSCROLL, "read"))
 	      if (!floor_consume (OBOOK, "read"))
 		consume (OSCROLL, "read", showread);
@@ -534,7 +534,7 @@ parse (void)
 	  nomove = 1;
 	  cursors ();
 	  lprintf ("\nLarn, Version %d.%d.%d, Diff=%d", (int) VERSION,
-		   (int) SUBVERSION, (int) PATCHLEVEL, (int) cdesc[HARDGAME]);
+		   (int) SUBVERSION, (int) PATCHLEVEL, (int) c[HARDGAME]);
 
 	  if (wizard)
 	    lprcat (" Wizard");
@@ -624,15 +624,15 @@ parse (void)
 	case 'T':
 	  yrepcount = 0;
 	  cursors ();
-	  if (cdesc[SHIELD] != -1)
+	  if (c[SHIELD] != -1)
 	    {
-	      cdesc[SHIELD] = -1;
+	      c[SHIELD] = -1;
 	      lprcat ("\nYour shield is off");
 	      bottomline ();
 	    }
-	  else if (cdesc[WEAR] != -1)
+	  else if (c[WEAR] != -1)
 	    {
-	      cdesc[WEAR] = -1;
+	      c[WEAR] = -1;
 	      lprcat ("\nYour armor is off");
 	      bottomline ();
 	    }
@@ -647,7 +647,7 @@ parse (void)
 
 	case 'Z':
 	  yrepcount = 0;
-	  if (cdesc[LEVEL] > 9)
+	  if (c[LEVEL] > 9)
 	    {
 	      oteleport (1);
 	      return;
@@ -752,16 +752,16 @@ parse (void)
 	  scbr ();		/* system("stty -echo cbreak"); */
 	  for (i = 0; i < 6; i++)
 	    {
-	      cdesc[i] = 70;
+	      c[i] = 70;
 	    }
 	  iven[0] = iven[1] = 0;
 	  take (OPROTRING, 50);
 	  take (OLANCE, 25);
-	  cdesc[WIELD] = 1;
-	  cdesc[LANCEDEATH] = 1;
-	  cdesc[WEAR] = cdesc[SHIELD] = -1;
+	  c[WIELD] = 1;
+	  c[LANCEDEATH] = 1;
+	  c[WEAR] = c[SHIELD] = -1;
 	  raiseexperience (6000000L);
-	  cdesc[AWARENESS] += 25000;
+	  c[AWARENESS] += 25000;
 	  {
 	    for (i = 0; i < MAXY; i++)
 	      for (j = 0; j < MAXX; j++)
@@ -802,7 +802,7 @@ parse (void)
 	      item[MAXX - 1][i - MAXX - MAXY] = i;
 	      iarg[MAXX - 1][i - MAXX - MAXY] = 0;
 	    }
-	  cdesc[GOLD] += 250000;
+	  c[GOLD] += 250000;
 	  drawscreen ();
 	  return;
 #endif
@@ -818,7 +818,7 @@ parse2 (void)
 {
 
   /* move the monsters */
-  if (cdesc[HASTEMONST])
+  if (c[HASTEMONST])
     {
 
       movemonst ();
@@ -848,7 +848,7 @@ run (int dir)
       if (i > 0)
 	{
 
-	  if (cdesc[HASTEMONST])
+	  if (c[HASTEMONST])
 	    {
 
 	      movemonst ();
@@ -905,7 +905,7 @@ wield (void)
 	  if (i == '-')
 	    {
 
-	      cdesc[WIELD] = -1;
+	      c[WIELD] = -1;
 	      bottomline ();
 
 	      return;
@@ -938,14 +938,14 @@ wield (void)
 	      return;
 
 	    }
-	  else if (cdesc[SHIELD] != -1 && iven[i - 'a'] == O2SWORD)
+	  else if (c[SHIELD] != -1 && iven[i - 'a'] == O2SWORD)
 	    {
 
 	      lprcat ("\nBut one arm is busy with your shield!");
 	      return;
 
 	    }
-	  else if (cdesc[SHIELD] != -1 && iven[i - 'a'] == OHSWORD)
+	  else if (c[SHIELD] != -1 && iven[i - 'a'] == OHSWORD)
 	    {
 
 	      lprcat ("\nA longsword of slashing cannot be used while a shield is equipped!");
@@ -955,18 +955,18 @@ wield (void)
 	  else
 	    {
 
-	      cdesc[WIELD] = i - 'a';
+	      c[WIELD] = i - 'a';
 
 	      if (iven[i - 'a'] == OLANCE)
 		{
 
-		  cdesc[LANCEDEATH] = 1;
+		  c[LANCEDEATH] = 1;
 
 		}
 	      else
 		{
 
-		  cdesc[LANCEDEATH] = 0;
+		  c[LANCEDEATH] = 0;
 		}
 
 	      bottomline ();
@@ -1038,32 +1038,32 @@ wear (void)
 	      case OPLATEARMOR:
 	      case OSTUDLEATHER:
 	      case OSSPLATE:
-		if (cdesc[WEAR] != -1)
+		if (c[WEAR] != -1)
 		  {
 		    lprcat ("\nYou're already wearing some armor");
 		    return;
 		  }
-		cdesc[WEAR] = i - 'a';
+		c[WEAR] = i - 'a';
 		bottomline ();
 		return;
 	      case OSHIELD:
-		if (cdesc[SHIELD] != -1)
+		if (c[SHIELD] != -1)
 		  {
 		    lprcat ("\nYou are already wearing a shield");
 		    return;
 		  }
-		if (iven[cdesc[WIELD]] == O2SWORD)
+		if (iven[c[WIELD]] == O2SWORD)
 		  {
 		    lprcat
 		      ("\nYour hands are busy with the two handed sword!");
 		    return;
 		  }
-		  if (iven[cdesc[WIELD]] == OHSWORD)
+		  if (iven[c[WIELD]] == OHSWORD)
 		  {
 		    lprcat("\nYou are holding a longsword of slashing!");
 			return;
 		  }
-		cdesc[SHIELD] = i - 'a';
+		c[SHIELD] = i - 'a';
 		bottomline ();
 		return;
 	      default:
@@ -1110,9 +1110,9 @@ dropobj (void)
 	      lprcat ("\n\n");
 	      cl_dn (1, 23);
 	      lprcat ("How much gold do you drop? ");
-	      if ((amt = readnum ((int) cdesc[GOLD])) == 0)
+	      if ((amt = readnum ((int) c[GOLD])) == 0)
 		return;
-	      if (amt > cdesc[GOLD])
+	      if (amt > c[GOLD])
 		{
 		  lprcat ("\n");
 		  lprcat ("You don't have that much!");
@@ -1147,7 +1147,7 @@ dropobj (void)
 		  i = 32767;
 		  amt = 32767000L;
 		}
-	      cdesc[GOLD] -= amt;
+	      c[GOLD] -= amt;
 
 	      lprintf ("\nYou drop %d gold pieces", (int) amt);
 

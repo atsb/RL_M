@@ -13,19 +13,19 @@
 #define newpotion() (potprob[rund(41)])
 
 /* macro to return the + points on created leather armor */
-#define newleather() (nlpts[rund(cdesc[HARDGAME]?13:15)])
+#define newleather() (nlpts[rund(c[HARDGAME]?13:15)])
 
 /* macro to return the + points on chain armor */
 #define newchain() (nch[rund(10)])
 
 /* macro to return + points on plate armor */
-#define newplate() (nplt[rund(cdesc[HARDGAME]?4:12)])
+#define newplate() (nplt[rund(c[HARDGAME]?4:12)])
 
 /* macro to return + points on new daggers */
 #define newdagger() (ndgg[rund(13)])
 
 /* macro to return + points on new swords */
-#define newsword() (nsw[rund(cdesc[HARDGAME]?6:13)])
+#define newsword() (nsw[rund(c[HARDGAME]?6:13)])
 
 /* macro to destroy object at present location */
 #define forget() (item[playerx][playery]=know[playerx][playery]=0)

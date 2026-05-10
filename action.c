@@ -217,7 +217,7 @@ act_drink_fountain (void)
   x = rnd (100);
   if (x < 7)
     {
-      cdesc[HALFDAM] += 200 + rnd (200);
+      c[HALFDAM] += 200 + rnd (200);
       lprcat ("\nYou feel a sickness coming on");
     }
 
@@ -297,7 +297,7 @@ act_down_shaft (void)
       return;
     }
 
-  if (packweight () > 45 + 3 * (cdesc[STRENGTH] + cdesc[STREXTRA]))
+  if (packweight () > 45 + 3 * (c[STRENGTH] + c[STREXTRA]))
     {
       lprcat ("\nYou slip and fall down the shaft");
       lastnum = 275;
@@ -329,7 +329,7 @@ act_up_shaft (void)
       return;
     }
 
-  if (packweight () > 45 + 5 * (cdesc[STRENGTH] + cdesc[STREXTRA]))
+  if (packweight () > 45 + 5 * (c[STRENGTH] + c[STREXTRA]))
     {
       lprcat ("\nYou slip and fall down the shaft");
       lastnum = 275;
@@ -385,7 +385,7 @@ act_desecrate_altar (void)
   if (rnd (100) < 60)
     {
       createmonster (makemonst (level + 2) + 8);
-      cdesc[AGGRAVATE] += 2500;
+      c[AGGRAVATE] += 2500;
     }
   else if (rnd (101) < 30)
     {
@@ -416,7 +416,7 @@ act_donation_pray (void)
       cursor (1, 23);
       cltoeoln ();
       lprcat ("how much do you donate? ");
-      k = readnum ((int) cdesc[GOLD]);
+      k = readnum ((int) c[GOLD]);
 
       lprcat ("\n");
 
@@ -429,10 +429,10 @@ act_donation_pray (void)
 	  return;
 	}
 
-      if (cdesc[GOLD] >= k)
+      if (c[GOLD] >= k)
 	{
-	  temp = cdesc[GOLD] / 10;
-	  cdesc[GOLD] -= k;
+	  temp = c[GOLD] / 10;
+	  c[GOLD] -= k;
 	  bottomline ();
 
 	  /* if player gave less than 10% of _original_ gold, make a monster
@@ -442,7 +442,7 @@ act_donation_pray (void)
 	      /* added by ~Gibbon */
 	      lprcat ("You have offended the Gods.");
 	      createmonster (makemonst (level + 1));
-	      cdesc[AGGRAVATE] += 200;
+	      c[AGGRAVATE] += 200;
 	      return;
 	    }
 	  if (rnd (101) > 50)
@@ -452,14 +452,14 @@ act_donation_pray (void)
 	    }
 	  if (rnd (43) == 5)
 	    {
-	      if (cdesc[WEAR])
+	      if (c[WEAR])
 		lprcat ("You feel your armor vibrate for a moment");
 	      enchantarmor ();
 	      return;
 	    }
 	  if (rnd (43) == 8)
 	    {
-	      if (cdesc[WIELD])
+	      if (c[WIELD])
 		lprcat ("You feel your weapon vibrate for a moment");
 	      enchweapon ();
 	      return;
@@ -492,14 +492,14 @@ act_just_pray (void)
     lprcat ("nothing happens");
   else if (rnd (43) == 10)
     {
-      if (cdesc[WEAR])
+      if (c[WEAR])
 	lprcat ("You feel your armor vibrate for a moment");
       enchantarmor ();
       return;
     }
   else if (rnd (43) == 10)
     {
-      if (cdesc[WIELD])
+      if (c[WIELD])
 	lprcat ("You feel your weapon vibrate for a moment");
       enchweapon ();
       return;
@@ -520,14 +520,14 @@ act_prayer_heard (void)
 
   lprcat ("You have been heard!");
 
-  if (cdesc[ALTPRO] == 0)
+  if (c[ALTPRO] == 0)
     {
 
-      cdesc[MOREDEFENSES] += 3;
+      c[MOREDEFENSES] += 3;
     }
 
   /* protection field */
-  cdesc[ALTPRO] += 500;
+  c[ALTPRO] += 500;
 
   bottomline ();
 }
@@ -545,7 +545,7 @@ act_ignore_altar (void)
   if (rnd (100) < 30)
     {
       createmonster (makemonst (level + 1));
-      cdesc[AGGRAVATE] += rnd (450);
+      c[AGGRAVATE] += rnd (450);
     }
   else
     lprcat ("\nNothing happens");
@@ -576,17 +576,17 @@ act_open_chest (int x, int y)
       switch (rnd (10))		/* see if he gets a curse */
 	{
 	case 1:
-	  cdesc[ITCHING] += rnd (1000) + 100;
+	  c[ITCHING] += rnd (1000) + 100;
 	  lprcat ("\nYou feel an irritation spread over your skin!");
 	  break;
 
 	case 2:
-	  cdesc[CLUMSINESS] += rnd (1600) + 200;
+	  c[CLUMSINESS] += rnd (1600) + 200;
 	  lprcat ("\nYou begin to lose hand to eye coordination!");
 	  break;
 
 	case 3:
-	  cdesc[HALFDAM] += rnd (1600) + 200;
+	  c[HALFDAM] += rnd (1600) + 200;
 	  lprcat ("\nA sickness engulfs you!");
 	  break;
 	};
@@ -620,7 +620,7 @@ act_open_door (int x, int y)
 	{
 	case 6:
 	  lprcat ("\nThe door makes an awful groan, but remains stuck");
-	  cdesc[AGGRAVATE] += rnd (400);
+	  c[AGGRAVATE] += rnd (400);
 	  break;
 
 	case 7:
@@ -637,8 +637,8 @@ act_open_door (int x, int y)
 
 	case 9:
 	  lprcat ("\nYou suddenly feel weaker");
-	  if (cdesc[STRENGTH] > 3)
-	    cdesc[STRENGTH]--;
+	  if (c[STRENGTH] > 3)
+	    c[STRENGTH]--;
 	  bottomline ();
 	  break;
 

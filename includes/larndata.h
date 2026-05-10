@@ -118,7 +118,7 @@ extern int iarg[MAXX][MAXY], ivenarg[], lasthx, lasthy, lastnum, lastpx,
 extern int oldx, oldy, playerx, playery;
 extern int enable_scroll, yrepcount, wisid, lfd, fd;
 extern long outstanding_taxes, skill[], gtime;
-extern long cdesc[], cbak[];
+extern long c[], cbak[];
 extern time_t initialtime;
 extern unsigned long lrandx;
 extern struct cel *cell;

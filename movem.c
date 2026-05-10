@@ -59,10 +59,10 @@ movemonst (void)
 {
   int i, j, movecnt = 0, smart_count, min_int;
 
-  if (cdesc[HOLDMONST])
+  if (c[HOLDMONST])
     return;			/* no action if monsters are held */
 
-  if (cdesc[AGGRAVATE])		/* determine window of monsters to move */
+  if (c[AGGRAVATE])		/* determine window of monsters to move */
     {
       tmp1 = playery - 5;
       tmp2 = playery + 6;
@@ -116,8 +116,8 @@ movemonst (void)
      Also count # of smart monsters.
    */
   smart_count = 0;
-  min_int = 10 - cdesc[HARDGAME];	/* minimum monster intelligence to move smart */
-  if (cdesc[AGGRAVATE] || !cdesc[STEALTH])
+  min_int = 10 - c[HARDGAME];	/* minimum monster intelligence to move smart */
+  if (c[AGGRAVATE] || !c[STEALTH])
     {
       for (j = tmp1; j < tmp2; j++)
 	for (i = tmp3; i < tmp4; i++)
@@ -160,7 +160,7 @@ movemonst (void)
    */
   if (movecnt > 0)
     {
-      if (cdesc[SCAREMONST])
+      if (c[SCAREMONST])
 	for (i = 0; i < movecnt; i++)
 	  move_scared (movelist[i].x, movelist[i].y);
       else
@@ -190,7 +190,7 @@ movemonst (void)
      the player from getting free hits on a monster with long range
      spells or when stealthed.
    */
-  if (cdesc[AGGRAVATE] || !cdesc[STEALTH])
+  if (c[AGGRAVATE] || !c[STEALTH])
     {
       /* If the last monster hit is within the move window, its already
          been moved.
@@ -198,7 +198,7 @@ movemonst (void)
       if (((lasthx < tmp3 || lasthx >= tmp4) ||
 	   (lasthy < tmp1 || lasthy >= tmp2)) && mitem[lasthx][lasthy])
 	{
-	  if (cdesc[SCAREMONST])
+	  if (c[SCAREMONST])
 	    move_scared (lasthx, lasthy);
 	  else if (monster[mitem[lasthx][lasthy]].intelligence > min_int)
 	    {
@@ -223,7 +223,7 @@ movemonst (void)
 	    (lasthy < tmp1 || lasthy >= tmp2)) &&
 	   mitem[lasthx][lasthy]) || !stealth[lasthx][lasthy])
 	{
-	  if (cdesc[SCAREMONST])
+	  if (c[SCAREMONST])
 	    move_scared (lasthx, lasthy);
 	  else if (monster[mitem[lasthx][lasthy]].intelligence > min_int)
 	    {
@@ -689,7 +689,7 @@ mmove (int aa, int bb, int cc, int dd)
       fillmonst (mitem[cc][dd]);
       mitem[cc][dd] = 0;
     }
-  if (cdesc[BLINDCOUNT])
+  if (c[BLINDCOUNT])
     return;			/* if blind don't show where monsters are   */
   if (know[cc][dd] & HAVESEEN)
     {

@@ -13,11 +13,11 @@
 #include "includes/monster.h"
 
 #define botsub( _idx, _x, _y, _str )        \
-	if ( cdesc[(_idx)] != cbak[(_idx)] )        \
+	if ( c[(_idx)] != cbak[(_idx)] )        \
 	{                                   \
-	cbak[(_idx)] = cdesc[(_idx)];           \
+	cbak[(_idx)] = c[(_idx)];           \
 	cursor( (_x), (_y) );               \
-	lprintf( (_str), (int)cdesc[(_idx)] ); \
+	lprintf( (_str), (int)c[(_idx)] ); \
 	}
 
 #define nlprc(_ch) lprc(_ch)
@@ -93,66 +93,66 @@ bot_linex(void)
     {
         regen_bottom = FALSE;
         cursor(1, 18);
-        if (cdesc[SPELLMAX] > 99) {
+        if (c[SPELLMAX] > 99) {
             lprintf("Spells:");
-            lprintf("%3d(%3d)", (int)cdesc[SPELLS],
-                (int)cdesc[SPELLMAX]);
+            lprintf("%3d(%3d)", (int)c[SPELLS],
+                (int)c[SPELLMAX]);
         }
         else {
             lprintf("Spells:");
-            lprintf("%3d(%2d) ", (int)cdesc[SPELLS],
-                (int)cdesc[SPELLMAX]);
+            lprintf("%3d(%2d) ", (int)c[SPELLS],
+                (int)c[SPELLMAX]);
         }
         lprintf(" AC:");
-        lprintf(" %-3d ", (int)cdesc[AC]);
+        lprintf(" %-3d ", (int)c[AC]);
         lprintf(" WC:");
-        lprintf(" %-3d ", (int)cdesc[WCLASS]);
+        lprintf(" %-3d ", (int)c[WCLASS]);
         lprintf("Level:");
-        if (cdesc[LEVEL] > 99) {
-            lprintf("%3d", (int)cdesc[LEVEL]);
+        if (c[LEVEL] > 99) {
+            lprintf("%3d", (int)c[LEVEL]);
         }
         else {
-            lprintf(" %-2d", (int)cdesc[LEVEL]);
+            lprintf(" %-2d", (int)c[LEVEL]);
         }
-        /*debugtmp = cdesc[LEVEL]; */
+        /*debugtmp = c[LEVEL]; */
         lprintf(" Exp:");
-        lprintf(" %-9d %s\n", (int)cdesc[EXPERIENCE],
-            classname[cdesc[LEVEL] - 1]);
+        lprintf(" %-9d %s\n", (int)c[EXPERIENCE],
+            classname[c[LEVEL] - 1]);
         /*This is sill here to initially show the health stats. ~Gibbon*/
         lprintf("HP:");
-        lprintf(" %3d(%3d)", (int)cdesc[HP], (int)cdesc[HPMAX]);
+        lprintf(" %3d(%3d)", (int)c[HP], (int)c[HPMAX]);
         lprintf(" STR:");
-        lprintf("%-2d ", (int)(cdesc[STRENGTH] + cdesc[STREXTRA]));
+        lprintf("%-2d ", (int)(c[STRENGTH] + c[STREXTRA]));
         lprintf("INT:");
-        lprintf("%-2d ", (int)cdesc[INTELLIGENCE]);
+        lprintf("%-2d ", (int)c[INTELLIGENCE]);
         lprintf("WIS:");
-        lprintf("%-2d ", (int)cdesc[WISDOM]);
+        lprintf("%-2d ", (int)c[WISDOM]);
         lprintf("CON:");
-        lprintf("%-2d ", (int)cdesc[CONSTITUTION]);
+        lprintf("%-2d ", (int)c[CONSTITUTION]);
         lprintf("DEX:");
-        lprintf("%-2d ", (int)cdesc[DEXTERITY]);
+        lprintf("%-2d ", (int)c[DEXTERITY]);
         lprintf("CHA:");
-        lprintf("%-2d ", (int)cdesc[CHARISMA]);
+        lprintf("%-2d ", (int)c[CHARISMA]);
         lprintf("LV:");
 
         if ((level == 0) || (wizard))
-            cdesc[TELEFLAG] = 0;
-        if (cdesc[TELEFLAG])
+            c[TELEFLAG] = 0;
+        if (c[TELEFLAG])
             lprcat(" ?");
         else
             lprcat(levelname[level]);
         lprintf("  Gold:  ");
-        lprintf("%-6d", (int)cdesc[GOLD]);
+        lprintf("%-6d", (int)c[GOLD]);
         always = 1;
         botside();
-        cdesc[TMP] = cdesc[STRENGTH] + cdesc[STREXTRA];
+        c[TMP] = c[STRENGTH] + c[STREXTRA];
         for (i = 0; i < 100; i++)
-            cbak[i] = cdesc[i];
+            cbak[i] = c[i];
         return;
     }
 
     botsub(SPELLS, 8, 18, "%3d");
-    if (cdesc[SPELLMAX] > 99)
+    if (c[SPELLMAX] > 99)
     {
         botsub(SPELLMAX, 12, 18, "%3d)");
     }
@@ -163,32 +163,32 @@ bot_linex(void)
     botsub(AC, 21, 18, "%-3d");
     botsub(WCLASS, 30, 18, "%-3d");
     botsub(EXPERIENCE, 49, 18, "%-9d");
-    if (cdesc[LEVEL] != cbak[LEVEL])
+    if (c[LEVEL] != cbak[LEVEL])
     {
         cursor(59, 18);
-        lprcat(classname[cdesc[LEVEL] - 1]);
+        lprcat(classname[c[LEVEL] - 1]);
     }
-    if (cdesc[LEVEL] > 99)
+    if (c[LEVEL] > 99)
     {
         botsub(LEVEL, 40, 18, "%3d");
     }
     else
         botsub(LEVEL, 40, 18, " %-2d");
-    cdesc[TMP] = cdesc[STRENGTH] + cdesc[STREXTRA];
+    c[TMP] = c[STRENGTH] + c[STREXTRA];
     botsub(TMP, 18, 19, "%-2d");
     botsub(INTELLIGENCE, 25, 19, "%-2d");
     botsub(WISDOM, 32, 19, "%-2d");
     botsub(CONSTITUTION, 39, 19, "%-2d");
     botsub(DEXTERITY, 46, 19, "%-2d");
     botsub(CHARISMA, 53, 19, "%-2d");
-    if ((level != cbak[CAVELEVEL]) || (cdesc[TELEFLAG] != cbak[TELEFLAG]))
+    if ((level != cbak[CAVELEVEL]) || (c[TELEFLAG] != cbak[TELEFLAG]))
     {
         if ((level == 0) || (wizard))
-            cdesc[TELEFLAG] = 0;
-        cbak[TELEFLAG] = cdesc[TELEFLAG];
+            c[TELEFLAG] = 0;
+        cbak[TELEFLAG] = c[TELEFLAG];
         cbak[CAVELEVEL] = level;
         cursor(59, 19);
-        if (cdesc[TELEFLAG])
+        if (c[TELEFLAG])
             lprcat(" ?");
         else
             lprcat(levelname[level]);
@@ -219,7 +219,7 @@ called in monster.c hitplayer() and spattack()
 static void
 bot_hpx(void)
 {
-    if (cdesc[EXPERIENCE] != cbak[EXPERIENCE])
+    if (c[EXPERIENCE] != cbak[EXPERIENCE])
     {
         recalc();
         bot_linex();
@@ -283,11 +283,11 @@ botside(void)
     for (i = 0; i < 17; i++)
     {
         idx = bot_data[i].typ;
-        if ((always) || (cdesc[idx] != cbak[idx]))
+        if ((always) || (c[idx] != cbak[idx]))
         {
             if ((always) || (cbak[idx] == 0))
             {
-                if (cdesc[idx])
+                if (c[idx])
                 {
                     cursor(70, i + 1);
                     lprcat(bot_data[i].string);
@@ -296,7 +296,7 @@ botside(void)
                     cursors();
                 }
             }
-            else if (cdesc[idx] == 0)
+            else if (c[idx] == 0)
             {
                 cursor(70, i + 1);
                 lprcat("          ");
@@ -304,7 +304,7 @@ botside(void)
                 /*Reset cursor position. ~Gibbon */
                 cursors();
             }
-            cbak[idx] = cdesc[idx];
+            cbak[idx] = c[idx];
         }
     }
     always = 0;
@@ -341,12 +341,12 @@ draws(int xmin, int xmax, int ymin, int ymax)
         for (i = ymin; i < ymax; i++)
         {
             idx = bot_data[i].typ;
-            if (cdesc[idx])
+            if (c[idx])
             {
                 cursor(70, i + 1);
                 lprcat(bot_data[i].string);
             }
-            cbak[idx] = cdesc[idx];
+            cbak[idx] = c[idx];
         }
     }
 }
@@ -540,17 +540,17 @@ showcell(int x, int y)
 {
     int i, j, k, m;
 
-    if (cdesc[BLINDCOUNT])
+    if (c[BLINDCOUNT])
         return;			/* see nothing if blind     */
-    if (cdesc[AWARENESS])
+    if (c[AWARENESS])
     {
         minx = x - 3;
         maxx = x + 3;
         miny = y - 3;
         maxy = y + 3;
     }
-    else if (iven[cdesc[WIELD]] == OHSWORD
-        && ivenarg[cdesc[WIELD]] >= 0)
+    else if (iven[c[WIELD]] == OHSWORD
+        && ivenarg[c[WIELD]] >= 0)
     {
         minx = x - 2;
         maxx = x + 2;
@@ -623,7 +623,7 @@ show1cell(int x, int y)
     cursor(x + 1, y + 1);
 
     /* see nothing if blind, but clear previous player position */
-    if (cdesc[BLINDCOUNT])
+    if (c[BLINDCOUNT])
     {
 
         if (x == oldx && y == oldy)
@@ -717,8 +717,8 @@ if direction=0, don't move--just show where he is */
 {
     int k, m, i, j;
 
-    if (cdesc[CONFUSE])
-        if (cdesc[LEVEL] < rnd(30))
+    if (c[CONFUSE])
+        if (c[LEVEL] < rnd(30))
             dir = rund(9);		/*if confused any dir */
     k = playerx + diroffx[dir];
     m = playery + diroffy[dir];
@@ -733,7 +733,7 @@ if direction=0, don't move--just show where he is */
     /* prevent the player from moving onto a wall, or a closed door,
        unless the character has Walk-Through-Walls.
      */
-    if ((i == OCLOSEDDOOR || i == OWALL) && cdesc[WTW] == 0)
+    if ((i == OCLOSEDDOOR || i == OWALL) && c[WTW] == 0)
     {
         nomove = 1;
         return (yrepcount = 0);
@@ -778,7 +778,7 @@ if direction=0, don't move--just show where he is */
     if (i == OPUDDLE)
     {
         // Existing rusting logic for worn armor
-        int worn_armor_idx = cdesc[WEAR];
+        int worn_armor_idx = c[WEAR];
         int rusted_something = 0; // To track if recalc/bottomline is needed
         if (worn_armor_idx != -1 && is_metal_armor(iven[worn_armor_idx])) {
             if (ivenarg[worn_armor_idx] > -10) {
@@ -790,7 +790,7 @@ if direction=0, don't move--just show where he is */
         }
 
         // Existing rusting logic for shield
-        int shield_idx = cdesc[SHIELD];
+        int shield_idx = c[SHIELD];
         if (shield_idx != -1 && is_metal_armor(iven[shield_idx])) {
             if (ivenarg[shield_idx] > -10) {
                 ivenarg[shield_idx] -= 2;

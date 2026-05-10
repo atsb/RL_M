@@ -25,7 +25,7 @@ outfortune (void)
 
   lprcat ("\nThe cookie was delicious.");
 
-  if (cdesc[BLINDCOUNT])
+  if (c[BLINDCOUNT])
     {
 
       return;

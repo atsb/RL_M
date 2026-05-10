@@ -6,7 +6,7 @@
 #include "includes/moreobj.h"
 
 /*
-classname[cdesc[LEVEL]-1] gives the correct name of the players experience level
+classname[c[LEVEL]-1] gives the correct name of the players experience level
 */
 static char aa1[] = " mighty evil master";
 static char aa2[] = "apprentice demi-god";
@@ -55,7 +55,7 @@ char* classname[] = { "  novice explorer  ", "apprentice explorer", " practiced 
 
 /*
 table of experience needed to be a certain level of player
-skill[cdesc[LEVEL]] is the experience required to attain the next level
+skill[c[LEVEL]] is the experience required to attain the next level
 */
 #define MEG 1000000
 long skill[] = {
@@ -98,7 +98,7 @@ int predostuff = 0;		/*  2 means that the trap handling routines must do a
 char logname[LOGNAMESIZE];	/* the player's name */
 
 int cheat = 0;			/*  1 if the player has fudged save file            */
-int level = 0;			/*  cavelevel player is on = cdesc[CAVELEVEL]           */
+int level = 0;			/*  cavelevel player is on = c[CAVELEVEL]           */
 int wizard = 0;			/*  the wizard mode flag                            */
 int lastnum = 0;		/* the number of the monster last hitting player    */
 int hitflag = 0;		/*  flag for if player has been hit when running    */
@@ -115,7 +115,7 @@ unsigned long lrandx = 33601;	/*  the random number seed                      */
 time_t initialtime = 0;		/* time playing began                           */
 long gtime = 0;			/*  the clock for the game                      */
 long outstanding_taxes = 0;	/* present tax bill from score file             */
-long cdesc[100], cbak[100];	/*  the character description arrays            */
+long c[100], cbak[100];	/*  the character description arrays            */
 int enable_scroll = 0;		/* constant for enabled/disabled scrolling regn */
 char aborted[] = " aborted";
 struct sphere* spheres = 0;	/*pointer to linked list for spheres of annihilation */

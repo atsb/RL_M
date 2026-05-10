@@ -235,27 +235,27 @@ fntchange (int how)
     {
     case 1:
       lprcat ("Your strength");
-      fch (how, &cdesc[STRENGTH]);
+      fch (how, &c[STRENGTH]);
       break;
     case 2:
       lprcat ("Your intelligence");
-      fch (how, &cdesc[INTELLIGENCE]);
+      fch (how, &c[INTELLIGENCE]);
       break;
     case 3:
       lprcat ("Your wisdom");
-      fch (how, &cdesc[WISDOM]);
+      fch (how, &c[WISDOM]);
       break;
     case 4:
       lprcat ("Your constitution");
-      fch (how, &cdesc[CONSTITUTION]);
+      fch (how, &c[CONSTITUTION]);
       break;
     case 5:
       lprcat ("Your dexterity");
-      fch (how, &cdesc[DEXTERITY]);
+      fch (how, &c[DEXTERITY]);
       break;
     case 6:
       lprcat ("Your charm");
-      fch (how, &cdesc[CHARISMA]);
+      fch (how, &c[CHARISMA]);
       break;
     case 7:
       j = rnd (level + 1);
@@ -556,7 +556,7 @@ open_something (void)
   cursors ();
   /* check for confusion.
    */
-  if (cdesc[CONFUSE])
+  if (c[CONFUSE])
     {
       lprcat ("You're too confused!");
       return;
@@ -618,7 +618,7 @@ close_something (void)
   cursors ();
   /* check for confusion.
    */
-  if (cdesc[CONFUSE])
+  if (c[CONFUSE])
     {
       lprcat ("You're too confused!");
       return;

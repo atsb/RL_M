@@ -60,7 +60,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
   int i, j;
 
   /* can't find objects if time is stopped    */
-  if (cdesc[TIMESTOP])
+  if (c[TIMESTOP])
     return;
   i = item[playerx][playery];
   if (i == 0)
@@ -340,8 +340,8 @@ lookforobject (char do_ident, char do_pickup, char do_action)
       lprcat ("\nYou are hit by a dart");
       lastnum = 260;
       losehp (rnd (5));
-      if ((--cdesc[STRENGTH]) < 3)
-	cdesc[STRENGTH] = 3;
+      if ((--c[STRENGTH]) < 3)
+	c[STRENGTH] = 3;
       bottomline ();
       return;
 
@@ -514,7 +514,7 @@ oteleport (int err)
 		nap(4000);
   		died(264);	/* stuck in a rock */
 	}
-  cdesc[TELEFLAG] = 1;		/* show ?? on bottomline if been teleported    */
+  c[TELEFLAG] = 1;		/* show ?? on bottomline if been teleported    */
   if (level == 0)
     tmp = 0;
   else if (level < MAXLEVEL)
@@ -607,7 +607,7 @@ quaffpotion (int pot, int set_known)
     {
     case 0:
       lprcat ("\nYou fall asleep. . .");
-      i = rnd (11) - (cdesc[CONSTITUTION] >> 2) + 2;
+      i = rnd (11) - (c[CONSTITUTION] >> 2) + 2;
       while (--i > 0)
 	{
 	  parse2 ();
@@ -619,10 +619,10 @@ quaffpotion (int pot, int set_known)
 
     case 1:
       lprcat ("\nYou feel better");
-      if (cdesc[HP] == cdesc[HPMAX])
+      if (c[HP] == c[HPMAX])
 	raisemhp (1);
-      else if ((cdesc[HP] += rnd (20) + 20 + cdesc[LEVEL]) > cdesc[HPMAX])
-	cdesc[HP] = cdesc[HPMAX];
+      else if ((c[HP] += rnd (20) + 20 + c[LEVEL]) > c[HPMAX])
+	c[HP] = c[HPMAX];
       break;
 
     case 2:
@@ -633,42 +633,42 @@ quaffpotion (int pot, int set_known)
 
     case 3:
       lprcat ("\nYou feel strange for a moment");
-      cdesc[rund (6)]++;
+      c[rund (6)]++;
       break;
 
     case 4:
       lprcat ("\nYou feel more self confident!");
-      cdesc[WISDOM] += rnd (2);
+      c[WISDOM] += rnd (2);
       break;
 
     case 5:
       lprcat ("\nWow!  You feel great!");
-      if (cdesc[STRENGTH] < 12)
-	cdesc[STRENGTH] = 12;
+      if (c[STRENGTH] < 12)
+	c[STRENGTH] = 12;
       else
-	cdesc[STRENGTH]++;
+	c[STRENGTH]++;
       break;
 
     case 6:
       lprcat ("\nYour charm went up by one!");
-      cdesc[CHARISMA]++;
+      c[CHARISMA]++;
       break;
 
     case 7:
       lprcat ("\nYou become dizzy!");
-      if (--cdesc[STRENGTH] < 3)
-	cdesc[STRENGTH] = 3;
+      if (--c[STRENGTH] < 3)
+	c[STRENGTH] = 3;
       break;
 
     case 8:
       lprcat ("\nYour intelligence went up by one!");
-      cdesc[INTELLIGENCE]++;
+      c[INTELLIGENCE]++;
       break;
 
     case 9:
       lprcat ("\nYou sense the presence of objects!");
       nap (NAPTIME);
-      if (cdesc[BLINDCOUNT])
+      if (c[BLINDCOUNT])
 	return;
       for (i = 0; i < MAXY; i++)
 	for (j = 0; j < MAXX; j++)
@@ -722,7 +722,7 @@ quaffpotion (int pot, int set_known)
     case 10:			/* monster detection */
       lprcat ("\nYou detect the presence of monsters!");
       nap (NAPTIME);
-      if (cdesc[BLINDCOUNT])
+      if (c[BLINDCOUNT])
 	return;
       for (i = 0; i < MAXY; i++)
 	for (j = 0; j < MAXX; j++)
@@ -748,43 +748,43 @@ quaffpotion (int pot, int set_known)
 
     case 13:
       lprcat ("\nYou can't see anything!");	/* blindness */
-      cdesc[BLINDCOUNT] += 500;
+      c[BLINDCOUNT] += 500;
       return;
 
     case 14:
       lprcat ("\nYou feel confused");
-      cdesc[CONFUSE] += 20 + rnd (9);
+      c[CONFUSE] += 20 + rnd (9);
       return;
 
     case 15:
       lprcat ("\nWOW!!!  You feel Super-fantastic!!!");
-      if (cdesc[HERO] == 0)
+      if (c[HERO] == 0)
 	for (i = 0; i < 6; i++)
-	  cdesc[i] += 11;
-      cdesc[HERO] += 250;
+	  c[i] += 11;
+      c[HERO] += 250;
       break;
 
     case 16:
       lprcat ("\nYou have a greater intestinal constitude!");
-      cdesc[CONSTITUTION]++;
+      c[CONSTITUTION]++;
       break;
 
     case 17:
       lprcat ("\nYou now have incredibly bulging muscles!!!");
-      if (cdesc[GIANTSTR] == 0)
-	cdesc[STREXTRA] += 21;
-      cdesc[GIANTSTR] += 700;
+      if (c[GIANTSTR] == 0)
+	c[STREXTRA] += 21;
+      c[GIANTSTR] += 700;
       break;
 
     case 18:
       lprcat ("\nYou feel a chill run up your spine!");
-      cdesc[FIRERESISTANCE] += 1000;
+      c[FIRERESISTANCE] += 1000;
       break;
 
     case 19:
       lprcat ("\nYou feel greedy . . .");
       nap (NAPTIME);
-      if (cdesc[BLINDCOUNT])
+      if (c[BLINDCOUNT])
 	return;
       for (i = 0; i < MAXY; i++)
 	for (j = 0; j < MAXX; j++)
@@ -805,7 +805,7 @@ quaffpotion (int pot, int set_known)
 
     case 20:
       lprcat ("\nYou feel all better now!");
-      cdesc[HP] = cdesc[HPMAX];
+      c[HP] = c[HPMAX];
       break;			/* instant healing */
 
     case 21:
@@ -814,12 +814,12 @@ quaffpotion (int pot, int set_known)
 
     case 22:
       lprcat ("\nYou feel a sickness engulf you");	/* poison */
-      cdesc[HALFDAM] += 200 + rnd (200);
+      c[HALFDAM] += 200 + rnd (200);
       return;
 
     case 23:
       lprcat ("\nYou feel your vision sharpen");	/* see invisible */
-      cdesc[SEEINVISIBLE] += rnd (1000) + 400;
+      c[SEEINVISIBLE] += rnd (1000) + 400;
       monstnamelist[INVISIBLESTALKER] = 'I';
       return;
     };
@@ -836,7 +836,7 @@ static void
 oscroll (int typ)
 {
   lprcat ("\nDo you ");
-  if (cdesc[BLINDCOUNT] == 0)
+  if (c[BLINDCOUNT] == 0)
     lprcat ("(r) read it, ");
   lprcat ("(t) take it");
   iopts ();
@@ -850,7 +850,7 @@ oscroll (int typ)
 	  return;
 
 	case 'r':
-	  if (cdesc[BLINDCOUNT])
+	  if (c[BLINDCOUNT])
 	    break;
 	  lprcat ("read");
 	  forget ();
@@ -909,9 +909,9 @@ adjtimel (int tim)
   int j;
 
   for (j = 0; j < 26; j++)	/* adjust time related parameters */
-    if (cdesc[time_change[j]])
-      if ((cdesc[time_change[j]] -= tim) < 1)
-	cdesc[time_change[j]] = 1;
+    if (c[time_change[j]])
+      if ((c[time_change[j]] -= tim) < 1)
+	c[time_change[j]] = 1;
 
   regen ();
 }
@@ -968,7 +968,7 @@ read_scroll (int typ)
 
     case 6:
       lprcat ("\nSomething isn't right...");
-      cdesc[AGGRAVATE] += 800;
+      c[AGGRAVATE] += 800;
       return;			/* aggravate monsters */
 
     case 7:
@@ -990,12 +990,12 @@ read_scroll (int typ)
 
     case 9:
       lprcat ("\nYou feel extra alert");
-      cdesc[AWARENESS] += 1800;
+      c[AWARENESS] += 1800;
       return;			/* expanded awareness   */
 
     case 10:
       lprcat ("\nSomething isn't right...");
-      cdesc[HASTEMONST] += rnd (55) + 12;
+      c[HASTEMONST] += rnd (55) + 12;
       return;			/* haste monster */
 
     case 11:
@@ -1006,17 +1006,17 @@ read_scroll (int typ)
 	    hitp[j][i] = monster[mitem[j][i]].hitpoints;
       return;			/* monster healing */
     case 12:
-      cdesc[SPIRITPRO] += 300 + rnd (200);
+      c[SPIRITPRO] += 300 + rnd (200);
       bottomline ();
       return;			/* spirit protection */
 
     case 13:
-      cdesc[UNDEADPRO] += 300 + rnd (200);
+      c[UNDEADPRO] += 300 + rnd (200);
       bottomline ();
       return;			/* undead protection */
 
     case 14:
-      cdesc[STEALTH] += 250 + rnd (250);
+      c[STEALTH] += 250 + rnd (250);
       bottomline ();
       return;			/* stealth */
 
@@ -1026,12 +1026,12 @@ read_scroll (int typ)
 	for (j = 0; j < MAXX; j++)
 	  know[j][i] = KNOWALL;
       draws (0, MAXX, 0, MAXY);
-      cdesc[TELEFLAG] = 0;		/* magic map tells you what floor you're on */
+      c[TELEFLAG] = 0;		/* magic map tells you what floor you're on */
       refresh();
       return;
 
     case 16:
-      cdesc[HOLDMONST] += 30;
+      c[HOLDMONST] += 30;
       bottomline ();
       return;			/* hold monster */
 
@@ -1057,7 +1057,7 @@ read_scroll (int typ)
     case 18:
       lprcat ("\nYou feel a twitch at the base of your skull");
       for (i = 0; i < 11; i++)
-	cdesc[exten[i]] <<= 1;	/* spell extension */
+	c[exten[i]] <<= 1;	/* spell extension */
       break;
 
     case 19:
@@ -1074,8 +1074,8 @@ read_scroll (int typ)
     case 20:
       lprcat ("\nYou sense a benign presence");
       for (i = 0; i < 10; i++)	/* remove curse */
-	if (cdesc[curse[i]])
-	  cdesc[curse[i]] = 1;
+	if (c[curse[i]])
+	  c[curse[i]] = 1;
       break;
 
     case 21:
@@ -1087,7 +1087,7 @@ read_scroll (int typ)
       break;
     case 23:
       lprcat ("\nYou sense a benign presence");
-      cdesc[LIFEPROT]++;
+      c[LIFEPROT]++;
       break;			/* life protection */
     };
 }
@@ -1099,7 +1099,7 @@ opit (void)
   int i;
   if (rnd (101) < 81)
     {
-      if (rnd (70) > 9 * cdesc[DEXTERITY] - packweight () || rnd (101) < 5)
+      if (rnd (70) > 9 * c[DEXTERITY] - packweight () || rnd (101) < 5)
 	{
 	  if (level == MAXLEVEL - 1)
 	    obottomless ();
@@ -1162,7 +1162,7 @@ static void
 obook (void)
 {
   lprcat ("\nDo you ");
-  if (cdesc[BLINDCOUNT] == 0)
+  if (c[BLINDCOUNT] == 0)
     lprcat ("(r) read it, ");
   lprcat ("(t) take it");
   iopts ();
@@ -1176,7 +1176,7 @@ obook (void)
 	  return;
 
 	case 'r':
-	  if (cdesc[BLINDCOUNT])
+	  if (c[BLINDCOUNT])
 	    break;
 	  lprcat ("read");
 	  /* no more book */ readbook (iarg[playerx][playery]);
@@ -1231,7 +1231,7 @@ readbook (int lev)
     {
 
       lprcat ("\nYour int went up by one!");
-      cdesc[INTELLIGENCE]++;
+      c[INTELLIGENCE]++;
       bottomline ();
     }
 }
@@ -1287,7 +1287,7 @@ ogold (int arg)
   else if (arg == ODGOLD)
     i *= 10;
   lprintf ("\nIt is worth %d!", (int) i);
-  cdesc[GOLD] += i;
+  c[GOLD] += i;
   bottomgold ();
   item[playerx][playery] = know[playerx][playery] = 0;	/* destroy gold    */
 }

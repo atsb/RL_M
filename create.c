@@ -39,19 +39,19 @@ makeplayer(void)
     screen_clear();
 
     /*  start player off with 15 hit points */
-    cdesc[HPMAX] = cdesc[HP] = 10;
+    c[HPMAX] = c[HP] = 10;
 
     /*  player starts at level one          */
-    cdesc[LEVEL] = 1;
+    c[LEVEL] = 1;
 
     /*  total # spells starts off as 3  */
-    cdesc[SPELLMAX] = cdesc[SPELLS] = 1;
+    c[SPELLMAX] = c[SPELLS] = 1;
 
     /* start regeneration correctly */
-    cdesc[REGENCOUNTER] = 16;
-    cdesc[ECOUNTER] = 96;
+    c[REGENCOUNTER] = 16;
+    c[ECOUNTER] = 96;
 
-    cdesc[SHIELD] = cdesc[WEAR] = cdesc[WIELD] = -1;
+    c[SHIELD] = c[WEAR] = c[WIELD] = -1;
 
     for (i = 0; i < 26; i++)
     {
@@ -62,14 +62,14 @@ makeplayer(void)
     /* he knows protection, magic missile */
     spelknow[0] = spelknow[1] = 1;
 
-    if (cdesc[HARDGAME] <= 0)
+    if (c[HARDGAME] <= 0)
     {
 
         iven[0] = OLEATHER;
         iven[1] = ODAGGER;
         iven[2] = 0;
-        ivenarg[1] = ivenarg[0] = cdesc[WEAR] = 0;
-        cdesc[WIELD] = 1;
+        ivenarg[1] = ivenarg[0] = c[WEAR] = 0;
+        c[WIELD] = 1;
     }
 
     playerx = rnd(MAXX - 2);
@@ -81,7 +81,7 @@ makeplayer(void)
     for (i = 0; i < 6; i++)
     {
 
-        cdesc[i] = 12;
+        c[i] = 12;
     }
 
     recalc();
@@ -522,7 +522,7 @@ troom(int lv, int xsize, int ysize, int tx, int ty, int glyph)
     tp2 = playery;
     playery = ty + (ysize >> 1);
 
-    if (cdesc[HARDGAME] < 2)
+    if (c[HARDGAME] < 2)
     {
         for (playerx = tx + 1; playerx <= tx + xsize - 2; playerx += 2)
         {
@@ -654,12 +654,12 @@ makeobject(int j)
     froom(2, ORINGOFEXTRA, 0);	/* ring of extra regen      */
     froom(3, ONOTHEFT, 0);	/* device of antitheft      */
     froom(2, OSWORDofSLASHING, 0);	/* sword of slashing */
-    if (cdesc[BESSMANN] == 0)
+    if (c[BESSMANN] == 0)
     {
         froom(4, OHAMMER, 0);	/*Bessman's flailing hammer */
-        cdesc[BESSMANN] = 1;
+        c[BESSMANN] = 1;
     }
-    if (cdesc[HARDGAME] < 3 || (rnd(4) == 3))
+    if (c[HARDGAME] < 3 || (rnd(4) == 3))
     {
         if (j > 3)
         {
@@ -728,7 +728,7 @@ fillroom(int what, int arg)
     int x, y;
 
 #ifdef EXTRA
-    cdesc[FILLROOM]++;
+    c[FILLROOM]++;
 #endif
 
     x = rnd(MAXX - 2);
@@ -739,7 +739,7 @@ fillroom(int what, int arg)
 
 #ifdef EXTRA
         /* count up these random walks */
-        cdesc[RANDOMWALK]++;
+        c[RANDOMWALK]++;
 #endif
 
         x += rnd(3) - 2;
@@ -818,7 +818,7 @@ sethp(int flg)
     if (level == 0)
     {
 
-        cdesc[TELEFLAG] = 0;
+        c[TELEFLAG] = 0;
 
         return;
     }

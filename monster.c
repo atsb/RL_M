@@ -265,17 +265,17 @@ hitmonster (int x, int y)
 {
   int tmp, monst, flag, damag = 0;
 
-  if (cdesc[TIMESTOP])
+  if (c[TIMESTOP])
     return;			/* not if time stopped */
   vxy (&x, &y);			/* verify coordinates are within range */
   if ((monst = mitem[x][y]) == 0)
     return;
   hit3flag = 1;
   ifblind (x, y);
-  tmp = monster[monst].armorclass + cdesc[LEVEL] +
-    cdesc[DEXTERITY] + cdesc[WCLASS] / 4 - 12;
+  tmp = monster[monst].armorclass + c[LEVEL] +
+    c[DEXTERITY] + c[WCLASS] / 4 - 12;
   cursors ();
-  if ((rnd (20) < tmp - cdesc[HARDGAME]) || (rnd (71) < 5))	/* need at least random chance to hit */
+  if ((rnd (20) < tmp - c[HARDGAME]) || (rnd (71) < 5))	/* need at least random chance to hit */
     {
       lprcat ("\nYou hit");
       flag = 1;
@@ -293,23 +293,23 @@ hitmonster (int x, int y)
   if (flag)			/* if the monster was hit */
     if ((monst == RUSTMONSTER) || (monst == DISENCHANTRESS)
 	|| (monst == CUBE))
-      if (cdesc[WIELD] >= 0)
-	if (ivenarg[cdesc[WIELD]] > -10)
+      if (c[WIELD] >= 0)
+	if (ivenarg[c[WIELD]] > -10)
 	  {
 	    lprintf ("\nYour weapon is dulled by the %s", lastmonst);
-	    --ivenarg[cdesc[WIELD]];
+	    --ivenarg[c[WIELD]];
 
 	    /* fix for dulled rings of strength, cleverness, dexterity bug. */
-	    switch (iven[cdesc[WIELD]])
+	    switch (iven[c[WIELD]])
 	      {
 	      case ODEXRING:
-		cdesc[DEXTERITY]--;
+		c[DEXTERITY]--;
 		break;
 	      case OSTRRING:
-		cdesc[STREXTRA]--;
+		c[STREXTRA]--;
 		break;
 	      case OCLEVERRING:
-		cdesc[INTELLIGENCE]--;
+		c[INTELLIGENCE]--;
 		break;
 	      }
 	    /* */
@@ -343,14 +343,14 @@ hitm (int x, int y, int amt)
   vxy (&x, &y);			/* verify coordinates are within range */
   amt2 = amt;			/* save initial damage so we can return it */
   monst = mitem[x][y];
-  if (cdesc[HALFDAM])
+  if (c[HALFDAM])
     amt >>= 1;			/* if half damage curse adjust damage points */
   if (amt <= 0)
     amt2 = amt = 1;
   lasthx = x;
   lasthy = y;
   stealth[x][y] = 1;		/* make sure hitting monst breaks stealth condition */
-  cdesc[HOLDMONST] = 0;		/* hit a monster breaks hold monster spell  */
+  c[HOLDMONST] = 0;		/* hit a monster breaks hold monster spell  */
   switch (monst)
     {				/* if a dragon and orb(s) of dragon slaying   */
     case WHITEDRAGON:
@@ -359,7 +359,7 @@ hitm (int x, int y, int amt)
     case BRONZEDRAGON:
     case PLATINUMDRAGON:
     case SILVERDRAGON:
-      amt *= 1 + (cdesc[SLAYING] << 1);
+      amt *= 1 + (c[SLAYING] << 1);
       break;
     }
   /* invincible monster fix is here */
@@ -368,7 +368,7 @@ hitm (int x, int y, int amt)
   if ((hpoints = hitp[x][y]) <= amt)
     {
 #ifdef EXTRA
-      cdesc[MONSTKILLED]++;
+      c[MONSTKILLED]++;
 #endif
       lprintf ("\nThe");
       lprintf(" %s ",lastmonst);
@@ -402,21 +402,21 @@ hitplayer (int x, int y)
   vxy (&x, &y);			/* verify coordinates are within range */
   lastnum = mster = mitem[x][y];
   /*  spirit naga's and poltergeist's do nothing if scarab of negate spirit   */
-  if (cdesc[NEGATESPIRIT] || cdesc[SPIRITPRO])
+  if (c[NEGATESPIRIT] || c[SPIRITPRO])
     if ((mster == POLTERGEIST) || (mster == SPIRITNAGA))
       return;
   /*  if undead and cube of undead control    */
-  if (cdesc[CUBEofUNDEAD] || cdesc[UNDEADPRO])
+  if (c[CUBEofUNDEAD] || c[UNDEADPRO])
     if ((mster == VAMPIRE) || (mster == WRAITH) || (mster == ZOMBIE))
       return;
   if ((know[x][y] & KNOWHERE) == 0)
     show1cell (x, y);
-  bias = (cdesc[HARDGAME]) + 1;
+  bias = (c[HARDGAME]) + 1;
   hitflag = hit2flag = hit3flag = 1;
   yrepcount = 0;
   cursors ();
   ifblind (x, y);
-  if (cdesc[INVISIBILITY])
+  if (c[INVISIBILITY])
     if (rnd (33) < 20)
       {
 	lprintf ("\nThe");
@@ -424,8 +424,8 @@ hitplayer (int x, int y)
 	lprintf("misses wildly\n");
 	return;
       }
-  if (cdesc[CHARMCOUNT])
-    if (rnd (30) + 5 * monster[mster].level - cdesc[CHARISMA] < 30)
+  if (c[CHARMCOUNT])
+    if (rnd (30) + 5 * monster[mster].level - c[CHARISMA] < 30)
       {
 	lprintf ("\nThe");
 	lprintf(" %s ",lastmonst);
@@ -441,8 +441,8 @@ hitplayer (int x, int y)
     }
   tmp = 0;
   if (monster[mster].attack > 0)
-    if (((dam + bias + 8) > cdesc[AC])
-	|| (rnd ((int) ((cdesc[AC] > 0) ? cdesc[AC] : 1)) == 1))
+    if (((dam + bias + 8) > c[AC])
+	|| (rnd ((int) ((c[AC] > 0) ? c[AC] : 1)) == 1))
       {
 	if (spattack (monster[mster].attack, x, y))
 	  {
@@ -453,14 +453,14 @@ hitplayer (int x, int y)
 	bias -= 2;
 	cursors ();
       }
-  if (((dam + bias) > cdesc[AC])
-      || (rnd ((int) ((cdesc[AC] > 0) ? cdesc[AC] : 1)) == 1))
+  if (((dam + bias) > c[AC])
+      || (rnd ((int) ((c[AC] > 0) ? c[AC] : 1)) == 1))
     {
       lprintf ("\nThe");
       lprintf(" %s ",lastmonst);
       lprintf("hit you");
       tmp = 1;
-      if ((dam -= cdesc[AC]) < 0)
+      if ((dam -= c[AC]) < 0)
 	dam = 0;
       if (dam > 0)
 	{
@@ -732,15 +732,15 @@ spattack (int x, int xx, int yy)
   int i, j = 0, k, m;
   char *p = 0;
 
-  if (cdesc[CANCELLATION])
+  if (c[CANCELLATION])
     return (0);
   vxy (&xx, &yy);		/* verify x & y coordinates */
   switch (x)
     {
     case 1:			/* rust your armor, j=1 when rusting has occurred */
-      m = k = cdesc[WEAR];
+      m = k = c[WEAR];
 
-      i = cdesc[SHIELD];
+      i = c[SHIELD];
 
       if (i != -1)
 	{
@@ -786,9 +786,9 @@ spattack (int x, int xx, int yy)
       break;
 
     case 2:
-      i = rnd (15) + 8 - cdesc[AC];
+      i = rnd (15) + 8 - c[AC];
     spout:p = "\nThe %s breathes fire at you!";
-      if (cdesc[FIRERESISTANCE])
+      if (c[FIRERESISTANCE])
 	p = "\nThe %s's flame doesn't phase you!";
       else
     spout2:if (p)
@@ -799,14 +799,14 @@ spattack (int x, int xx, int yy)
       return (0);
 
     case 3:
-      i = rnd (20) + 25 - cdesc[AC];
+      i = rnd (20) + 25 - c[AC];
       goto spout;
 
     case 4:
-      if (cdesc[STRENGTH] > 3)
+      if (c[STRENGTH] > 3)
 	{
 	  p = "\nThe %s stung you!  You feel weaker";
-	  --cdesc[STRENGTH];
+	  --c[STRENGTH];
 	}
       else
 	p = "\nThe %s stung you!";
@@ -814,7 +814,7 @@ spattack (int x, int xx, int yy)
 
     case 5:
       p = "\nThe %s blasts you with his cold breath";
-      i = rnd (15) + 18 - cdesc[AC];
+      i = rnd (15) + 18 - c[AC];
       goto spout2;
 
     case 6:
@@ -826,21 +826,21 @@ spattack (int x, int xx, int yy)
 
     case 7:
       p = "\nThe %s got you with a gusher!";
-      i = rnd (15) + 25 - cdesc[AC];
+      i = rnd (15) + 25 - c[AC];
       goto spout2;
 
     case 8:
-      if (cdesc[NOTHEFT])
+      if (c[NOTHEFT])
 	return (0);		/* he has a device of no theft */
-      if (cdesc[GOLD])
+      if (c[GOLD])
 	{
 	  p = "\nThe %s hit you -- Your purse feels lighter";
-	  if (cdesc[GOLD] > 32767)
-	    cdesc[GOLD] >>= 1;
+	  if (c[GOLD] > 32767)
+	    c[GOLD] >>= 1;
 	  else
-	    cdesc[GOLD] -= rnd ((int) (1 + (cdesc[GOLD] >> 1)));
-	  if (cdesc[GOLD] < 0)
-	    cdesc[GOLD] = 0;
+	    c[GOLD] -= rnd ((int) (1 + (c[GOLD] >> 1)));
+	  if (c[GOLD] < 0)
+	    c[GOLD] = 0;
 	}
       else
 	p = "\nThe %s couldn't find any gold to steal";
@@ -876,12 +876,12 @@ spattack (int x, int xx, int yy)
 
     case 10:
       p = "\nThe %s hit you with his barbed tail";
-      i = rnd (25) - cdesc[AC];
+      i = rnd (25) - c[AC];
       goto spout2;
 
     case 11:
       p = "\nThe %s has confused you";
-      cdesc[CONFUSE] += 10 + rnd (10);
+      c[CONFUSE] += 10 + rnd (10);
       break;
 
     case 12:			/*  performs any number of other special attacks    */
@@ -889,11 +889,11 @@ spattack (int x, int xx, int yy)
 
     case 13:
       p = "\nThe %s flattens you with his psionics!";
-      i = rnd (15) + 30 - cdesc[AC];
+      i = rnd (15) + 30 - c[AC];
       goto spout2;
 
     case 14:
-      if (cdesc[NOTHEFT])
+      if (c[NOTHEFT])
 	return (0);		/* he has device of no theft */
       if (emptyhanded () == 1)
 	{
@@ -910,12 +910,12 @@ spattack (int x, int xx, int yy)
       return (1);
 
     case 15:
-      i = rnd (10) + 5 - cdesc[AC];
+      i = rnd (10) + 5 - c[AC];
     spout3:p = "\nThe %s bit you!";
       goto spout2;
 
     case 16:
-      i = rnd (15) + 10 - cdesc[AC];
+      i = rnd (15) + 10 - c[AC];
       goto spout3;
     };
   if (p)
@@ -935,7 +935,7 @@ spattack (int x, int xx, int yy)
 *
 *  Routine to subtract hitpoints from the user and flag the bottomline display
 *  Enter with the number of hit points to lose
-*  Note: if x > cdesc[HP] this routine could kill the player!
+*  Note: if x > c[HP] this routine could kill the player!
 */
 void
 checkloss (int x)

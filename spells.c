@@ -83,7 +83,7 @@ cast (void)
 
   cursors ();
 
-  if (cdesc[SPELLS] <= 0)
+  if (c[SPELLS] <= 0)
     {
 
       lprcat ("\nYou don't have any spells!");
@@ -93,7 +93,7 @@ cast (void)
 
   lprcat (eys);
 
-  --cdesc[SPELLS];
+  --c[SPELLS];
 
   while ((a = ttgetch ()) == 'I')
     {
@@ -111,11 +111,11 @@ cast (void)
     {
     over:
       lprcat (aborted);
-      cdesc[SPELLS]++;
+      c[SPELLS]++;
       return;
     }				/*  to escape casting a spell   */
 #ifdef EXTRA
-  cdesc[SPELLSCAST]++;
+  c[SPELLSCAST]++;
 #endif
   for (lprc ('\n'), j = -1, i = 0; i < SPNUM; i++)	/*seq search for his spell, hash? */
     if ((spelcode[i][0] == a) && (spelcode[i][1] == b)
@@ -150,13 +150,13 @@ speldamage (int x)
 
   if (x >= SPNUM)
     return;			/* no such spell */
-  if (cdesc[TIMESTOP])
+  if (c[TIMESTOP])
     {
       lprcat ("  It didn't seem to work");
       return;
     }				/* not if time stopped */
-  clev = cdesc[LEVEL];
-  if ((rnd (23) == 7) || (rnd (18) > cdesc[INTELLIGENCE]))
+  clev = c[LEVEL];
+  if ((rnd (23) == 7) || (rnd (18) > c[INTELLIGENCE]))
     {
       lprcat ("  It didn't work!");
       return;
@@ -172,9 +172,9 @@ speldamage (int x)
       /* ----- LEVEL 1 SPELLS ----- */
 
     case 0:
-      if (cdesc[PROTECTIONTIME] == 0)
-	cdesc[MOREDEFENSES] += 2;	/* protection field +2 */
-      cdesc[PROTECTIONTIME] += 250;
+      if (c[PROTECTIONTIME] == 0)
+	c[MOREDEFENSES] += 2;	/* protection field +2 */
+      c[PROTECTIONTIME] += 250;
       return;
 
     case 1:
@@ -184,9 +184,9 @@ speldamage (int x)
       return;
 
     case 2:
-      if (cdesc[DEXCOUNT] == 0)
-	cdesc[DEXTERITY] += 3;	/* dexterity   */
-      cdesc[DEXCOUNT] += 400;
+      if (c[DEXCOUNT] == 0)
+	c[DEXTERITY] += 3;	/* dexterity   */
+      c[DEXCOUNT] += 400;
       return;
 
 	/*Further fixes below for issue #36.  Removed crusty old 'C' and replaced with
@@ -199,7 +199,7 @@ speldamage (int x)
       return;
 
     case 4:			/*  charm monster   */
-      cdesc[CHARMCOUNT] += cdesc[CHARISMA] << 1;
+      c[CHARMCOUNT] += c[CHARISMA] << 1;
       return;
 
     case 5:
@@ -215,9 +215,9 @@ speldamage (int x)
 	  return;
 
     case 7:
-      if (cdesc[STRCOUNT] == 0)
-	cdesc[STREXTRA] += 3;	/*  strength    */
-      cdesc[STRCOUNT] += 150 + rnd (100);
+      if (c[STRCOUNT] == 0)
+	c[STREXTRA] += 3;	/*  strength    */
+      c[STRCOUNT] += 150 + rnd (100);
       return;
 
     case 8:
@@ -238,7 +238,7 @@ speldamage (int x)
       return;			/* healing */
 
     case 10:
-      cdesc[BLINDCOUNT] = 0;
+      c[BLINDCOUNT] = 0;
       return;			/* cure blindness   */
 
     case 11:
@@ -246,7 +246,7 @@ speldamage (int x)
       return;
 
     case 12:
-      if (rnd (11) + 7 <= cdesc[WISDOM])
+      if (rnd (11) + 7 <= c[WISDOM])
 	direct (x, rnd (20) + 20 + clev, "\nThe %s believed!", 0);
       else
 	lprcat ("\n It didn't believe the illusions!");
@@ -256,7 +256,7 @@ speldamage (int x)
       for (j = i = 0; i < 26; i++)
 	if (iven[i] == OAMULET)
 	  j += 1 + ivenarg[i];
-      cdesc[INVISIBILITY] += (j << 7) + 12;
+      c[INVISIBILITY] += (j << 7) + 12;
       return;
 
       /* ----- LEVEL 3 SPELLS ----- */
@@ -275,11 +275,11 @@ speldamage (int x)
       return;			/*  polymorph */
 
     case 17:
-      cdesc[CANCELLATION] += 5 + clev;
+      c[CANCELLATION] += 5 + clev;
       return;			/*  cancellation    */
 
     case 18:
-      cdesc[HASTESELF] += 7 + clev;
+      c[HASTESELF] += 7 + clev;
       return;			/* haste self  */
 
     case 19:
@@ -302,7 +302,7 @@ speldamage (int x)
 		break;
 
 	      case OSTATUE:
-		if (cdesc[HARDGAME] < 3)
+		if (c[HARDGAME] < 3)
 		  {
 		    *p = OBOOK;
 		    iarg[i][j] = level;
@@ -344,15 +344,15 @@ speldamage (int x)
       return;
 
     case 23:
-      i = min_math_larn (cdesc[HP] - 1, cdesc[HPMAX] / 2);	/* drain life */
+      i = min_math_larn (c[HP] - 1, c[HPMAX] / 2);	/* drain life */
       direct (x, i + i, "", 0);
-      cdesc[HP] -= i;
+      c[HP] -= i;
       return;
 
     case 24:
-      if (cdesc[GLOBE] == 0)
-	cdesc[MOREDEFENSES] += 10;
-      cdesc[GLOBE] += 200;
+      if (c[GLOBE] == 0)
+	c[MOREDEFENSES] += 10;
+      c[GLOBE] += 200;
       loseint ();		/* globe of invulnerability */
       return;
 
@@ -368,7 +368,7 @@ speldamage (int x)
 	  died (270);
 	  return;
 	}
-      if (cdesc[WISDOM] > rnd (10) + 10)
+      if (c[WISDOM] > rnd (10) + 10)
 	direct (x, 2000, " \nThe %s's heart stopped", 0);	/* finger of death */
       else
 	lprcat (" It didn't work");
@@ -377,15 +377,15 @@ speldamage (int x)
       /* ----- LEVEL 5 SPELLS ----- */
 
     case 27:
-      cdesc[SCAREMONST] += rnd (10) + clev;
+      c[SCAREMONST] += rnd (10) + clev;
       return;			/* scare monster */
 
     case 28:
-      cdesc[HOLDMONST] += rnd (10) + clev;
+      c[HOLDMONST] += rnd (10) + clev;
       return;			/* hold monster */
 
     case 29:
-      cdesc[TIMESTOP] += rnd (20) + (clev << 1);
+      c[TIMESTOP] += rnd (20) + (clev << 1);
       return;			/* time stop */
 
     case 30:
@@ -439,7 +439,7 @@ speldamage (int x)
       return;
 
     case 35:			/* walk through walls */
-      cdesc[WTW] += rnd (10) + 5;
+      c[WTW] += rnd (10) + 5;
       return;
 
     case 36:			/* alter reality */
@@ -571,10 +571,10 @@ static void
 loseint (void)
 {
 
-  if (--cdesc[INTELLIGENCE] < 3)
+  if (--c[INTELLIGENCE] < 3)
     {
 
-      cdesc[INTELLIGENCE] = 3;
+      c[INTELLIGENCE] = 3;
     }
 }
 
@@ -589,12 +589,12 @@ loseint (void)
 static int
 isconfuse (void)
 {
-  if (cdesc[CONFUSE])
+  if (c[CONFUSE])
     {
       lprcat (" You can't aim your magic!");
     }
 
-  return (cdesc[CONFUSE]);
+  return (c[CONFUSE]);
 }
 
 
@@ -639,10 +639,10 @@ fullhit (int xx)
 
   if (xx < 0 || xx > 20)
     return (0);			/* fullhits are out of range */
-  if (cdesc[LANCEDEATH])
+  if (c[LANCEDEATH])
     return (10000);		/* great sword of death */
-  i = xx * ((cdesc[WCLASS] >> 1) + cdesc[STRENGTH] + cdesc[STREXTRA] -
-	    cdesc[HARDGAME] - 12 + cdesc[MOREDAM]);
+  i = xx * ((c[WCLASS] >> 1) + c[STRENGTH] + c[STREXTRA] -
+	    c[HARDGAME] - 12 + c[MOREDAM]);
   return ((i >= 1) ? i : xx);
 }
 
@@ -798,7 +798,7 @@ godirect (int spnum, int dam, char *str, int delay, char cshow)
 	}
 
       /* if not blind show effect */
-      if (cdesc[BLINDCOUNT] == 0)
+      if (c[BLINDCOUNT] == 0)
 	{
 
 	  cursor (x + 1, y + 1);
@@ -845,7 +845,7 @@ godirect (int spnum, int dam, char *str, int delay, char cshow)
 	    lprintf (str, "wall");
 	    if (
 		 /* enough damage? */
-		 dam >= 50 + cdesc[HARDGAME] &&
+		 dam >= 50 + c[HARDGAME] &&
 		 /* not on V3 */
 		 level < MAXLEVEL + MAXVLEVEL - 1 &&
 		 x < MAXX - 1 && y < MAXY - 1 && x != 0 && y != 0)
@@ -884,7 +884,7 @@ godirect (int spnum, int dam, char *str, int delay, char cshow)
 	    lprc ('\n');
 	    lprintf (str, "statue");
 
-	    if (cdesc[HARDGAME] < 3)
+	    if (c[HARDGAME] < 3)
 	      if (dam > 44)
 		{
 		  lprcat ("  The statue crumbles");
@@ -913,7 +913,7 @@ godirect (int spnum, int dam, char *str, int delay, char cshow)
 	    cursors ();
 	    lprc ('\n');
 	    lprintf (str, "altar");
-	    if (dam > 75 - (cdesc[HARDGAME] >> 2))
+	    if (dam > 75 - (c[HARDGAME] >> 2))
 	      {
 		create_guardian (DEMONPRINCE, x, y);
 		show1cell (x, y);
@@ -964,7 +964,7 @@ godirect (int spnum, int dam, char *str, int delay, char cshow)
 
 	  };
 
-      dam -= 3 + (cdesc[HARDGAME] >> 1);
+      dam -= 3 + (c[HARDGAME] >> 1);
     }
 }
 
@@ -986,7 +986,7 @@ ifblind (int x, int y)
   /* verify correct x, y coordinates */
   vxy (&x, &y);
 
-  if (cdesc[BLINDCOUNT])
+  if (c[BLINDCOUNT])
     {
 
       lastnum = 279;

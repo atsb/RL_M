@@ -129,7 +129,7 @@
 
 
 /*
-* defines for the character attribute array   cdesc[]
+* defines for the character attribute array   c[]
 */
 #define STRENGTH 0		/* characters physical strength not due to objects */
 #define INTELLIGENCE 1

@@ -59,7 +59,7 @@ static int
 amtgoldtrad(void)
 {
 	lprintf ("You have");
-	lprintf(" %-6d ",(int) cdesc[GOLD]);
+	lprintf(" %-6d ",(int) c[GOLD]);
 	lprintf("gold pieces.");
 	return(0);
 }
@@ -268,7 +268,7 @@ dndstore (void)
 
       cursor (1, 19);
       lprcat ("You have ");
-      lprintf ("%ld ",cdesc[GOLD]);
+      lprintf ("%ld ",c[GOLD]);
       lprintf("gold pieces");
 	
       cltoeoln ();
@@ -321,7 +321,7 @@ dndstore (void)
 	    outofstock ();
 	  else if (pocketfull ())
 	    handsfull ();
-	  else if (cdesc[GOLD] < (dnd_item[i].price) * 10L)
+	  else if (c[GOLD] < (dnd_item[i].price) * 10L)
 	    nogold ();
 	  else
 	    {
@@ -334,7 +334,7 @@ dndstore (void)
 		{
 		  scrollname[dnd_item[i].arg][0] = ' ';
 		}
-	      cdesc[GOLD] -= dnd_item[i].price * 10;
+	      c[GOLD] -= dnd_item[i].price * 10;
 	      dnd_item[i].qty--;
 	      take (dnd_item[i].obj, dnd_item[i].arg);
 	      if (dnd_item[i].qty == 0)
@@ -487,7 +487,7 @@ oschool (void)
   for (;;)
     {
       cursor (1, 19);
-      lprintf ("%d ",(int) cdesc[GOLD]);
+      lprintf ("%d ",(int) c[GOLD]);
       lprintf("gold pieces.");
       cursors ();
       lprcat ("\nWhat is your choice [");
@@ -508,7 +508,7 @@ oschool (void)
 	  return;
 	}
       lprc ((char) i);
-      if (cdesc[GOLD] < 250)
+      if (c[GOLD] < 250)
 	nogold ();
       else if (course[i - 'a'])
 	{
@@ -517,13 +517,13 @@ oschool (void)
 	}
       else if (i <= 'h')
 	{
-	  cdesc[GOLD] -= 250;
+	  c[GOLD] -= 250;
 	  time_used = 0;
 	  switch (i)
 	    {
 	    case 'a':
-	      cdesc[STRENGTH] += 2;
-	      cdesc[CONSTITUTION]++;
+	      c[STRENGTH] += 2;
+	      c[CONSTITUTION]++;
 	      lprcat ("\nYou feel stronger!");
 	      cl_line (16, 7);
 	      break;
@@ -533,18 +533,18 @@ oschool (void)
 		{
 		  lprcat
 		    ("\nSorry, but this class has a prerequisite of Fighters Training I");
-		  cdesc[GOLD] += 250;
+		  c[GOLD] += 250;
 		  time_used = -10000;
 		  break;
 		}
 	      lprcat ("\nYou feel much stronger!");
 	      cl_line (16, 8);
-	      cdesc[STRENGTH] += 2;
-	      cdesc[CONSTITUTION] += 2;
+	      c[STRENGTH] += 2;
+	      c[CONSTITUTION] += 2;
 	      break;
 
 	    case 'c':
-	      cdesc[INTELLIGENCE] += 2;
+	      c[INTELLIGENCE] += 2;
 	      lprcat ("\nThe task before you now seems more attainable!");
 	      cl_line (16, 9);
 	      break;
@@ -554,36 +554,36 @@ oschool (void)
 		{
 		  lprcat
 		    ("\nSorry, but this class has a prerequisite of Introduction to Wizardry");
-		  cdesc[GOLD] += 250;
+		  c[GOLD] += 250;
 		  time_used = -10000;
 		  break;
 		}
 	      lprcat ("\nThe task before you now seems very attainable!");
 	      cl_line (16, 10);
-	      cdesc[INTELLIGENCE] += 2;
+	      c[INTELLIGENCE] += 2;
 	      break;
 
 	    case 'e':
-	      cdesc[CHARISMA] += 3;
+	      c[CHARISMA] += 3;
 	      lprcat ("\nYou now feel like a born leader!");
 	      cl_line (16, 11);
 	      break;
 
 	    case 'f':
-	      cdesc[WISDOM] += 2;
+	      c[WISDOM] += 2;
 	      lprcat
 		("\nYou now feel more confident that you can find the potion in time!");
 	      cl_line (16, 12);
 	      break;
 
 	    case 'g':
-	      cdesc[DEXTERITY] += 3;
+	      c[DEXTERITY] += 3;
 	      lprcat ("\nYou feel like dancing!");
 	      cl_line (16, 13);
 	      break;
 
 	    case 'h':
-	      cdesc[INTELLIGENCE]++;
+	      c[INTELLIGENCE]++;
 	      lprcat
 		("\nYour instructor told you that the Eye of Larn is rumored to be guarded\n");
 	      lprcat
@@ -596,13 +596,13 @@ oschool (void)
 	    {
 	      gtime += time_used;
 	      course[i - 'a']++;	/*  remember that he has taken that course  */
-	      cdesc[HP] = cdesc[HPMAX];
-	      cdesc[SPELLS] = cdesc[SPELLMAX];	/* he regenerated */
+	      c[HP] = c[HPMAX];
+	      c[SPELLS] = c[SPELLMAX];	/* he regenerated */
 
-	      if (cdesc[BLINDCOUNT])
-		cdesc[BLINDCOUNT] = 1;	/* cure blindness too!  */
-	      if (cdesc[CONFUSE])
-		cdesc[CONFUSE] = 1;	/*  end confusion   */
+	      if (c[BLINDCOUNT])
+		c[BLINDCOUNT] = 1;	/* cure blindness too!  */
+	      if (c[CONFUSE])
+		c[CONFUSE] = 1;	/*  end confusion   */
 	      adjtimel ((int) time_used);	/* adjust parameters for time change */
 	    }
 	  nap (NAPTIME);
@@ -633,7 +633,7 @@ obank2 (void)
   /* because we state the level in the title, clear the '?' in the
      level display at the bottom, if the user teleported.
    */
-  cdesc[TELEFLAG] = 0;
+  c[TELEFLAG] = 0;
 }
 
 
@@ -678,15 +678,15 @@ ointerest (void)
 {
   int i;
 
-  if (cdesc[BANKACCOUNT] < 0)
-    cdesc[BANKACCOUNT] = 0;
-  else if ((cdesc[BANKACCOUNT] > 0) && (cdesc[BANKACCOUNT] < 500000))
+  if (c[BANKACCOUNT] < 0)
+    c[BANKACCOUNT] = 0;
+  else if ((c[BANKACCOUNT] > 0) && (c[BANKACCOUNT] < 500000))
     {
       i = (gtime - lasttime) / 100;	/* # mobuls elapsed */
-      while ((i-- > 0) && (cdesc[BANKACCOUNT] < 500000))
-	cdesc[BANKACCOUNT] += cdesc[BANKACCOUNT] / 250;
-      if (cdesc[BANKACCOUNT] > 500000)
-	cdesc[BANKACCOUNT] = 500000;	/* interest limit */
+      while ((i-- > 0) && (c[BANKACCOUNT] < 500000))
+	c[BANKACCOUNT] += c[BANKACCOUNT] / 250;
+      if (c[BANKACCOUNT] > 500000)
+	c[BANKACCOUNT] = 500000;	/* interest limit */
     }
   lasttime = (gtime / 100) * 100;
 }
@@ -743,12 +743,12 @@ obanksub (void)
 	cursor(1,15);
   	lprintf("Gold in Bank Account");
 	cursor (1, 16);
-	lprintf("%8d",(long)cdesc[BANKACCOUNT]);
+	lprintf("%8d",(long)c[BANKACCOUNT]);
 	cursor(1,18);
   	lprintf("Gold in inventory");
 	cursor (1, 19);
-	lprintf("%8d",(long)cdesc[GOLD]);
-  if (cdesc[BANKACCOUNT] + cdesc[GOLD] >= 500000)
+	lprintf("%8d",(long)c[GOLD]);
+  if (c[BANKACCOUNT] + c[GOLD] >= 500000)
     lprcat
       ("\nNote:  Larndom law states that only deposits under 500,000gp  can earn interest.");
   for (;;)
@@ -773,8 +773,8 @@ obanksub (void)
 	  lprcat ("deposit\n");
 	  cltoeoln ();
 	  lprcat ("How much? ");
-	  amt = readnum ((int) cdesc[GOLD]);
-	  if (amt > cdesc[GOLD])
+	  amt = readnum ((int) c[GOLD]);
+	  if (amt > c[GOLD])
 	    {
 	      lprcat ("You don't have that much.");
 	      nap (NAPTIME);
@@ -787,24 +787,24 @@ obanksub (void)
 	    }
 	  else
 	    {
-	      cdesc[GOLD] -= amt;
-	      cdesc[BANKACCOUNT] += amt;
+	      c[GOLD] -= amt;
+	      c[BANKACCOUNT] += amt;
 	    }
 	  break;
 
 	case 'w':
 	  lprcat ("withdraw\nHow much? ");
-	  amt = readnum ((int) cdesc[BANKACCOUNT]);
+	  amt = readnum ((int) c[BANKACCOUNT]);
 
-	  if (amt > cdesc[BANKACCOUNT])
+	  if (amt > c[BANKACCOUNT])
 	    {
 	      lprcat ("\nYou don't have that much in the bank!");
 	      nap (NAPTIME);
 	    }
 	  else
 	    {
-	      cdesc[GOLD] += amt;
-	      cdesc[BANKACCOUNT] -= amt;
+	      c[GOLD] += amt;
+	      c[BANKACCOUNT] -= amt;
 	    }
 	  break;
 
@@ -820,7 +820,7 @@ obanksub (void)
 		  if (gemvalue[i])
 		    {
 		      gems_sold = TRUE;
-		      cdesc[GOLD] += gemvalue[i];
+		      c[GOLD] += gemvalue[i];
 		      iven[i] = 0;
 		      gemvalue[i] = 0;
 		      k = gemorder[i];
@@ -842,7 +842,7 @@ obanksub (void)
 		  nap (NAPTIME);
 		  break;
 		}
-	      cdesc[GOLD] += gemvalue[i];
+	      c[GOLD] += gemvalue[i];
 	      iven[i] = 0;
 	      gemvalue[i] = 0;
 	      k = gemorder[i];
@@ -856,9 +856,9 @@ obanksub (void)
 	};
 	/*Fix for #38 -Gibbon*/
 		cursor(1,16);
-		lprintf("%8d",(long)cdesc[BANKACCOUNT]);
+		lprintf("%8d",(long)c[BANKACCOUNT]);
 		cursor(1,19);
-		lprintf("%8d",(long)cdesc[GOLD]);
+		lprintf("%8d",(long)c[GOLD]);
     }
 }
 
@@ -1077,13 +1077,13 @@ otradepost (void)
 	  if (getyn () == 'y')
 	    {
 	      lprcat ("yes\n");
-	      cdesc[GOLD] += value;
-	      if (cdesc[WEAR] == isub)
-		cdesc[WEAR] = -1;
-	      if (cdesc[WIELD] == isub)
-		cdesc[WIELD] = -1;
-	      if (cdesc[SHIELD] == isub)
-		cdesc[SHIELD] = -1;
+	      c[GOLD] += value;
+	      if (c[WEAR] == isub)
+		c[WEAR] = -1;
+	      if (c[WIELD] == isub)
+		c[WIELD] = -1;
+	      if (c[SHIELD] == isub)
+		c[SHIELD] = -1;
 	      adjustcvalues (iven[isub], ivenarg[isub]);
 	      iven[isub] = 0;
 	      cleartradiven (isub);
@@ -1161,16 +1161,16 @@ olrs (void)
       {
       case 'p':
 	  	lprcat ("pay taxes\nHow much? ");
-	  	amt = readnum ((int) cdesc[GOLD]);
+	  	amt = readnum ((int) c[GOLD]);
 	  	
-	  if (amt > cdesc[GOLD])
+	  if (amt > c[GOLD])
 	    {
 	      lprcat ("  You don't have that much.\n");
 	    }
 	  else
 	    {
 	    	/*Fix for bug #23 ~Gibbon*/
-	      cdesc[GOLD] -= paytaxes ((int) amt);
+	      c[GOLD] -= paytaxes ((int) amt);
 		  lrs_welcome_text();
 	    }
 	  break;
@@ -1194,7 +1194,7 @@ olrs (void)
 	  }
 	  
       cursor (1, 19);
-      if (cdesc[GOLD] > 0)
+      if (c[GOLD] > 0)
       {
       	amtgoldtrad();
       }

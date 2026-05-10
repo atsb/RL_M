@@ -943,7 +943,7 @@ lflush (void)
 
 			  /* Draws the player block */
 			  tputs(SO);
-			  ttputch('@');
+			  ttputch(' ');
 			  tputs(SE);
 
 			  /* Restore cursor */

@@ -74,9 +74,7 @@
 #if defined NIX
 #include <sys/ioctl.h>
 #include <unistd.h>
-#ifndef FIONREAD
 #include <sys/socket.h>
-#endif
 #endif
 #include "includes/display.h"
 #include "includes/global.h"

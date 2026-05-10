@@ -213,7 +213,7 @@
 
 
 /* nap related */
-#define NAPTIME 1000
+#define NAPTIME 3000
 
 /*
 * object related constants

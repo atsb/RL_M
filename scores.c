@@ -132,7 +132,7 @@ static int
 readboard (void)
 {
 	FILE *pFile;
-	int b;
+	size_t b;
 
 	pFile = fopen(scorefile, "rb");
 	if (pFile == NULL)
@@ -168,7 +168,7 @@ static int
 writeboard (void)
 {
 	FILE *pFile;
-	int b;
+	size_t b;
 	set_score_output();
 
 	pFile = fopen(scorefile, "wb");

@@ -141,6 +141,159 @@ newcavelevel(int x)
                 know[i][j] = KNOWALL;
 }
 
+/*
+makecorridor_rogue(int x1, int y1, int x2, int y2)
+
+subroutine to make the rogue style corridoor connections.
+*/
+static void
+makecorridor_rogue(int x1, int y1, int x2, int y2)
+{
+    int x = x1, y = y1;
+    int steps = 0;
+
+    while ((x != x2 || y != y2) && steps < 500) {
+        if (x > 0 && x < MAXX - 1 && y > 0 && y < MAXY - 1)
+            item[x][y] = 0;
+
+        if (rnd(100) < 60) {
+            if (x < x2) x++;
+            else if (x > x2) x--;
+            else if (y < y2) y++;
+            else if (y > y2) y--;
+        }
+        else {
+            if (y < y2) y++;
+            else if (y > y2) y--;
+            else if (x < x2) x++;
+            else if (x > x2) x--;
+        }
+        steps++;
+    }
+}
+
+/*
+makemaze_rogue(level)
+
+subroutine to make the rogue style caverns for a given level.
+*/
+static void
+makemaze_rogue(int k)
+{
+    int i, j;
+
+    /* SEA OF WALL!!! */
+    for (i = 0; i < MAXY; i++)
+        for (j = 0; j < MAXX; j++)
+            item[j][i] = OWALL;
+
+    /* solid outer boundary */
+    for (i = 0; i < MAXY; i++) {
+        item[0][i] = OWALL;
+        item[MAXX - 1][i] = OWALL;
+    }
+    for (j = 0; j < MAXX; j++) {
+        item[j][0] = OWALL;
+        item[j][MAXY - 1] = OWALL;
+    }
+
+    /* 3x3 grid */
+    int cell_w = (MAXX - 2) / 3;
+    int cell_h = (MAXY - 2) / 3;
+    if (cell_w < 6) cell_w = 6;
+    if (cell_h < 6) cell_h = 6;
+
+    int rx[3][3], ry[3][3], rw[3][3], rh[3][3];
+    int gone[3][3];
+
+    /* gone rooms */
+    for (int gy = 0; gy < 3; gy++)
+        for (int gx = 0; gx < 3; gx++)
+            gone[gx][gy] = (rnd(4) == 0);
+
+    /* carve rooms */
+    for (int gy = 0; gy < 3; gy++) {
+        for (int gx = 0; gx < 3; gx++) {
+
+            if (gone[gx][gy]) {
+                rw[gx][gy] = rh[gx][gy] = 0;
+                continue;
+            }
+
+            int max_w = cell_w - 2;
+            int max_h = cell_h - 2;
+            if (max_w < 4) max_w = 4;
+            if (max_h < 4) max_h = 4;
+
+            rw[gx][gy] = rnd(max_w - 3) + 4;
+            rh[gx][gy] = rnd(max_h - 3) + 4;
+
+            int cell_x = 1 + gx * cell_w;
+            int cell_y = 1 + gy * cell_h;
+
+            int off_x_max = cell_w - rw[gx][gy];
+            int off_y_max = cell_h - rh[gx][gy];
+            if (off_x_max < 1) off_x_max = 1;
+            if (off_y_max < 1) off_y_max = 1;
+
+            rx[gx][gy] = cell_x + rnd(off_x_max);
+            ry[gx][gy] = cell_y + rnd(off_y_max);
+
+            /* carve interior */
+            for (i = 0; i < rh[gx][gy]; i++)
+                for (j = 0; j < rw[gx][gy]; j++) {
+                    int x = rx[gx][gy] + j;
+                    int y = ry[gx][gy] + i;
+                    if (x > 0 && x < MAXX - 1 && y > 0 && y < MAXY - 1)
+                        item[x][y] = 0;
+                }
+        }
+    }
+
+    /* horizontal connections */
+    for (int gy = 0; gy < 3; gy++) {
+        for (int gx = 0; gx < 2; gx++) {
+            if (rw[gx][gy] && rw[gx + 1][gy]) {
+                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                int x2 = rx[gx + 1][gy] + rw[gx + 1][gy] / 2;
+                int y2 = ry[gx + 1][gy] + rh[gx + 1][gy] / 2;
+                makecorridor_rogue(x1, y1, x2, y2);
+            }
+        }
+    }
+
+    /* vertical connections */
+    for (int gx = 0; gx < 3; gx++) {
+        for (int gy = 0; gy < 2; gy++) {
+            if (rh[gx][gy] && rh[gx][gy + 1]) {
+                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                int x2 = rx[gx][gy + 1] + rw[gx][gy + 1] / 2;
+                int y2 = ry[gx][gy + 1] + rh[gx][gy + 1] / 2;
+                makecorridor_rogue(x1, y1, x2, y2);
+            }
+        }
+    }
+
+    /* diagonal connections */
+    for (int gy = 0; gy < 2; gy++) {
+        for (int gx = 0; gx < 2; gx++) {
+            if (rw[gx][gy] && rw[gx + 1][gy + 1] && rnd(100) < 40) {
+                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                int x2 = rx[gx + 1][gy + 1] + rw[gx + 1][gy + 1] / 2;
+                int y2 = ry[gx + 1][gy + 1] + rh[gx + 1][gy + 1] / 2;
+                makecorridor_rogue(x1, y1, x2, y2);
+            }
+        }
+    }
+
+    if (k == 1)
+    {
+        item[33][MAXY - 1] = OENTRANCE;
+    }
+}
 
 /*
 makemaze(level)
@@ -155,6 +308,12 @@ makemaze(int k)
 {
     int i, j, tmp;
     int z;
+
+    /* ~30% chance to generate a rogue style maze */
+    if (k > 0 && k != MAXLEVEL - 1 && rnd(100) < 30) {
+        makemaze_rogue(k);
+        return;
+    }
 
     if (k > 1
         && (rnd(17) <= 4 || k == MAXLEVEL - 1

@@ -46,7 +46,7 @@
 #define SCORESIZE 10		/* this is the number of people on a scoreboard max */
 #define MAXPLEVEL 100		/* maximum player level allowed        */
 #define SPNUM 38		/* maximum number of spells in existance   */
-#define TIMELIMIT 30000		/* maximum number of moves before the game is called */
+#define TIMELIMIT 35000		/* maximum number of moves before the game is called */
 #define TAXRATE 1/20		/* tax rate for the LRS */
 
 #define BUFBIG  4096		/* size of the output buffer */

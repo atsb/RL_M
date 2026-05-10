@@ -177,7 +177,7 @@ void
 act_down_stairs (void)
 {
 
-  if (level != 0 && level != 10 && level != 13)
+  if (level != 0 && level != 10 && level != 14)
     {
 
       newcavelevel (level + 1);

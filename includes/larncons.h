@@ -39,7 +39,7 @@
 #define FALSE 0
 
 #define MAXLEVEL 11		/*  max # levels in the dungeon         */
-#define MAXVLEVEL 3		/*  max # of levels in the temple of the luran  */
+#define MAXVLEVEL 4		/*  max # of levels in the temple of the luran  */
 #define MAXX 67
 #define MAXY 17
 

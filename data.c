@@ -122,7 +122,7 @@ struct sphere* spheres = 0;	/*pointer to linked list for spheres of annihilation
 
 char* levelname[] =
 { " H", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9", "10", "V1",
-"V2", "V3"
+"V2", "V3", "V4"
 };
 
 char objnamelist[MAXOBJECT + 37] = ".AT_P<_F&^CMD>_$Bf*OD#~][[)))(((||||||||{?!BC}o:;,@@@@EVV))([[]]](^.[H***.^^.S.tsTLc`ulhatwpV=";

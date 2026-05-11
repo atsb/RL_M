@@ -954,6 +954,8 @@ cursor_block (void)
     standout();
     addch(' ');
     standend();
+#ifndef NO_PLAYER_CURSOR    
     curs_set(1);
+#endif    
 }
 

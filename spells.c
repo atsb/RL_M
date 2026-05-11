@@ -1324,7 +1324,7 @@ genmonst (void)
       ;
     }
 
-  lprint (i);
+  lprc(i);
 
   /* search for the monster type */
   for (j = 0; j < MAXMONST; j++)

@@ -302,7 +302,7 @@ main (int argc, char *argv[])
    */
   for (;;)
     {
-	  /* water animation and puddle growth every 3 tics (player moves) */
+	  /* water animation every ~6 player moves and puddle growth every ~30 player moves */
 	  long now = time(NULL);
 	  if (now - last_water_anim >= 3)
 	  {

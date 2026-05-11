@@ -67,19 +67,6 @@ water_hesitation(int x, int y)
     return 0;
 }
 
-
-/*
-*  water_tile(int x, int y)
-*  
-*  This routine to identify water
-*/
-static int
-water_tile(int x, int y)
-{
-    return (item[x][y] == OWATER ||
-        item[x][y] == OSHOREWATER);
-}
-
 /*
 *  aquatic_monster(int mid)
 *

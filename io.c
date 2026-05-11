@@ -732,8 +732,6 @@ cursor (int x, int y)
 {
   curx = x-1;
   cury = y-1;
-//  if (curx != playerx || cury != playery)
-//    curs_set(0);
   move(cury, curx);
 }
 
@@ -952,8 +950,10 @@ void
 cursor_block(void)
 {
     curs_set(0);
-
     attron(A_REVERSE);
     addch(' ');
     attroff(A_REVERSE);
+#ifndef NO_PLAYER_CURSOR    
+    curs_set(1);
+#endif
 }

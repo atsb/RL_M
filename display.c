@@ -679,9 +679,10 @@ showplayer(void)
     curs_set(0);
     show1cell(oldx, oldy);
     cursor(playerx + 1, playery + 1);
-    lprc(' ');
+    cursor_block();
     cursor(playerx + 1, playery + 1);
-    *lpnt++ = CURSOR_BLOCK;
+//    lprc(' ');
+//    cursor(playerx + 1, playery + 1);
     oldx = playerx;
     oldy = playery;
     refresh();

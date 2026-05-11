@@ -47,7 +47,6 @@
 ** ttputch(ch)     Print one character in decoded output buffer.
 ** flush_buf()     Flush buffer with decoded output.
 ** init_term()     Terminal initialization
-** char *tmcapcnv(sd,ss)   Routine to convert VT100 \33's to termcap format
 *
 * Note: ** entries are available only in termcap mode.
 */
@@ -56,6 +55,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <ctype.h>
+#include <curses.h>
 
 #if defined WINDOWS_VS
 #include <io.h>
@@ -74,7 +74,9 @@
 #if defined NIX
 #include <sys/ioctl.h>
 #include <unistd.h>
+#if !defined(HP165X) && !defined(FIONREAD)
 #include <sys/socket.h>
+#endif
 #endif
 #include "includes/display.h"
 #include "includes/global.h"
@@ -86,6 +88,9 @@
 #define LINBUFSIZE 128		/* size of the lgetw() and lgetl() buffer       */
 int lfd;			/*  output file numbers     */
 int fd;				/*  input file numbers      */
+static int curx = 0;
+static int cury = 0;
+
 
 
 static int ipoint = MAXIBUF, iepoint = MAXIBUF;	/*  input buffering pointers    */
@@ -94,11 +99,7 @@ static char lgetwbuf[LINBUFSIZE];	/* get line (word) buffer               */
 
 static int (*getchfn) (void);
 
-static void ttputch (int);
-static void tputs (const char *);
-
 static void flush_buf (void);
-
 
 /*
 *  Subroutine to set up terminal in correct mode for game
@@ -172,11 +173,13 @@ ttgetch (void)
 void
 scbr (void)
 {
+
   /* 
    * Set up to use the direct console input call which may
    * read from the keypad;
    */
   getchfn = ansiterm_getch;
+  curs_set(0);
 }
 
 
@@ -189,12 +192,13 @@ scbr (void)
 void
 sncbr (void)
 {
+
   /* 
    * Set up to use the direct console input call with echo, getche()
    */
   getchfn = ansiterm_getche;
+  curs_set(1);
 }
-
 
 
 /*
@@ -284,6 +288,7 @@ lprint (int x)
 }
 
 
+static int scrline = 18;	/* line # for wraparound instead of scrolling if no DL */
 
 /* 
 * output one byte to the output buffer 
@@ -291,13 +296,35 @@ lprint (int x)
 void
 lprc (char ch)
 {
+    if (lfd != 1) {
+      *lpnt++ = ch;
 
-  *lpnt++ = ch;
+      if (lpnt >= lpend)
+        {
 
-  if (lpnt >= lpend)
-    {
+          lflush ();
+        }
+    }
+    else {
+       if (ch == '\n' && (cury == 23) && enable_scroll) {
+        if (++scrline > 23)
+          {
 
-      lflush ();
+        scrline = 19;
+          }
+          
+        move(scrline+1, 0);
+        clrtoeol();
+        move(scrline, 0);
+        clrtoeol();
+       }
+       else if (ch=='\t')
+           addstr("    ");
+       else
+           addch(ch);
+#ifdef EXTRA
+       c[BYTESOUT]++;
+#endif
     }
 }
 
@@ -674,31 +701,40 @@ lwclose (void)
 void
 lprcat (char *str)
 {
-  char *str2;
-  
-  if (lpnt >= lpend)
-    {
+    if (lfd != 1) {
+      char *str2;
+      
+      if (lpnt >= lpend)
+        {
+          lflush();
+        }
+      str2 = lpnt;
+
+      while ((*str2++ = *str++) != '\0')
+        ;
+      lpnt = str2 - 1;
       lflush();
     }
-  str2 = lpnt;
-
-  while ((*str2++ = *str++) != '\0')
-    ;
-  lpnt = str2 - 1;
-  lflush();
+    else {
+        char* p = str;
+        char c;
+        while ((c = *p++)) {
+            lprc(c);
+        }
+    }
 }
 
 /*
 * cursor(x,y)    Put cursor at specified coordinates staring at [1,1] (termcap)
 */
-void cursor(int x, int y)
+void
+cursor (int x, int y)
 {
-	if (lpnt >= lpend)
-		lflush();
-
-	*lpnt++ = CURSOR;
-	*lpnt++ = (char)x;
-	*lpnt++ = (char)y;
+  curx = x-1;
+  cury = y-1;
+//  if (curx != playerx || cury != playery)
+//    curs_set(0);
+  move(cury, curx);
 }
 
 /*
@@ -707,6 +743,7 @@ void cursor(int x, int y)
 void
 cursors (void)
 {
+  curs_set(0);
   cursor(1, 24);
 }
 
@@ -719,47 +756,6 @@ cursors (void)
 
 /* translated output buffer */
 static char *outbuf = NULL;
-
-/*
-* ANSI control sequences
-*/
-
-/* clear to end of line */
-static const char CE[] = { 27, '[', 'K', 0 };
-
-/* clear to end of display */
-static char *CD = NULL;
-
-/* clear screen */
-static const char CL[] = { 27, '[', ';', 'H', 27, '[', '2', 'J', 0 };
-
-/* cursor motion */
-static const char CM[] =
-  { 27, '[', '%', 'i', '%', '2', ';', '%', '2', 'H', 0 };
-
-/* Removed the 'static' from the AL[] and DL[] as these are unused and static 
-   isn't really needed as the variable itself is never used which
-   negates the need for a local version which is why you would ever use
-   static anyway. /rant -Gibbon
-*/
-
-/* insert line */
-const char AL[] = { 27, '[', 'L', 0 };
-
-/* delete line */
-const char DL[] = { 27, '[', 'M', 0 };
-
-/* begin standout mode */
-static const char SO[] = { 27, '[', '1', 'm', 0 };
-
-/* end standout mode */
-static const char SE[] = { 27, '[', 'm', 0 };
-
-/* terminal initialization */
-static const char TI[] = { 27, '[', 'm', 0 };
-
-/* terminal end */
-static const char TE[] = { 27, '[', 'm', 0 };
 
 
 /*
@@ -785,8 +781,8 @@ init_term (void)
 void
 cl_line (int x, int y)
 {
-  cursor (1, y);
-  *lpnt++ = CL_LINE;
+  move (y-1, 0);
+  clrtoeol();
   cursor (x, y);
 }
 
@@ -797,11 +793,10 @@ void
 cl_up (int x, int y)
 {
   int i;
-  cursor (1, 1);
   for (i = 1; i <= y; i++)
     {
-      *lpnt++ = CL_LINE;
-      *lpnt++ = '\n';
+        move (i-1,0);
+        clrtoeol();
     }
   cursor (x, y);
 }
@@ -812,26 +807,8 @@ cl_up (int x, int y)
 void
 cl_dn (int x, int y)
 {
-  int i;
-  cursor (1, y);
-  if (CD == NULL)
-    {
-      *lpnt++ = CL_LINE;
-
-      for (i = y; i <= 24; i++)
-	{
-	  *lpnt++ = CL_LINE;
-
-	  if (i != 24)
-	    *lpnt++ = '\n';
-	}
-      cursor (x, y);
-
-    }
-  else
-    {
-      *lpnt++ = CL_DOWN;
-    }
+  move (y-1,0);
+  clrtobot();
   cursor (x, y);
 }
 
@@ -841,12 +818,9 @@ cl_dn (int x, int y)
 void
 lstandout (char *str)
 {
-  *lpnt++ = ST_START;
-  while (*str)
-    {
-      *lpnt++ = *str++;
-    }
-  *lpnt++ = ST_END;
+    standout();
+    lprcat(str);
+    standend();
 }
 
 /*
@@ -865,171 +839,41 @@ set_score_output (void)
 *  for termcap version: Flush output in output buffer according to output
 *                       status as indicated by `enable_scroll'
 */
-static int scrline = 18;	/* line # for wraparound instead of scrolling if no DL */
 
 
 void
 lflush (void)
 {
-  int lpoint;
-  char *str;
-  static int curx = 0;
-  static int cury = 0;
-
-  if ((lpoint = lpnt - lpbuf) > 0)
-    {
-#ifdef EXTRA
-      c[BYTESOUT] += lpoint;
-#endif
-      if (enable_scroll <= -1)
+    int lpoint;
+      if (lfd != 1)
 	{
-	  flush_buf();
+        if ((lpoint = lpnt - lpbuf) > 0) {
+#ifdef EXTRA
+        c[BYTESOUT] += lpoint;
+#endif
+#if defined WINDOWS_VS
+            if (_write(lfd, lpbuf, lpoint) != lpoint)
+#endif
+#if defined NIX
+            if (write(lfd, lpbuf, lpoint) != lpoint)
+#endif
+            {
+              fprintf(stderr,"Error writing output file\n");
+            }
+          lpnt = lpbuf;		/* point back to beginning of buffer */
+            }
+	  flush_buf(); 
 
 	  /* Catch write errors on save files
 	   */
-#if defined WINDOWS_VS
- 	if (_write(lfd, lpbuf, lpoint) != lpoint)
-#endif
-#if defined NIX
- 	if (write(lfd, lpbuf, lpoint) != lpoint)
-#endif
-	    {
-	      fprintf(stderr,"Error writing output file\n");
-	    }
-	  lpnt = lpbuf;		/* point back to beginning of buffer */
 	  return;
 	}
-      for (str = lpbuf; str < lpnt; str++)
-	{
-	  if (*str >= 32)
-	    {
-	      ttputch (*str);
-	      curx++;
-	    }
-	  else
-	    switch (*str)
-	      {
-	      case CLEAR:
-		tputs (CL);
-		curx = cury = 0;
-		break;
-
-	      case CL_LINE:
-		tputs (CE);
-		break;
-
-	      case CL_DOWN:
-		tputs (CD);
-		break;
-
-	      case ST_START:
-		tputs (SO);
-		break;
-
-	      case ST_END:
-		tputs (SE);
-		break;
-
-	      case CURSOR:
-		curx = *++str - 1;
-		cury = *++str - 1;
-		tputs (atgoto (CM, curx, cury));
-		break;
-
-		  case CURSOR_BLOCK:
-		  {
-			  /* Restore cursor */
-			  tputs(atgoto(CM, curx, cury));
-
-			  /* Draws the player block */
-			  tputs(SO);
-			  ttputch(' ');
-			  tputs(SE);
-
-			  /* Restore cursor */
-			  tputs(atgoto(CM, curx, cury));
-
-			  break;
-		  }
-
-	      case '\n':
-		if ((cury == 23) && enable_scroll)
-		  {
-
-		    if (++scrline > 23)
-		      {
-
-			scrline = 19;
-		      }
-
-		    tputs (atgoto (CM, 0, scrline + 1));
-		    tputs (CE);
-
-		    tputs (atgoto (CM, 0, scrline));
-		    tputs (CE);
-
-		  }
-		else
-		  {
-
-		    ttputch ('\n');
-		    cury++;
-		  }
-
-		curx = 0;
-		break;
-
-	      case T_INIT:
-		tputs (TI);
-		break;
-	      case T_END:
-		tputs (TE);
-		break;
-	      default:
-		ttputch (*str);
-		curx++;
-	      }
-	}
+    else {
+        refresh();
     }
-  lpnt = lpbuf;
-  flush_buf ();			/* flush real output buffer now */
 }
 
 static int io_index = 0;
-
-/*
-* ttputch(ch)      Print one character in decoded output buffer.
-*/
-static void
-ttputch (int c)
-{
-
-  outbuf[io_index++] = (char) c;
-
-  if (io_index >= BUFBIG)
-    {
-
-      flush_buf ();
-    }
-}
-
-
-
-/*
-* Outputs string pointed to by cp.  Modified using public domain termcap
-* routines. ~Gibbon.
-*/
-static void
-tputs (const char *cp)
-{
-  if (cp == NULL)
-    {
-    }
-  while (*cp != '\0')
-    {
-      ttputch (*cp++);
-    }
-}
 
 
 /*
@@ -1038,13 +882,7 @@ tputs (const char *cp)
 static void
 flush_buf (void)
 {
-  if (io_index)
-    {
-      if (lfd == 1)
-	{
-	  ansiterm_out (outbuf, io_index);
-	}
-      else
+      if (lfd != 1)
 	{
 #if defined WINDOWS_VS
 		_write(lfd, outbuf, io_index);
@@ -1053,70 +891,21 @@ flush_buf (void)
 		write(lfd, outbuf, io_index);
 #endif
 	}
-    }
     io_index = 0;
 }
 
-
 /*
-*  char *tmcapcnv(sd,ss)  Routine to convert VT100 escapes to termcap format
-*
-*  Processes only the \33[#m sequence (converts . files for termcap use 
+*  flushall()  Function to flush all type-ahead in the input buffer
+*  
 */
-char *
-tmcapcnv (char *sd, char *ss)
-{
-  int tmstate = 0;		/* 0=normal, 1=\33 2=[ 3=# */
-  char tmdigit = 0;		/* the # in \33[#m */
 
-  while (*ss)
-    {
-      switch (tmstate)
-	{
-	case 0:
-	  if (*ss == '\33')
-	    {
-	      tmstate++;
-	      break;
-	    }
-	ign:*sd++ = *ss;
-	ign2:tmstate = 0;
-	  break;
-	case 1:
-	  if (*ss != '[')
-	    goto ign;
-	  tmstate++;
-	  break;
-	case 2:
-		if (isdigit((unsigned char)*ss))
-	    {
-	      tmdigit = *ss - '0';
-	      tmstate++;
-	      break;
-	    }
-	  if (*ss == 'm')
-	    {
-	      *sd++ = ST_END;
-	      goto ign2;
-	    }
-	  goto ign;
-	case 3:
-	  if (*ss == 'm')
-	    {
-	      if (tmdigit)
-		*sd++ = ST_START;
-	      else
-		*sd++ = ST_END;
-	      goto ign2;
-	    }
-	default:
-	  goto ign;
-	};
-      ss++;
-    }
-  *sd = 0;			/* NULL terminator */
-  return (sd);
+void
+lflushall (void)
+{
+    flushinp();
 }
+
+
 
 void
 enter_name (void)
@@ -1158,3 +947,13 @@ enter_name (void)
 
   scbr ();
 }
+
+void 
+cursor_block (void) 
+{
+    standout();
+    addch(' ');
+    standend();
+    curs_set(1);
+}
+

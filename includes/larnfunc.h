@@ -1,4 +1,4 @@
-
+#include <curses.h>
 
 /*
 *
@@ -34,10 +34,10 @@
 #define disappear(x,y) (mitem[x][y]=know[x][y]=0)
 
 /* macro to turn on bold display for the terminal */
-#define setbold() (*lpnt++ = ST_START)
+#define setbold() standout()
 
 /* macro to turn off bold display for the terminal */
-#define resetbold() (*lpnt++ = ST_END)
+#define resetbold() standend()
 
 /* macro to setup the scrolling region for the terminal */
 #define setscroll() enable_scroll=1
@@ -46,10 +46,10 @@
 #define resetscroll() enable_scroll=0
 
 /* macro to clear the screen and home the cursor */
-#define screen_clear() (*lpnt++ =CLEAR, regen_bottom=TRUE)
+#define screen_clear() do { clear(); cursor(1,1); } while(0)
 
 /* macro to clear to end of line */
-#define cltoeoln() (*lpnt++ = CL_LINE)
+#define cltoeoln() clrtoeol()
 
 /* macros to seed the random number generator */
 /* This is needed on Windows which throws an error due to 'random' not being defined on MingW.  I'll clean it up later. -Gibbon */

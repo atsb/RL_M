@@ -732,8 +732,6 @@ cursor (int x, int y)
 {
   curx = x-1;
   cury = y-1;
-//  if (curx != playerx || cury != playery)
-//    curs_set(0);
   move(cury, curx);
 }
 

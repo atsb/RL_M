@@ -632,7 +632,8 @@ makestream(int level)
 *
 * subroutine to make a puddle of a given size and slowly expand it to simulate dripping.
 */
-void expand_puddle(void)
+void
+expand_puddle(void)
 {
     const int MAX_RADIUS = 4;
 

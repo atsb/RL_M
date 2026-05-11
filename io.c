@@ -953,7 +953,4 @@ cursor_block(void)
     attron(A_REVERSE);
     addch(' ');
     attroff(A_REVERSE);
-#ifndef NO_PLAYER_CURSOR    
-    curs_set(1);
-#endif
 }

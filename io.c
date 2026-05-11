@@ -813,9 +813,9 @@ cl_dn (int x, int y)
 void
 lstandout (char *str)
 {
-    standout();
+    attron(A_REVERSE);
     lprcat(str);
-    standend();
+    attroff(A_REVERSE);
 }
 
 /*

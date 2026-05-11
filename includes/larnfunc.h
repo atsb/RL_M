@@ -34,10 +34,10 @@
 #define disappear(x,y) (mitem[x][y]=know[x][y]=0)
 
 /* macro to turn on bold display for the terminal */
-#define setbold() standout()
+#define setbold() attron(A_REVERSE)
 
 /* macro to turn off bold display for the terminal */
-#define resetbold() standend()
+#define resetbold() attroff(A_REVERSE)
 
 /* macro to setup the scrolling region for the terminal */
 #define setscroll() enable_scroll=1

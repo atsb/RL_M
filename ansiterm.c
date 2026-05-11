@@ -67,6 +67,7 @@ ansiterm_getche (void)
   noecho ();
   return key;
 }
+
 /* wgetch() is the modern way. -Gibbon */
 static int
 llgetch (void)

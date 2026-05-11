@@ -224,10 +224,10 @@
 #define MAXPOTION 35		/* maximum number of potions that are possible */
 #define MAXPOTIONNAME	32
 
-#define MAXOBJ 94		/* the maximum number of objects   n < MAXOBJ */
+#define MAXOBJ 95		/* the maximum number of objects   n < MAXOBJ */
 
 /*  defines for the objects in the game     */
-#define MAXOBJECT  93
+#define MAXOBJECT  94
 
 #define OALTAR 1
 #define OTHRONE 2
@@ -333,4 +333,5 @@
 #define OWWAND 88		/* wand of wonder */
 #define OPSTAFF 89		/* staff of power */
 #define OWATER 93		/* puddle object */
-/* used up to 93. ~Gibbon */
+#define OSHOREWATER 94		/* puddle object */
+/* used up to 94. ~Gibbon */

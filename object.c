@@ -424,6 +424,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 	    case OCUBEofUNDEAD:
 	    case ONOTHEFT:
         case OWATER:
+        case OSHOREWATER:
 	      break;
 
 	    default:

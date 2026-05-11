@@ -313,7 +313,7 @@ main (int argc, char *argv[])
 		  /* redraw only puddles for performance reasons (low cpu usage) */
 		  for (int yy = 0; yy < MAXY; yy++)
 			  for (int xx = 0; xx < MAXX; xx++)
-				  if (item[xx][yy] == OWATER)
+				  if (item[xx][yy] == OWATER && OSHOREWATER)
 					  show1cell(xx, yy);
 
 		  refresh();

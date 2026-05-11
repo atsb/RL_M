@@ -759,7 +759,7 @@ if direction=0, don't move--just show where he is */
     playerx = k;
     playery = m;
 
-    if (i == OWATER)
+    if (i == OWATER || OSHOREWATER)
     {
         // Existing rusting logic for worn armor
         int worn_armor_idx = c[WEAR];

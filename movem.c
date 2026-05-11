@@ -45,6 +45,23 @@ static struct foo
   int smart;
 } movelist[250];
 
+static int
+water_penalty(int x, int y)
+{
+    int obj = item[x][y];
+
+    /* Deep water */
+    if (obj == OWATER)
+        return 7;
+
+    /* Shore water */
+    if (obj == OSHOREWATER)
+        return 4;
+
+    return 0;
+}
+
+
 /*
 *  water_tile(int x, int y)
 *  
@@ -53,7 +70,8 @@ static struct foo
 static int
 water_tile(int x, int y)
 {
-    return (item[x][y] == OWATER);
+    return (item[x][y] == OWATER ||
+        item[x][y] == OSHOREWATER);
 }
 
 /*
@@ -479,82 +497,57 @@ move_smart(int i, int j)
     }
 
     /* list of candidate directions */
-    int candx[8], candy[8], candcount = 0;
+    int candx[8], candy[8], candscore[8], candcount = 0;
 
-    if (mid != VAMPIRE)
+    for (z = 1; z < 9; z++)
     {
-        for (z = 1; z < 9; z++)
-        {
-            x = i + diroffx[z];
-            y = j + diroffy[z];
+        x = i + diroffx[z];
+        y = j + diroffy[z];
 
-            if (screen[x][y] < screen[i][j] && !mitem[x][y])
-            {
-                candx[candcount] = x;
-                candy[candcount] = y;
-                candcount++;
-            }
-        }
-    }
-    else
-    {
-        /* vampires avoid mirrors */
-        for (z = 1; z < 9; z++)
+        if (screen[x][y] < screen[i][j] && !mitem[x][y])
         {
-            x = i + diroffx[z];
-            y = j + diroffy[z];
+            if (mid == VAMPIRE && item[x][y] == OMIRROR)
+                continue;
 
-            if (screen[x][y] < screen[i][j] &&
-                item[x][y] != OMIRROR &&
-                !mitem[x][y])
-            {
-                candx[candcount] = x;
-                candy[candcount] = y;
-                candcount++;
-            }
+            int score = screen[x][y];
+
+            /* tiny hesitation for land monsters */
+            if (!aquatic_monster(mid))
+                score += water_penalty(x, y);
+
+            candx[candcount] = x;
+            candy[candcount] = y;
+            candscore[candcount] = score;
+            candcount++;
         }
     }
 
-    /* fallback to dumb movement */
     if (candcount == 0)
     {
         move_dumb(i, j);
         return;
     }
 
-    /* movement:
-       pass 0 avoids water (land monsters only)
-       pass 1 allows water if no dry options exist
-    */
-    for (int pass = 0; pass < 2; pass++)
+    /* choose lowest score */
+    int best = 0;
+    for (z = 1; z < candcount; z++)
+        if (candscore[z] < candscore[best])
+            best = z;
+
+    x = candx[best];
+    y = candy[best];
+
+    /* attack player */
+    if (x == playerx && y == playery)
     {
-        for (z = 0; z < candcount; z++)
-        {
-            x = candx[z];
-            y = candy[z];
-
-            /* land monsters avoid water */
-            if (pass == 0 &&
-                !aquatic_monster(mid) &&
-                water_tile(x, y))
-                continue;
-
-            /* attack player */
-            if (x == playerx && y == playery)
-            {
-                hitmonster(x, y);
-                return;
-            }
-
-            /* move */
-            mmove(i, j, w1x[0] = x, w1y[0] = y);
-            return;
-        }
+        hitmonster(x, y);
+        return;
     }
 
-    /* If all else fails */
-    move_dumb(i, j);
+    /* move */
+    mmove(i, j, w1x[0] = x, w1y[0] = y);
 }
+
 
 /*
 For monsters that are not moving in an intelligent fashion.  Move
@@ -603,72 +596,63 @@ move_dumb(int i, int j)
     if (xh > MAXX) xh = MAXX;
     if (yh > MAXY) yh = MAXY;
 
-    /* movement:
-       pass 0 avoids water (land monsters only)
-       pass 1 allows water if no dry options exist
-    */
-    for (int pass = 0; pass < 2; pass++)
+    tmpd = 1000000;
+    tmpx = i;
+    tmpy = j;
+
+    for (k = xl; k < xh; k++)
     {
-        tmpd = 10000;
-        tmpx = i;
-        tmpy = j;
-
-        for (k = xl; k < xh; k++)
+        for (m = yl; m < yh; m++)
         {
-            for (m = yl; m < yh; m++)
+            /* attack player */
+            if (k == playerx && m == playery)
             {
-                /* attack player */
-                if (k == playerx && m == playery)
-                {
-                    tmpd = 1;
-                    tmpx = k;
-                    tmpy = m;
-                    break;
-                }
-
-                /* tile should be walkable */
-                if (item[k][m] == OWALL ||
-                    item[k][m] == OCLOSEDDOOR ||
-                    ((mitem[k][m] != 0) && !(k == i && m == j)))
-                    continue;
-
-                /* vampires avoid mirrors */
-                if (mid == VAMPIRE && item[k][m] == OMIRROR)
-                    continue;
-
-                /* land monsters avoid water */
-                if (pass == 0 &&
-                    !aquatic_monster(mid) &&
-                    water_tile(k, m))
-                    continue;
-
-                /* distance */
-                tmp = (playerx - k) * (playerx - k) +
-                    (playery - m) * (playery - m);
-
-                if (tmp < tmpd)
-                {
-                    tmpd = tmp;
-                    tmpx = k;
-                    tmpy = m;
-                }
+                tmpx = k;
+                tmpy = m;
+                goto domove;
             }
-        }
 
-        /* valid move this pass, do it */
-        if ((tmpd < 10000) && ((tmpx != i) || (tmpy != j)))
-        {
-            mmove(i, j, tmpx, tmpy);
-            w1x[0] = tmpx;
-            w1y[0] = tmpy;
-            return;
+            /* tile must be walkable */
+            if (item[k][m] == OWALL ||
+                item[k][m] == OCLOSEDDOOR ||
+                ((mitem[k][m] != 0) && !(k == i && m == j)))
+                continue;
+
+            /* vampires avoid mirrors */
+            if (mid == VAMPIRE && item[k][m] == OMIRROR)
+                continue;
+
+            /* base distance */
+            tmp = (playerx - k) * (playerx - k) +
+                (playery - m) * (playery - m);
+
+            /* tiny hesitation for land monsters */
+            if (!aquatic_monster(mid))
+                tmp += water_penalty(k, m);
+
+            if (tmp < tmpd)
+            {
+                tmpd = tmp;
+                tmpx = k;
+                tmpy = m;
+            }
         }
     }
 
-    /* No movement */
-    w1x[0] = i;
-    w1y[0] = j;
+domove:
+    if (tmpx != i || tmpy != j)
+    {
+        mmove(i, j, tmpx, tmpy);
+        w1x[0] = tmpx;
+        w1y[0] = tmpy;
+    }
+    else
+    {
+        w1x[0] = i;
+        w1y[0] = j;
+    }
 }
+
 
 /*
 *  mmove(x,y,xd,yd)    Function to actually perform the monster movement

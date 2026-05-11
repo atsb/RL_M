@@ -45,8 +45,14 @@ static struct foo
   int smart;
 } movelist[250];
 
+/*
+*  water_hesitation(int x, int y)
+*
+*  This routine to determine hesitation based on the type of water tile.
+*  Returns 7 for deep water, 4 for shore water.
+*/
 static int
-water_penalty(int x, int y)
+water_hesitation(int x, int y)
 {
     int obj = item[x][y];
 
@@ -513,7 +519,7 @@ move_smart(int i, int j)
 
             /* tiny hesitation for land monsters */
             if (!aquatic_monster(mid))
-                score += water_penalty(x, y);
+                score += water_hesitation(x, y);
 
             candx[candcount] = x;
             candy[candcount] = y;
@@ -628,7 +634,7 @@ move_dumb(int i, int j)
 
             /* tiny hesitation for land monsters */
             if (!aquatic_monster(mid))
-                tmp += water_penalty(k, m);
+                tmp += water_hesitation(k, m);
 
             if (tmp < tmpd)
             {

@@ -142,12 +142,12 @@ newcavelevel(int x)
 }
 
 /*
-makecorridor_rogue(int x1, int y1, int x2, int y2)
+makecorridor_caverns(int x1, int y1, int x2, int y2)
 
-subroutine to make the rogue style corridoor connections.
+subroutine to make the caverns corridoor connections.
 */
 static void
-makecorridor_rogue(int x1, int y1, int x2, int y2)
+makecorridor_caverns(int x1, int y1, int x2, int y2)
 {
     int x = x1, y = y1;
     int steps = 0;
@@ -173,12 +173,12 @@ makecorridor_rogue(int x1, int y1, int x2, int y2)
 }
 
 /*
-makemaze_rogue(level)
+makemaze_caverns(level)
 
-subroutine to make the rogue style caverns for a given level.
+subroutine to make the caverns for a given level.
 */
 static void
-makemaze_rogue(int k)
+makemaze_caverns(int k)
 {
     int i, j;
 
@@ -258,7 +258,7 @@ makemaze_rogue(int k)
                 int y1 = ry[gx][gy] + rh[gx][gy] / 2;
                 int x2 = rx[gx + 1][gy] + rw[gx + 1][gy] / 2;
                 int y2 = ry[gx + 1][gy] + rh[gx + 1][gy] / 2;
-                makecorridor_rogue(x1, y1, x2, y2);
+                makecorridor_caverns(x1, y1, x2, y2);
             }
         }
     }
@@ -271,7 +271,7 @@ makemaze_rogue(int k)
                 int y1 = ry[gx][gy] + rh[gx][gy] / 2;
                 int x2 = rx[gx][gy + 1] + rw[gx][gy + 1] / 2;
                 int y2 = ry[gx][gy + 1] + rh[gx][gy + 1] / 2;
-                makecorridor_rogue(x1, y1, x2, y2);
+                makecorridor_caverns(x1, y1, x2, y2);
             }
         }
     }
@@ -284,7 +284,7 @@ makemaze_rogue(int k)
                 int y1 = ry[gx][gy] + rh[gx][gy] / 2;
                 int x2 = rx[gx + 1][gy + 1] + rw[gx + 1][gy + 1] / 2;
                 int y2 = ry[gx + 1][gy + 1] + rh[gx + 1][gy + 1] / 2;
-                makecorridor_rogue(x1, y1, x2, y2);
+                makecorridor_caverns(x1, y1, x2, y2);
             }
         }
     }
@@ -309,9 +309,9 @@ makemaze(int k)
     int i, j, tmp;
     int z;
 
-    /* ~30% chance to generate a rogue style maze */
+    /* ~30% chance to generate a caverns style maze */
     if (k > 0 && k != MAXLEVEL - 1 && rnd(100) < 30) {
-        makemaze_rogue(k);
+        makemaze_caverns(k);
         return;
     }
 

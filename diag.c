@@ -301,7 +301,7 @@ restoregame (char *fname)
   if (lopen (fname) <= 0)
     {
       lcreat ((char *) 0);
-      lprintf ("\nCan't open file <%s>to restore game\n", fname);
+      lprintf ("\nCan't open file <%s> to restore game\n", fname);
       nap (NAPTIME);
       c[GOLD] = c[BANKACCOUNT] = 0;
       died (-265);

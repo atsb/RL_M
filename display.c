@@ -1,4 +1,4 @@
-#include <curses.h>
+﻿#include <curses.h>
 #include <stdlib.h>
 #include <string.h>
 #include "includes/action.h"

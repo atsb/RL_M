@@ -390,7 +390,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 
     case OWATER:
       if (do_ident)
-          lprcat("\nYou step into a puddle of water.");
+          lprcat("\nYou wade into water.");
       return;
 
     case OWALL:

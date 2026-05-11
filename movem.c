@@ -45,6 +45,46 @@ static struct foo
   int smart;
 } movelist[250];
 
+/*
+*  water_tile(int x, int y)
+*  
+*  This routine to identify water
+*/
+static int
+water_tile(int x, int y)
+{
+    return (item[x][y] == OWATER);
+}
+
+/*
+*  aquatic_monster(int mid)
+*
+*  This routine is to identify which monster
+*  prefers or does not prefer water
+*/
+static int
+aquatic_monster(int mid)
+{
+    switch (mid)
+    {
+    case WATERLORD:
+    case GREENURCHIN:
+    case VORTEX:
+    case BAT:
+    case POLTERGEIST:
+    case WHITEDRAGON:
+    case BRONZEDRAGON:
+    case GREENDRAGON:
+    case SILVERDRAGON:
+    case PLATINUMDRAGON:
+    case REDDRAGON:
+    case SPIRITNAGA:
+    case SNAKE:
+        return 1;
+    default:
+        return 0;
+    }
+}
 
 
 /*
@@ -420,14 +460,13 @@ that is closer to the player.
 Parameters: the X,Y position of the monster to be moved.
 */
 static void
-move_smart (int i, int j)
+move_smart(int i, int j)
 {
-  int x, y, z;
+    int x, y, z;
+    int mid = mitem[i][j];
 
-  /* check for a half-speed monster, and check if not to move.  Could be
-     done in the monster list build.
-   */
-  switch (mitem[i][j])
+    /* half speed monsters */
+    switch (mid)
     {
     case TROGLODYTE:
     case HOBGOBLIN:
@@ -435,45 +474,87 @@ move_smart (int i, int j)
     case XVART:
     case INVISIBLESTALKER:
     case ICELIZARD:
-      if ((gtime & 1) == 1)
-	return;
-    };
+        if ((gtime & 1) == 1)
+            return;
+    }
 
-  /* find an adjoining location in the proximity ripple that is
-     closer to the player (has a lower value) than the monster's
-     current position.
-   */
-  if (mitem[i][j] != VAMPIRE)
-    for (z = 1; z < 9; z++)	/* go around in a circle */
-      {
-	x = i + diroffx[z];
-	y = j + diroffy[z];
-	if (screen[x][y] < screen[i][j])
-	  if (!mitem[x][y])
-	    {
-	      mmove (i, j, w1x[0] = x, w1y[0] = y);
-	      return;
-	    }
-      }
-  else
-    /* prevent vampires from moving onto mirrors
-     */
-    for (z = 1; z < 9; z++)	/* go around in a circle */
-      {
-	x = i + diroffx[z];
-	y = j + diroffy[z];
-	if ((screen[x][y] < screen[i][j]) && (item[x][y] != OMIRROR))
-	  if (!mitem[x][y])
-	    {
-	      mmove (i, j, w1x[0] = x, w1y[0] = y);
-	      return;
-	    }
-      }
+    /* list of candidate directions */
+    int candx[8], candy[8], candcount = 0;
 
+    if (mid != VAMPIRE)
+    {
+        for (z = 1; z < 9; z++)
+        {
+            x = i + diroffx[z];
+            y = j + diroffy[z];
+
+            if (screen[x][y] < screen[i][j] && !mitem[x][y])
+            {
+                candx[candcount] = x;
+                candy[candcount] = y;
+                candcount++;
+            }
+        }
+    }
+    else
+    {
+        /* vampires avoid mirrors */
+        for (z = 1; z < 9; z++)
+        {
+            x = i + diroffx[z];
+            y = j + diroffy[z];
+
+            if (screen[x][y] < screen[i][j] &&
+                item[x][y] != OMIRROR &&
+                !mitem[x][y])
+            {
+                candx[candcount] = x;
+                candy[candcount] = y;
+                candcount++;
+            }
+        }
+    }
+
+    /* fallback to dumb movement */
+    if (candcount == 0)
+    {
+        move_dumb(i, j);
+        return;
+    }
+
+    /* movement:
+       pass 0 avoids water (land monsters only)
+       pass 1 allows water if no dry options exist
+    */
+    for (int pass = 0; pass < 2; pass++)
+    {
+        for (z = 0; z < candcount; z++)
+        {
+            x = candx[z];
+            y = candy[z];
+
+            /* land monsters avoid water */
+            if (pass == 0 &&
+                !aquatic_monster(mid) &&
+                water_tile(x, y))
+                continue;
+
+            /* attack player */
+            if (x == playerx && y == playery)
+            {
+                hitmonster(x, y);
+                return;
+            }
+
+            /* move */
+            mmove(i, j, w1x[0] = x, w1y[0] = y);
+            return;
+        }
+    }
+
+    /* If all else fails */
+    move_dumb(i, j);
 }
-
-
-
 
 /*
 For monsters that are not moving in an intelligent fashion.  Move
@@ -481,16 +562,19 @@ in a direct fashion toward the player's current position.
 
 Parameters: the X,Y position of the monster to move.
 */
+/*
+For monsters that are not moving in an intelligent fashion.
+Move in a direct fashion toward the player's current position.
+*/
 static void
-move_dumb (int i, int j)
+move_dumb(int i, int j)
 {
-  int xl, yl, xh, yh;
-  int k, m, tmp, tmpd, tmpx, tmpy;
+    int xl, yl, xh, yh;
+    int k, m, tmp, tmpd, tmpx, tmpy;
+    int mid = mitem[i][j];
 
-  /* check for a half-speed monster, and check if not to move.  Could be
-     done in the monster list build.
-   */
-  switch (mitem[i][j])
+    /* half speed monsters */
+    switch (mid)
     {
     case TROGLODYTE:
     case HOBGOBLIN:
@@ -498,87 +582,93 @@ move_dumb (int i, int j)
     case XVART:
     case INVISIBLESTALKER:
     case ICELIZARD:
-      if ((gtime & 1) == 1)
-	return;
-    };
-
-  /* dumb monsters move here */
-  /* set up range of spots to check.  instead of checking all points
-     around the monster, only check those closest to the player.  For
-     example, if the player is up and right of the monster, check only
-     the three spots up and right of the monster.
-   */
-  xl = i - 1;
-  yl = j - 1;
-  xh = i + 2;
-  yh = j + 2;
-  if (i < playerx)
-    xl++;
-  else if (i > playerx)
-    --xh;
-  if (j < playery)
-    yl++;
-  else if (j > playery)
-    --yh;
-
-  if (xl < 0)
-    xl = 0;
-  if (yl < 0)
-    yl = 0;
-  if (xh > MAXX)
-    xh = MAXX;			/* MAXX OK; loop check below is <, not <= */
-  if (yh > MAXY)
-    yh = MAXY;			/* MAXY OK; loop check below is <, not <= */
-
-  /* check all spots in the range.  find the one that is closest to
-     the player.  if the monster is already next to the player, exit
-     the check immediately.
-   */
-  tmpd = 10000;
-  tmpx = i;
-  tmpy = j;
-  for (k = xl; k < xh; k++)
-    for (m = yl; m < yh; m++)
-      if (k == playerx && m == playery)
-	{
-	  tmpd = 1;
-	  tmpx = k;
-	  tmpy = m;
-	  break;		/* exitloop */
-	}
-      else if ((item[k][m] != OWALL) &&
-	       (item[k][m] != OCLOSEDDOOR) &&
-	       ((mitem[k][m] == 0) || ((k == i) && (m == j))) &&
-	       ((mitem[i][j] != VAMPIRE) || (item[k][m] != OMIRROR)))
-	{
-	  tmp = (playerx - k) * (playerx - k) + (playery - m) * (playery - m);
-	  if (tmp < tmpd)
-	    {
-	      tmpd = tmp;
-	      tmpx = k;
-	      tmpy = m;
-	    }			/* end if */
-	}			/* end if */
-
-  /* we have finished checking the spaces around the monster.  if
-     any can be moved on and are closer to the player than the
-     current location, move the monster.
-   */
-  if ((tmpd < 10000) && ((tmpx != i) || (tmpy != j)))
-    {
-      mmove (i, j, tmpx, tmpy);
-      w1x[0] = tmpx;		/* for last monster hit */
-      w1y[0] = tmpy;
+        if ((gtime & 1) == 1)
+            return;
     }
-  else
+
+    /* search window */
+    xl = i - 1;
+    yl = j - 1;
+    xh = i + 2;
+    yh = j + 2;
+
+    if (i < playerx) xl++;
+    else if (i > playerx) --xh;
+
+    if (j < playery) yl++;
+    else if (j > playery) --yh;
+
+    if (xl < 0) xl = 0;
+    if (yl < 0) yl = 0;
+    if (xh > MAXX) xh = MAXX;
+    if (yh > MAXY) yh = MAXY;
+
+    /* movement:
+       pass 0 avoids water (land monsters only)
+       pass 1 allows water if no dry options exist
+    */
+    for (int pass = 0; pass < 2; pass++)
     {
-      w1x[0] = i;		/* for last monster hit */
-      w1y[0] = j;
+        tmpd = 10000;
+        tmpx = i;
+        tmpy = j;
+
+        for (k = xl; k < xh; k++)
+        {
+            for (m = yl; m < yh; m++)
+            {
+                /* attack player */
+                if (k == playerx && m == playery)
+                {
+                    tmpd = 1;
+                    tmpx = k;
+                    tmpy = m;
+                    break;
+                }
+
+                /* tile should be walkable */
+                if (item[k][m] == OWALL ||
+                    item[k][m] == OCLOSEDDOOR ||
+                    ((mitem[k][m] != 0) && !(k == i && m == j)))
+                    continue;
+
+                /* vampires avoid mirrors */
+                if (mid == VAMPIRE && item[k][m] == OMIRROR)
+                    continue;
+
+                /* land monsters avoid water */
+                if (pass == 0 &&
+                    !aquatic_monster(mid) &&
+                    water_tile(k, m))
+                    continue;
+
+                /* distance */
+                tmp = (playerx - k) * (playerx - k) +
+                    (playery - m) * (playery - m);
+
+                if (tmp < tmpd)
+                {
+                    tmpd = tmp;
+                    tmpx = k;
+                    tmpy = m;
+                }
+            }
+        }
+
+        /* valid move this pass, do it */
+        if ((tmpd < 10000) && ((tmpx != i) || (tmpy != j)))
+        {
+            mmove(i, j, tmpx, tmpy);
+            w1x[0] = tmpx;
+            w1y[0] = tmpy;
+            return;
+        }
     }
-}				/* end move_dumb() */
 
-
-
+    /* No movement */
+    w1x[0] = i;
+    w1y[0] = j;
+}
 
 /*
 *  mmove(x,y,xd,yd)    Function to actually perform the monster movement

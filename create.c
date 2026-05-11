@@ -526,7 +526,7 @@ makestream(int level)
                     continue;
                 }
 
-                item[sx][sy] = OPUDDLE;
+                item[sx][sy] = OWATER;
                 iarg[sx][sy] = 0;
             }
         }
@@ -621,8 +621,100 @@ makestream(int level)
             case OVOLUP:
                 continue;
             }
-            item[sx][sy] = OPUDDLE;
+            item[sx][sy] = OWATER;
             iarg[sx][sy] = 0;
+        }
+    }
+}
+
+/*
+* expand_puddle(void)
+*
+* subroutine to make a puddle of a given size and slowly expand it to simulate dripping.
+*/
+void expand_puddle(void)
+{
+    const int MAX_RADIUS = 4;
+
+    /* Chance per move that a puddle will grow */
+    if (rnd(6) != 1) return;
+
+    for (int y = 1; y < MAXY - 1; y++)
+    {
+        for (int x = 1; x < MAXX - 1; x++)
+        {
+            if (item[x][y] != OWATER)
+                continue;
+
+            /* valid growth directions */
+            int gx[4], gy[4], gcount = 0;
+
+            static const int dx[4] = { 0, 0, -1, 1 };
+            static const int dy[4] = { -1, 1, 0, 0 };
+
+            for (int d = 0; d < 4; d++)
+            {
+                int nx = x + dx[d];
+                int ny = y + dy[d];
+
+                /* bounds check */
+                if (nx < 1 || nx >= MAXX - 1 || ny < 1 || ny >= MAXY - 1)
+                    continue;
+
+                /* do NOT overwrite walls */
+                if (item[nx][ny] == OWALL)
+                    continue;
+
+                /* do NOT overwrite monsters */
+                if (mitem[nx][ny] != 0)
+                    continue;
+
+                /* do NOT overwrite special structures */
+                switch (item[nx][ny])
+                {
+                case OENTRANCE:
+                case ODNDSTORE:
+                case OSCHOOL:
+                case OBANK:
+                case OVOLDOWN:
+                case OHOME:
+                case OTRADEPOST:
+                case OLRS:
+                case OSTAIRSUP:
+                case OSTAIRSDOWN:
+                case OVOLUP:
+                    continue;
+                }
+
+                /* maximum radius */
+                int puddle_count = 0;
+                for (int yy = y - MAX_RADIUS; yy <= y + MAX_RADIUS; yy++)
+                    for (int xx = x - MAX_RADIUS; xx <= x + MAX_RADIUS; xx++)
+                        if (xx > 0 && xx < MAXX && yy > 0 && yy < MAXY)
+                            if (item[xx][yy] == OWATER)
+                                puddle_count++;
+
+                if (puddle_count > (MAX_RADIUS * MAX_RADIUS))
+                    continue;
+
+                /* growth direction */
+                gx[gcount] = nx;
+                gy[gcount] = ny;
+                gcount++;
+            }
+
+            /* if no valid directions then puddle is blocked */
+            if (gcount == 0)
+                continue;
+
+            /* valid direction at random */
+            int pick = rnd(gcount) - 1;
+            int nx = gx[pick];
+            int ny = gy[pick];
+
+            /* grow puddle */
+            item[nx][ny] = OWATER;
+            iarg[nx][ny] = 0;
         }
     }
 }
@@ -669,7 +761,7 @@ makepuddle(int level)
             {
                 for (x = px; x < px + puddle_width; x++)
                 {
-                    item[x][y] = OPUDDLE;
+                    item[x][y] = OWATER;
                     iarg[x][y] = 0;
                 }
             }
@@ -900,7 +992,7 @@ makeobject(int j)
         for (y = debug_puddle_y; y < debug_puddle_y + debug_puddle_size; ++y) {
             for (x = debug_puddle_x; x < debug_puddle_x + debug_puddle_size; ++x) {
                 if (x < MAXX - 1 && y < MAXY - 1) { // Boundary checks
-                    item[x][y] = OPUDDLE;
+                    item[x][y] = OWATER;
                     iarg[x][y] = 0; // Default argument
                     mitem[x][y] = 0; // Ensure no monster there
                     know[x][y] = KNOWALL; // Make it visible for debug

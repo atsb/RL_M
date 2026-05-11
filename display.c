@@ -638,7 +638,7 @@ show1cell(int x, int y)
     }
 
     /* Animated water that flickers per tile every 3 tics*/
-    if (item[x][y] == OPUDDLE)
+    if (item[x][y] == OWATER)
     {
         static const char flicker_chars[] = { '~', '=', '~', '=' };
         int idx = (x * 7 + y * 13 + water_anim_toggle) & 3;
@@ -759,7 +759,7 @@ if direction=0, don't move--just show where he is */
     playerx = k;
     playery = m;
 
-    if (i == OPUDDLE)
+    if (i == OWATER)
     {
         // Existing rusting logic for worn armor
         int worn_armor_idx = c[WEAR];

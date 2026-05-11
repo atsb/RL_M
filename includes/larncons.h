@@ -332,5 +332,5 @@
 #define OSPHTAILSMAN 87		/* tailsman of the sphere */
 #define OWWAND 88		/* wand of wonder */
 #define OPSTAFF 89		/* staff of power */
-#define OPUDDLE 93		/* puddle object */
+#define OWATER 93		/* puddle object */
 /* used up to 93. ~Gibbon */

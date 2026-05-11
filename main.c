@@ -302,17 +302,18 @@ main (int argc, char *argv[])
    */
   for (;;)
     {
-	  /* water animation every 3 tics (player moves) */
+	  /* water animation and puddle growth every 3 tics (player moves) */
 	  long now = time(NULL);
 	  if (now - last_water_anim >= 3)
 	  {
 		  last_water_anim = now;
 		  water_anim_toggle = !water_anim_toggle;
+		  expand_puddle();
 
 		  /* redraw only puddles for performance reasons (low cpu usage) */
 		  for (int yy = 0; yy < MAXY; yy++)
 			  for (int xx = 0; xx < MAXX; xx++)
-				  if (item[xx][yy] == OPUDDLE)
+				  if (item[xx][yy] == OWATER)
 					  show1cell(xx, yy);
 
 		  refresh();

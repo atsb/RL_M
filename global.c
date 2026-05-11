@@ -48,6 +48,9 @@
 #include "includes/scores.h"
 #include "includes/nap.h"
 
+int water_anim_toggle = 0;
+long last_water_anim = 0;
+
 /*
 * raiselevel()
 *

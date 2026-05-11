@@ -623,47 +623,36 @@ show1cell(int x, int y)
     /* see nothing if blind, but clear previous player position */
     if (c[BLINDCOUNT])
     {
-
         if (x == oldx && y == oldy)
             lprc(' ');
-
         return;
     }
 
+    /* Monster overrides */
     k = mitem[x][y];
-
     if (k)
     {
-
         lprc(monstnamelist[k]);
-
+        know[x][y] = KNOWALL;
+        return;
     }
-    else
+
+    /* Animated water that flickers per tile every 3 tics*/
+    if (item[x][y] == OPUDDLE)
     {
-
-        k = item[x][y];
-
-        switch (k)
-        {
-
-        case OWALL:
-        case 0:
-        case OIVTELETRAP:
-        case OTRAPARROWIV:
-        case OIVDARTRAP:
-        case OIVTRAPDOOR:
-            lprc(objnamelist[k]);
-            break;
-        default:
-            lprc(objnamelist[k]);
-        }
+        static const char flicker_chars[] = { '~', ' = ', '~', '=' };
+        int idx = (x * 7 + y * 13 + water_anim_toggle) & 3;
+        lprc(flicker_chars[idx]);
+        know[x][y] = KNOWALL;
+        return;
     }
 
+    /* Normal tile */
+    k = item[x][y];
+    lprc(objnamelist[k]);
 
-    /* we end up knowing about it */
     know[x][y] = KNOWALL;
 }
-
 
 
 

@@ -1,4 +1,4 @@
-/* create.c */
+﻿/* create.c */
 
 // #define PUDDLE_TEST // Uncomment or define via compiler flags to enable debug puddle
 
@@ -468,6 +468,164 @@ eat(int xx, int yy)
     }
 }
 
+/*
+* makestream(level)
+*
+* subroutine to make a long winding horizontal river
+* or a more subdued stream.
+*/
+static void
+makestream(int level)
+{
+    int x, y, dx, dy, len, i;
+    int width = 2;
+
+    /* random full horizontal river */
+    if (rnd(5) == 1)
+    {
+        /* random Y */
+        y = rnd(MAXY - 4) + 2;
+
+        /* start west edge */
+        for (x = 1; x < MAXX - 1; x++)
+        {
+            /* vertical wiggle */
+            if (rnd(10) < 2)
+            {
+                int wiggle = (rnd(2) ? 1 : -1);
+                if (y + wiggle > 1 && y + wiggle < MAXY - 2)
+                    y += wiggle;
+            }
+
+            /* create river */
+            for (i = 0; i < width; i++)
+            {
+                int sx = x;
+                int sy = y + i;
+
+                if (sx < 1 || sx >= MAXX - 1 || sy < 1 || sy >= MAXY - 1)
+                    continue;
+
+                if (mitem[sx][sy] != 0)
+                    continue;
+
+                /* avoid destroying structures */
+                switch (item[sx][sy])
+                {
+                case OENTRANCE:
+                case ODNDSTORE:
+                case OSCHOOL:
+                case OBANK:
+                case OVOLDOWN:
+                case OHOME:
+                case OTRADEPOST:
+                case OLRS:
+                case OSTAIRSUP:
+                case OSTAIRSDOWN:
+                case OVOLUP:
+                    continue;
+                }
+
+                item[sx][sy] = OPUDDLE;
+                iarg[sx][sy] = 0;
+            }
+        }
+
+        return; /* end river */
+    }
+
+    /* snaky streams */
+    int max_len = 10 + rnd(25);
+
+    /* random starting point */
+    x = rnd(MAXX - 4) + 2;
+    y = rnd(MAXY - 4) + 2;
+
+    /* randomised dominancy*/
+    int dominant = rnd(2);
+
+    /* dominant direction */
+    if (dominant == 0) {
+        dx = (rnd(2) ? 1 : -1);
+        dy = 0;
+    }
+    else {
+        dx = 0;
+        dy = (rnd(2) ? 1 : -1);
+    }
+
+    for (len = 0; len < max_len; len++)
+    {
+        /* 70% chance to just go straight */
+        if (rnd(10) < 7) {
+            /* this may look dead but has a
+            chance to prevent the wiggle,
+            so it goes straight */
+        }
+        /* 20% chance to wiggle */
+        else if (rnd(10) < 9) {
+            if (dominant == 0) {
+                /* horizontal stream up/down */
+                dy = (rnd(2) ? 1 : -1);
+                dx = (rnd(2) ? 1 : -1); /* diagonal */
+            }
+            else {
+                /* vertical stream left/right */
+                dx = (rnd(2) ? 1 : -1);
+                dy = (rnd(2) ? 1 : -1);
+            }
+        }
+        /* 10% chance for 90 degrees turn */
+        else {
+            int t = dx;
+            dx = -dy;
+            dy = t;
+        }
+
+        x += dx;
+        y += dy;
+
+        /* boundary check analysis */
+        if (x < 1 || x >= MAXX - 2 || y < 1 || y >= MAXY - 2)
+            break;
+
+        /* create stream */
+        for (i = 0; i < width; i++)
+        {
+            int sx = x;
+            int sy = y;
+
+            if (dx != 0) sy += i;  /* horizontal */
+            else
+                sx += i; /* vertical */
+
+            if (sx < 1 || sx >= MAXX - 1 || sy < 1 || sy >= MAXY - 1)
+                continue;
+
+            if (mitem[sx][sy] != 0)
+                continue;
+
+            /* avoid overwriting structures */
+            switch (item[sx][sy])
+            {
+            case OENTRANCE:
+            case ODNDSTORE:
+            case OSCHOOL:
+            case OBANK:
+            case OVOLDOWN:
+            case OHOME:
+            case OTRADEPOST:
+            case OLRS:
+            case OSTAIRSUP:
+            case OSTAIRSDOWN:
+            case OVOLUP:
+                continue;
+            }
+            item[sx][sy] = OPUDDLE;
+            iarg[sx][sy] = 0;
+        }
+    }
+}
 
 /*
 * makepuddle(level)
@@ -838,10 +996,15 @@ makeobject(int j)
         // And perhaps not on special levels if desired, e.g.
         // if (j > 0 && j != MAXLEVEL -1 && j != MAXLEVEL + MAXVLEVEL - 1)
         int num_puddles = rnd(3) + 1; // Generate 1 to 3 puddles
+        int num_streams = rnd(2); // Generate 1 to 2 streams
         int i;
         for (i = 0; i < num_puddles; i++)
         {
             makepuddle(j);
+        }
+        for (i = 0; i < num_streams; i++)
+        {
+            makestream(j);
         }
     }
 }

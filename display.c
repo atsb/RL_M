@@ -640,7 +640,7 @@ show1cell(int x, int y)
     /* Animated water that flickers per tile every 3 tics*/
     if (item[x][y] == OPUDDLE)
     {
-        static const char flicker_chars[] = { '~', ' = ', '~', '=' };
+        static const char flicker_chars[] = { '~', '=', '~', '=' };
         int idx = (x * 7 + y * 13 + water_anim_toggle) & 3;
         lprc(flicker_chars[idx]);
         know[x][y] = KNOWALL;

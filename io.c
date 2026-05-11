@@ -58,8 +58,8 @@
 #include <curses.h>
 
 #if defined WINDOWS_VS
+#define _INC_CONIO
 #include <io.h>
-#include <conio.h>
 #endif
 
 #include <sys/stat.h>

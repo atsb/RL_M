@@ -948,12 +948,12 @@ enter_name (void)
   scbr ();
 }
 
-void 
-cursor_block (void) 
+void
+cursor_block(void)
 {
-    standout();
-    addch(' ');
-    standend();
-    curs_set(1);
-}
+    curs_set(0);
 
+    attron(A_REVERSE);
+    addch(' ');
+    attroff(A_REVERSE);
+}

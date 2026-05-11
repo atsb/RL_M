@@ -681,8 +681,6 @@ showplayer(void)
     cursor(playerx + 1, playery + 1);
     cursor_block();
     cursor(playerx + 1, playery + 1);
-//    lprc(' ');
-//    cursor(playerx + 1, playery + 1);
     oldx = playerx;
     oldy = playery;
     refresh();

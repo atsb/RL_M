@@ -220,10 +220,10 @@ main (int argc, char *argv[])
 #if defined WINDOWS_VS
 		  MessageBox(NULL, L"-s = Show scores\n-i = Show all scores (including inventory at time of death)\n-0 to -9 = Difficulty setting\n-h or -? = This help text", L"HELP TEXT", MB_OK);
 #else
-	    ansiterm_clean_up ();
-	    puts (cmdhelp);
+	    lprcat(cmdhelp);
 		lprcat("Press any key to exit...");
 		ttgetch();
+	    ansiterm_clean_up ();
 #endif
 		exit (EXIT_SUCCESS);
 	  default:

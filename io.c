@@ -83,7 +83,7 @@
 #include "includes/tgoto.h"
 
 #define LINBUFSIZE 128		/* size of the lgetw() and lgetl() buffer       */
-int lfd;			/*  output file numbers     */
+int lfd = 0;		/*  output file numbers     */
 int fd;				/*  input file numbers      */
 static int curx = 0;
 static int cury = 0;
@@ -293,7 +293,7 @@ static int scrline = 18;	/* line # for wraparound instead of scrolling if no DL 
 void
 lprc (char ch)
 {
-    if (lfd != 1) {
+    if (lfd > 2) {
       *lpnt++ = ch;
 
       if (lpnt >= lpend)
@@ -698,7 +698,7 @@ lwclose (void)
 void
 lprcat (char *str)
 {
-    if (lfd != 1) {
+    if (lfd > 2) {
       char *str2;
       
       if (lpnt >= lpend)
@@ -840,7 +840,7 @@ void
 lflush (void)
 {
     int lpoint;
-      if (lfd != 1)
+      if (lfd > 2)
 	{
         if ((lpoint = lpnt - lpbuf) > 0) {
 #ifdef EXTRA
@@ -877,7 +877,7 @@ static int io_index = 0;
 static void
 flush_buf (void)
 {
-      if (lfd != 1)
+      if (lfd > 2)
 	{
 #if defined WINDOWS_VS
 		_write(lfd, outbuf, io_index);

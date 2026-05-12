@@ -97,7 +97,8 @@ jobs:
           --output type=local,dest=./out-${SAFE} \
           -f Dockerfile.cross .
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: larn-${{ matrix.platform }}
+    - name: Tar output
+      run: |
+        SAFE="${{ matrix.platform }}"
+        SAFE="${SAFE//\//_}"
+        tar -czf larn-${SAFE}.tar.gz -C out-${SAFE} .

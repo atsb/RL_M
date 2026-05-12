@@ -56,11 +56,12 @@
 #include <time.h> 
 #include <ctype.h>
 #include <curses.h>
-
+#include <unistd.h>
 #include <sys/stat.h>
 #include <setjmp.h>
 #include <fcntl.h>		/* For O_BINARY */
 
+#include "includes/larn.h"
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"
@@ -69,8 +70,6 @@
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
 #endif
-
-#include <unistd.h>
 
 #include "includes/display.h"
 #include "includes/global.h"

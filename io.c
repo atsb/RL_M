@@ -71,7 +71,7 @@
 #include "includes/larnfunc.h"
 #include "includes/ansiterm.h"
 
-#if defined NIX
+#if !defined(_WIN32)
 #include <sys/ioctl.h>
 #include <unistd.h>
 #ifndef FIONREAD

@@ -62,9 +62,6 @@
 #include <fcntl.h>		/* For O_BINARY */
 
 #include "includes/larn.h"
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
 #include "includes/ansiterm.h"
 
 #if !defined(_WIN32)

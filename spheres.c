@@ -38,7 +38,7 @@ newsphere (int x, int y, int dir, int life)
   struct sphere *sp;
 
   if (((sp = (struct sphere *) malloc (sizeof (struct sphere)))) == 0)
-    return (cdesc[SPHCAST]);	/* can't malloc, therefore failure */
+    return (c[SPHCAST]);	/* can't malloc, therefore failure */
   if (dir >= 9)
     dir = 0;			/* no movement if direction not found */
   if (level == 0)
@@ -60,7 +60,7 @@ newsphere (int x, int y, int dir, int life)
       cursors ();
       lprintf ("\nThe %s dispels the sphere!", monster[m].name);
       rmsphere (x, y);		/* remove any spheres that are here */
-      return (cdesc[SPHCAST]);
+      return (c[SPHCAST]);
     }
   if (m == DISENCHANTRESS)	/* disenchantress cancels spheres */
     {
@@ -69,9 +69,9 @@ newsphere (int x, int y, int dir, int life)
 	       monster[m].name);
     boom:sphboom (x, y);	/* blow up stuff around sphere */
       rmsphere (x, y);		/* remove any spheres that are here */
-      return (cdesc[SPHCAST]);
+      return (c[SPHCAST]);
     }
-  if (cdesc[CANCELLATION])	/* cancellation cancels spheres */
+  if (c[CANCELLATION])	/* cancellation cancels spheres */
     {
       cursors ();
       lprcat
@@ -111,7 +111,7 @@ newsphere (int x, int y, int dir, int life)
       sp->p = spheres;
       spheres = sp;
     }
-  return (++cdesc[SPHCAST]);	/* one more sphere in the world */
+  return (++c[SPHCAST]);	/* one more sphere in the world */
 }
 
 
@@ -136,7 +136,7 @@ rmsphere (int x, int y)
 	  item[x][y] = mitem[x][y] = 0;
 	  know[x][y] = 1;
 	  show1cell (x, y);	/* show the now missing sphere */
-	  --cdesc[SPHCAST];
+	  --c[SPHCAST];
 	  if (sp == spheres)
 	    {
 	      sp2 = sp;
@@ -152,7 +152,7 @@ rmsphere (int x, int y)
 	}
 
   /* return number of spheres in the world */
-  return cdesc[SPHCAST];
+  return c[SPHCAST];
 }
 
 
@@ -168,10 +168,10 @@ sphboom (int x, int y)
 {
   int i, j;
 
-  if (cdesc[HOLDMONST])
-    cdesc[HOLDMONST] = 1;
-  if (cdesc[CANCELLATION])
-    cdesc[CANCELLATION] = 1;
+  if (c[HOLDMONST])
+    c[HOLDMONST] = 1;
+  if (c[CANCELLATION])
+    c[CANCELLATION] = 1;
   for (j = max_math_larn (1, x - 2); j < min_math_larn (x + 3, MAXX - 1); j++)
     for (i = max_math_larn (1, y - 2); i < min_math_larn (y + 3, MAXY - 1); i++)
       {
@@ -233,7 +233,7 @@ movsphere (void)
 	  rmsphere (x, y);	/* delete sphere */
 	  continue;
 	}
-      switch (rnd ((int) max_math_larn (7, cdesc[INTELLIGENCE] >> 1)))	/* time to move the sphere */
+      switch (rnd ((int) max_math_larn (7, c[INTELLIGENCE] >> 1)))	/* time to move the sphere */
 	{
 	case 1:
 	case 2:		/* change direction to a random one */

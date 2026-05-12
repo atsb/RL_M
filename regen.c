@@ -19,7 +19,7 @@ regen (void)
   int i, flag;
   long *d;
 
-  d = cdesc;
+  d = c;
 #ifdef EXTRA
   d[MOVESMADE]++;
 #endif

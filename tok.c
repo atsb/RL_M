@@ -60,7 +60,7 @@ yylex (void)
   lflush ();
   for (;;)
     {
-      cdesc[BYTESIN]++;
+      c[BYTESIN]++;
 
       cc = ttgetch ();
 
@@ -113,28 +113,28 @@ sethard (int hard)
   int i;
   struct monst *mp;
 
-  j = cdesc[HARDGAME];
+  j = c[HARDGAME];
   hashewon ();
 
-  /* don't set cdesc[HARDGAME] if restoring game */
+  /* don't set c[HARDGAME] if restoring game */
   if (restorflag == 0)
     {
 
       if (hard >= 0)
 	{
 
-	  cdesc[HARDGAME] = hard;
+	  c[HARDGAME] = hard;
 	}
 
     }
   else
     {
 
-      /* set cdesc[HARDGAME] to proper value if restoring game */
-      cdesc[HARDGAME] = j;
+      /* set c[HARDGAME] to proper value if restoring game */
+      c[HARDGAME] = j;
     }
 
-  k = cdesc[HARDGAME];
+  k = c[HARDGAME];
 
   if (k == 0)
     {

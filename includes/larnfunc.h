@@ -1,4 +1,10 @@
-
+#if defined(_WIN32) && !defined(WINDOWS_VS)
+#include <ncursesw/curses.h>
+#elif defined (WINDOWS_VS)
+#include <curses.h>
+#else
+#include <curses.h>
+#endif
 
 /*
 *
@@ -13,19 +19,19 @@
 #define newpotion() (potprob[rund(41)])
 
 /* macro to return the + points on created leather armor */
-#define newleather() (nlpts[rund(cdesc[HARDGAME]?13:15)])
+#define newleather() (nlpts[rund(c[HARDGAME]?13:15)])
 
 /* macro to return the + points on chain armor */
 #define newchain() (nch[rund(10)])
 
 /* macro to return + points on plate armor */
-#define newplate() (nplt[rund(cdesc[HARDGAME]?4:12)])
+#define newplate() (nplt[rund(c[HARDGAME]?4:12)])
 
 /* macro to return + points on new daggers */
 #define newdagger() (ndgg[rund(13)])
 
 /* macro to return + points on new swords */
-#define newsword() (nsw[rund(cdesc[HARDGAME]?6:13)])
+#define newsword() (nsw[rund(c[HARDGAME]?6:13)])
 
 /* macro to destroy object at present location */
 #define forget() (item[playerx][playery]=know[playerx][playery]=0)
@@ -34,10 +40,10 @@
 #define disappear(x,y) (mitem[x][y]=know[x][y]=0)
 
 /* macro to turn on bold display for the terminal */
-#define setbold() (*lpnt++ = ST_START)
+#define setbold() attron(A_REVERSE)
 
 /* macro to turn off bold display for the terminal */
-#define resetbold() (*lpnt++ = ST_END)
+#define resetbold() attroff(A_REVERSE)
 
 /* macro to setup the scrolling region for the terminal */
 #define setscroll() enable_scroll=1
@@ -46,10 +52,10 @@
 #define resetscroll() enable_scroll=0
 
 /* macro to clear the screen and home the cursor */
-#define screen_clear() (*lpnt++ =CLEAR, regen_bottom=TRUE)
+#define screen_clear() do { clear(); cursor(1,1); } while(0)
 
 /* macro to clear to end of line */
-#define cltoeoln() (*lpnt++ = CL_LINE)
+#define cltoeoln() clrtoeol()
 
 /* macros to seed the random number generator */
 /* This is needed on Windows which throws an error due to 'random' not being defined on MingW.  I'll clean it up later. -Gibbon */

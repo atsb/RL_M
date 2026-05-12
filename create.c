@@ -1,4 +1,4 @@
-/* create.c */
+﻿/* create.c */
 
 // #define PUDDLE_TEST // Uncomment or define via compiler flags to enable debug puddle
 
@@ -39,19 +39,19 @@ makeplayer(void)
     screen_clear();
 
     /*  start player off with 15 hit points */
-    cdesc[HPMAX] = cdesc[HP] = 10;
+    c[HPMAX] = c[HP] = 10;
 
     /*  player starts at level one          */
-    cdesc[LEVEL] = 1;
+    c[LEVEL] = 1;
 
     /*  total # spells starts off as 3  */
-    cdesc[SPELLMAX] = cdesc[SPELLS] = 1;
+    c[SPELLMAX] = c[SPELLS] = 1;
 
     /* start regeneration correctly */
-    cdesc[REGENCOUNTER] = 16;
-    cdesc[ECOUNTER] = 96;
+    c[REGENCOUNTER] = 16;
+    c[ECOUNTER] = 96;
 
-    cdesc[SHIELD] = cdesc[WEAR] = cdesc[WIELD] = -1;
+    c[SHIELD] = c[WEAR] = c[WIELD] = -1;
 
     for (i = 0; i < 26; i++)
     {
@@ -62,14 +62,14 @@ makeplayer(void)
     /* he knows protection, magic missile */
     spelknow[0] = spelknow[1] = 1;
 
-    if (cdesc[HARDGAME] <= 0)
+    if (c[HARDGAME] <= 0)
     {
 
         iven[0] = OLEATHER;
         iven[1] = ODAGGER;
         iven[2] = 0;
-        ivenarg[1] = ivenarg[0] = cdesc[WEAR] = 0;
-        cdesc[WIELD] = 1;
+        ivenarg[1] = ivenarg[0] = c[WEAR] = 0;
+        c[WIELD] = 1;
     }
 
     playerx = rnd(MAXX - 2);
@@ -81,7 +81,7 @@ makeplayer(void)
     for (i = 0; i < 6; i++)
     {
 
-        cdesc[i] = 12;
+        c[i] = 12;
     }
 
     recalc();
@@ -141,6 +141,159 @@ newcavelevel(int x)
                 know[i][j] = KNOWALL;
 }
 
+/*
+makecorridor_caverns(int x1, int y1, int x2, int y2)
+
+subroutine to make the caverns corridoor connections.
+*/
+static void
+makecorridor_caverns(int x1, int y1, int x2, int y2)
+{
+    int x = x1, y = y1;
+    int steps = 0;
+
+    while ((x != x2 || y != y2) && steps < 500) {
+        if (x > 0 && x < MAXX - 1 && y > 0 && y < MAXY - 1)
+            item[x][y] = 0;
+
+        if (rnd(100) < 60) {
+            if (x < x2) x++;
+            else if (x > x2) x--;
+            else if (y < y2) y++;
+            else if (y > y2) y--;
+        }
+        else {
+            if (y < y2) y++;
+            else if (y > y2) y--;
+            else if (x < x2) x++;
+            else if (x > x2) x--;
+        }
+        steps++;
+    }
+}
+
+/*
+makemaze_caverns(level)
+
+subroutine to make the caverns for a given level.
+*/
+static void
+makemaze_caverns(int k)
+{
+    int i, j;
+
+    /* SEA OF WALL!!! */
+    for (i = 0; i < MAXY; i++)
+        for (j = 0; j < MAXX; j++)
+            item[j][i] = OWALL;
+
+    /* solid outer boundary */
+    for (i = 0; i < MAXY; i++) {
+        item[0][i] = OWALL;
+        item[MAXX - 1][i] = OWALL;
+    }
+    for (j = 0; j < MAXX; j++) {
+        item[j][0] = OWALL;
+        item[j][MAXY - 1] = OWALL;
+    }
+
+    /* 3x3 grid */
+    int cell_w = (MAXX - 2) / 3;
+    int cell_h = (MAXY - 2) / 3;
+    if (cell_w < 6) cell_w = 6;
+    if (cell_h < 6) cell_h = 6;
+
+    int rx[3][3], ry[3][3], rw[3][3], rh[3][3];
+    int gone[3][3];
+
+    /* gone rooms */
+    for (int gy = 0; gy < 3; gy++)
+        for (int gx = 0; gx < 3; gx++)
+            gone[gx][gy] = (rnd(4) == 0);
+
+    /* carve rooms */
+    for (int gy = 0; gy < 3; gy++) {
+        for (int gx = 0; gx < 3; gx++) {
+
+            if (gone[gx][gy]) {
+                rw[gx][gy] = rh[gx][gy] = 0;
+                continue;
+            }
+
+            int max_w = cell_w - 2;
+            int max_h = cell_h - 2;
+            if (max_w < 4) max_w = 4;
+            if (max_h < 4) max_h = 4;
+
+            rw[gx][gy] = rnd(max_w - 3) + 4;
+            rh[gx][gy] = rnd(max_h - 3) + 4;
+
+            int cell_x = 1 + gx * cell_w;
+            int cell_y = 1 + gy * cell_h;
+
+            int off_x_max = cell_w - rw[gx][gy];
+            int off_y_max = cell_h - rh[gx][gy];
+            if (off_x_max < 1) off_x_max = 1;
+            if (off_y_max < 1) off_y_max = 1;
+
+            rx[gx][gy] = cell_x + rnd(off_x_max);
+            ry[gx][gy] = cell_y + rnd(off_y_max);
+
+            /* carve interior */
+            for (i = 0; i < rh[gx][gy]; i++)
+                for (j = 0; j < rw[gx][gy]; j++) {
+                    int x = rx[gx][gy] + j;
+                    int y = ry[gx][gy] + i;
+                    if (x > 0 && x < MAXX - 1 && y > 0 && y < MAXY - 1)
+                        item[x][y] = 0;
+                }
+        }
+    }
+
+    /* horizontal connections */
+    for (int gy = 0; gy < 3; gy++) {
+        for (int gx = 0; gx < 2; gx++) {
+            if (rw[gx][gy] && rw[gx + 1][gy]) {
+                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                int x2 = rx[gx + 1][gy] + rw[gx + 1][gy] / 2;
+                int y2 = ry[gx + 1][gy] + rh[gx + 1][gy] / 2;
+                makecorridor_caverns(x1, y1, x2, y2);
+            }
+        }
+    }
+
+    /* vertical connections */
+    for (int gx = 0; gx < 3; gx++) {
+        for (int gy = 0; gy < 2; gy++) {
+            if (rh[gx][gy] && rh[gx][gy + 1]) {
+                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                int x2 = rx[gx][gy + 1] + rw[gx][gy + 1] / 2;
+                int y2 = ry[gx][gy + 1] + rh[gx][gy + 1] / 2;
+                makecorridor_caverns(x1, y1, x2, y2);
+            }
+        }
+    }
+
+    /* diagonal connections */
+    for (int gy = 0; gy < 2; gy++) {
+        for (int gx = 0; gx < 2; gx++) {
+            if (rw[gx][gy] && rw[gx + 1][gy + 1] && rnd(100) < 40) {
+                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                int x2 = rx[gx + 1][gy + 1] + rw[gx + 1][gy + 1] / 2;
+                int y2 = ry[gx + 1][gy + 1] + rh[gx + 1][gy + 1] / 2;
+                makecorridor_caverns(x1, y1, x2, y2);
+            }
+        }
+    }
+
+    if (k == 1)
+    {
+        item[33][MAXY - 1] = OENTRANCE;
+    }
+}
 
 /*
 makemaze(level)
@@ -155,6 +308,12 @@ makemaze(int k)
 {
     int i, j, tmp;
     int z;
+
+    /* ~30% chance to generate a caverns style maze */
+    if (k > 0 && k != MAXLEVEL - 1 && rnd(100) < 30) {
+        makemaze_caverns(k);
+        return;
+    }
 
     if (k > 1
         && (rnd(17) <= 4 || k == MAXLEVEL - 1
@@ -309,6 +468,257 @@ eat(int xx, int yy)
     }
 }
 
+/*
+* makestream(level)
+*
+* subroutine to make a long winding horizontal river
+* or a more subdued stream.
+*/
+static void
+makestream(int level)
+{
+    int x, y, dx, dy, len, i;
+    int width = 2;
+
+    /* random full horizontal river */
+    if (rnd(5) == 1)
+    {
+        /* random Y */
+        y = rnd(MAXY - 4) + 2;
+
+        /* start west edge */
+        for (x = 1; x < MAXX - 1; x++)
+        {
+            /* vertical wiggle */
+            if (rnd(10) < 2)
+            {
+                int wiggle = (rnd(2) ? 1 : -1);
+                if (y + wiggle > 1 && y + wiggle < MAXY - 2)
+                    y += wiggle;
+            }
+
+            /* create river */
+            for (i = 0; i < width; i++)
+            {
+                int sx = x;
+                int sy = y + i;
+
+                if (sx < 1 || sx >= MAXX - 1 || sy < 1 || sy >= MAXY - 1)
+                    continue;
+
+                if (mitem[sx][sy] != 0)
+                    continue;
+
+                /* avoid destroying structures */
+                switch (item[sx][sy])
+                {
+                case OENTRANCE:
+                case ODNDSTORE:
+                case OSCHOOL:
+                case OBANK:
+                case OVOLDOWN:
+                case OHOME:
+                case OTRADEPOST:
+                case OLRS:
+                case OSTAIRSUP:
+                case OSTAIRSDOWN:
+                case OVOLUP:
+                    continue;
+                }
+
+                item[sx][sy] = OWATER;
+                iarg[sx][sy] = 0;
+            }
+        }
+
+        return; /* end river */
+    }
+
+    /* snaky streams */
+    int max_len = 10 + rnd(25);
+
+    /* random starting point */
+    x = rnd(MAXX - 4) + 2;
+    y = rnd(MAXY - 4) + 2;
+
+    /* randomised dominancy*/
+    int dominant = rnd(2);
+
+    /* dominant direction */
+    if (dominant == 0) {
+        dx = (rnd(2) ? 1 : -1);
+        dy = 0;
+    }
+    else {
+        dx = 0;
+        dy = (rnd(2) ? 1 : -1);
+    }
+
+    for (len = 0; len < max_len; len++)
+    {
+        /* 70% chance to just go straight */
+        if (rnd(10) < 7) {
+            /* this may look dead but has a
+            chance to prevent the wiggle,
+            so it goes straight */
+        }
+        /* 20% chance to wiggle */
+        else if (rnd(10) < 9) {
+            if (dominant == 0) {
+                /* horizontal stream up/down */
+                dy = (rnd(2) ? 1 : -1);
+                dx = (rnd(2) ? 1 : -1); /* diagonal */
+            }
+            else {
+                /* vertical stream left/right */
+                dx = (rnd(2) ? 1 : -1);
+                dy = (rnd(2) ? 1 : -1);
+            }
+        }
+        /* 10% chance for 90 degrees turn */
+        else {
+            int t = dx;
+            dx = -dy;
+            dy = t;
+        }
+
+        x += dx;
+        y += dy;
+
+        /* boundary check analysis */
+        if (x < 1 || x >= MAXX - 2 || y < 1 || y >= MAXY - 2)
+            break;
+
+        /* create stream */
+        for (i = 0; i < width; i++)
+        {
+            int sx = x;
+            int sy = y;
+
+            if (dx != 0) sy += i;  /* horizontal */
+            else
+                sx += i; /* vertical */
+
+            if (sx < 1 || sx >= MAXX - 1 || sy < 1 || sy >= MAXY - 1)
+                continue;
+
+            if (mitem[sx][sy] != 0)
+                continue;
+
+            /* avoid overwriting structures */
+            switch (item[sx][sy])
+            {
+            case OENTRANCE:
+            case ODNDSTORE:
+            case OSCHOOL:
+            case OBANK:
+            case OVOLDOWN:
+            case OHOME:
+            case OTRADEPOST:
+            case OLRS:
+            case OSTAIRSUP:
+            case OSTAIRSDOWN:
+            case OVOLUP:
+                continue;
+            }
+            item[sx][sy] = OWATER;
+            iarg[sx][sy] = 0;
+        }
+    }
+}
+
+/*
+* expand_puddle(void)
+*
+* subroutine to make a puddle of a given size and slowly expand it to simulate dripping.
+*/
+void
+expand_puddle(void)
+{
+    const int MAX_RADIUS = 4;
+
+    /* Chance per move that a puddle will grow */
+    if (rnd(6) != 1) return;
+
+    for (int y = 1; y < MAXY - 1; y++)
+    {
+        for (int x = 1; x < MAXX - 1; x++)
+        {
+            if (item[x][y] != OWATER)
+                continue;
+
+            /* valid growth directions */
+            int gx[4], gy[4], gcount = 0;
+
+            static const int dx[4] = { 0, 0, -1, 1 };
+            static const int dy[4] = { -1, 1, 0, 0 };
+
+            for (int d = 0; d < 4; d++)
+            {
+                int nx = x + dx[d];
+                int ny = y + dy[d];
+
+                /* bounds check */
+                if (nx < 1 || nx >= MAXX - 1 || ny < 1 || ny >= MAXY - 1)
+                    continue;
+
+                /* do NOT overwrite walls */
+                if (item[nx][ny] == OWALL)
+                    continue;
+
+                /* do NOT overwrite monsters */
+                if (mitem[nx][ny] != 0)
+                    continue;
+
+                /* do NOT overwrite special structures */
+                switch (item[nx][ny])
+                {
+                case OENTRANCE:
+                case ODNDSTORE:
+                case OSCHOOL:
+                case OBANK:
+                case OVOLDOWN:
+                case OHOME:
+                case OTRADEPOST:
+                case OLRS:
+                case OSTAIRSUP:
+                case OSTAIRSDOWN:
+                case OVOLUP:
+                    continue;
+                }
+
+                /* maximum radius */
+                int puddle_count = 0;
+                for (int yy = y - MAX_RADIUS; yy <= y + MAX_RADIUS; yy++)
+                    for (int xx = x - MAX_RADIUS; xx <= x + MAX_RADIUS; xx++)
+                        if (xx > 0 && xx < MAXX && yy > 0 && yy < MAXY)
+                            if (item[xx][yy] == OWATER)
+                                puddle_count++;
+
+                if (puddle_count > (MAX_RADIUS * MAX_RADIUS))
+                    continue;
+
+                /* growth direction */
+                gx[gcount] = nx;
+                gy[gcount] = ny;
+                gcount++;
+            }
+
+            /* if no valid directions then puddle is blocked */
+            if (gcount == 0)
+                continue;
+
+            /* valid direction at random */
+            int pick = rnd(gcount) - 1;
+            int nx = gx[pick];
+            int ny = gy[pick];
+
+            /* grow puddle */
+            item[nx][ny] = OWATER;
+            iarg[nx][ny] = 0;
+        }
+    }
+}
 
 /*
 * makepuddle(level)
@@ -352,7 +762,7 @@ makepuddle(int level)
             {
                 for (x = px; x < px + puddle_width; x++)
                 {
-                    item[x][y] = OPUDDLE;
+                    item[x][y] = OWATER;
                     iarg[x][y] = 0;
                 }
             }
@@ -522,7 +932,7 @@ troom(int lv, int xsize, int ysize, int tx, int ty, int glyph)
     tp2 = playery;
     playery = ty + (ysize >> 1);
 
-    if (cdesc[HARDGAME] < 2)
+    if (c[HARDGAME] < 2)
     {
         for (playerx = tx + 1; playerx <= tx + xsize - 2; playerx += 2)
         {
@@ -572,25 +982,6 @@ makeobject(int j)
         fillroom(OHOME, 0);	/*  the players home & family   */
         fillroom(OTRADEPOST, 0);	/*  the trading post            */
         fillroom(OLRS, 0);	/*  the larn revenue service    */
-
-#ifdef PUDDLE_TEST
-        // Add a debug puddle in town
-        int debug_puddle_x = 20;
-        int debug_puddle_y = 5;
-        int debug_puddle_size = 3;
-        int x, y;
-
-        for (y = debug_puddle_y; y < debug_puddle_y + debug_puddle_size; ++y) {
-            for (x = debug_puddle_x; x < debug_puddle_x + debug_puddle_size; ++x) {
-                if (x < MAXX - 1 && y < MAXY - 1) { // Boundary checks
-                    item[x][y] = OPUDDLE;
-                    iarg[x][y] = 0; // Default argument
-                    mitem[x][y] = 0; // Ensure no monster there
-                    know[x][y] = KNOWALL; // Make it visible for debug
-                }
-            }
-        }
-#endif // PUDDLE_TEST
 
         return;
     }
@@ -654,12 +1045,12 @@ makeobject(int j)
     froom(2, ORINGOFEXTRA, 0);	/* ring of extra regen      */
     froom(3, ONOTHEFT, 0);	/* device of antitheft      */
     froom(2, OSWORDofSLASHING, 0);	/* sword of slashing */
-    if (cdesc[BESSMANN] == 0)
+    if (c[BESSMANN] == 0)
     {
         froom(4, OHAMMER, 0);	/*Bessman's flailing hammer */
-        cdesc[BESSMANN] = 1;
+        c[BESSMANN] = 1;
     }
-    if (cdesc[HARDGAME] < 3 || (rnd(4) == 3))
+    if (c[HARDGAME] < 3 || (rnd(4) == 3))
     {
         if (j > 3)
         {
@@ -679,10 +1070,15 @@ makeobject(int j)
         // And perhaps not on special levels if desired, e.g.
         // if (j > 0 && j != MAXLEVEL -1 && j != MAXLEVEL + MAXVLEVEL - 1)
         int num_puddles = rnd(3) + 1; // Generate 1 to 3 puddles
+        int num_streams = rnd(2); // Generate 1 to 2 streams
         int i;
         for (i = 0; i < num_puddles; i++)
         {
             makepuddle(j);
+        }
+        for (i = 0; i < num_streams; i++)
+        {
+            makestream(j);
         }
     }
 }
@@ -728,7 +1124,7 @@ fillroom(int what, int arg)
     int x, y;
 
 #ifdef EXTRA
-    cdesc[FILLROOM]++;
+    c[FILLROOM]++;
 #endif
 
     x = rnd(MAXX - 2);
@@ -739,7 +1135,7 @@ fillroom(int what, int arg)
 
 #ifdef EXTRA
         /* count up these random walks */
-        cdesc[RANDOMWALK]++;
+        c[RANDOMWALK]++;
 #endif
 
         x += rnd(3) - 2;
@@ -818,7 +1214,7 @@ sethp(int flg)
     if (level == 0)
     {
 
-        cdesc[TELEFLAG] = 0;
+        c[TELEFLAG] = 0;
 
         return;
     }

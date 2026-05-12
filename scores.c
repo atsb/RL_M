@@ -132,7 +132,7 @@ static int
 readboard (void)
 {
 	FILE *pFile;
-	int b;
+	size_t b;
 
 	pFile = fopen(scorefile, "rb");
 	if (pFile == NULL)
@@ -168,7 +168,7 @@ static int
 writeboard (void)
 {
 	FILE *pFile;
-	int b;
+	size_t b;
 	set_score_output();
 
 	pFile = fopen(scorefile, "wb");
@@ -228,7 +228,7 @@ makeboard (void)
 /*
 *  hashewon()   Function to return 1 if player has won a game before, else 0
 *
-*  This function also sets cdesc[HARDGAME] to appropriate value -- 0 if not a
+*  This function also sets c[HARDGAME] to appropriate value -- 0 if not a
 *  winner, otherwise the next level of difficulty listed in the winners
 *  scoreboard.  This function also sets outstanding_taxes to the value in
 *  the winners scoreboard.
@@ -238,14 +238,14 @@ hashewon (void)
 {
   int i;
 
-  cdesc[HARDGAME] = 0;
+  c[HARDGAME] = 0;
   if (readboard () < 0)
     return (0);			/* can't find scoreboard */
   for (i = 0; i < SCORESIZE; i++)	/* search through winners scoreboard */
     if (strcmp (winr[i].who, logname) == 0)
       if (winr[i].score > 0)
 	{
-	  cdesc[HARDGAME] = winr[i].hardlev + 1;
+	  c[HARDGAME] = winr[i].hardlev + 1;
 	  /* outstanding_taxes = winr[i].taxes; */
 	  return (1);
 	}
@@ -502,7 +502,7 @@ showallscores (void)
   lcreat ((char *) 0);
   if (readboard () < 0)
     return;
-  cdesc[WEAR] = cdesc[WIELD] = cdesc[SHIELD] = -1;	/* not wielding or wearing anything */
+  c[WEAR] = c[WIELD] = c[SHIELD] = -1;	/* not wielding or wearing anything */
   for (i = 0; i < MAXPOTION; i++)
     potionname[i][0] = ' ';
   for (i = 0; i < MAXSCROLL; i++)
@@ -586,7 +586,7 @@ newscore (int score, char *whoo, int whyded, int winner)
 	if (strcmp (sco[i].who, logname) == 0)
 	  sco[i].score = 0;
       taxes = score * TAXRATE;
-      score += 100000 * cdesc[HARDGAME];	/* bonus for winning */
+      score += 100000 * c[HARDGAME];	/* bonus for winning */
       /* if he has a slot on the winning scoreboard update it if greater score */
       for (i = 0; i < SCORESIZE; i++)
 	if (strcmp (winr[i].who, logname) == 0)
@@ -652,11 +652,11 @@ new1sub (int score, int i, char *whoo, int taxes)
 
   p = &winr[i];
   p->taxes += taxes;
-  if ((score >= p->score) || (cdesc[HARDGAME] > p->hardlev))
+  if ((score >= p->score) || (c[HARDGAME] > p->hardlev))
     {
       strcpy (p->who, whoo);
       p->score = score;
-      p->hardlev = cdesc[HARDGAME];
+      p->hardlev = c[HARDGAME];
       p->timeused = gtime / 100;
       p->hasmail = 1;
     }
@@ -681,12 +681,12 @@ new2sub (int score, int i, char *whoo, int whyded)
   struct scofmt *p;
 
   p = &sco[i];
-  if ((score >= p->score) || (cdesc[HARDGAME] > p->hardlev))
+  if ((score >= p->score) || (c[HARDGAME] > p->hardlev))
     {
       strcpy (p->who, whoo);
       p->score = score;
       p->what = whyded;
-      p->hardlev = cdesc[HARDGAME];
+      p->hardlev = c[HARDGAME];
       p->level = level;
       for (j = 0; j < 26; j++)
 	{
@@ -704,7 +704,7 @@ new2sub (int score, int i, char *whoo, int whyded)
 *      int x;
 *
 *  if x < 0 then don't show scores
-*  died() never returns! (unless cdesc[LIFEPROT] and a reincarnatable death!)
+*  died() never returns! (unless c[LIFEPROT] and a reincarnatable death!)
 *
 *      < 256   killed by the monster number
 *      256     quit
@@ -746,10 +746,11 @@ void
 died (int x)
 {
   int f, win;
+  char i = 0;
   /*char ch, *mod;
      time_t zzz; */
 
-  if (cdesc[LIFEPROT] > 0)	/* if life protection */
+  if (c[LIFEPROT] > 0)	/* if life protection */
     {
       switch ((x > 0) ? x : -x)
 	{
@@ -769,9 +770,9 @@ died (int x)
 	case 300:
 	  goto invalid;		/* can't be saved */
 	};
-      --cdesc[LIFEPROT];
-      cdesc[HP] = cdesc[HPMAX];
-      --cdesc[CONSTITUTION];
+      --c[LIFEPROT];
+      c[HP] = c[HPMAX];
+      --c[CONSTITUTION];
       cursors ();
       lprcat ("\nYou feel wiiieeeeerrrrrd all over! ");
       lflush ();
@@ -781,8 +782,9 @@ died (int x)
     }
 
   cursors ();
-  lprcat ("\nPress any key to continue. ");
-  ttgetch ();
+  lprcat("\nPress 'x' to continue.\n");
+  while ((i = getch()) != 'x')
+      i = ttgetch();
 
 invalid:
   /*clearvt100(); */
@@ -808,16 +810,16 @@ invalid:
   else
     win = 0;
 
-  cdesc[GOLD] += cdesc[BANKACCOUNT];
-  cdesc[BANKACCOUNT] = 0;
+  c[GOLD] += c[BANKACCOUNT];
+  c[BANKACCOUNT] = 0;
 
   /*  now enter the player at the end of the scoreboard */
-  newscore (cdesc[GOLD], logname, x, win);
+  newscore (c[GOLD], logname, x, win);
   diedsub (x);			/* print out the score line */
   lflush ();
 
   set_score_output ();
-  if ((wizard == 0) && (cdesc[GOLD] > 0))	/*  wizards can't score     */
+  if ((wizard == 0) && (c[GOLD] > 0))	/*  wizards can't score     */
     {
       /*  now for the scoreboard maintenance -- not for a suspended game  */
       if (x != 257)
@@ -857,7 +859,7 @@ diedsub (int x)
 {
   char ch, *mod;
 
-  lprintf ("Score: %ld, Diff: %ld,  %s ", cdesc[GOLD], cdesc[HARDGAME],
+  lprintf ("\nScore: %ld, Diff: %ld,  %s ", c[GOLD], c[HARDGAME],
 	   logname);
 
   if (x < 256)
@@ -877,7 +879,7 @@ diedsub (int x)
 	  mod = "a";
 	}
 
-      lprintf ("killed by %s %s", mod, monster[x].name);
+      lprintf ("\nkilled by %s %s", mod, monster[x].name);
 
     }
   else

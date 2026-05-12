@@ -55,7 +55,7 @@ jobs:
     - name: Build (Windows)
       if: matrix.os == 'windows-latest'
       shell: msys2 {0}
-      run: make
+      run: make -f Makefile.mingw
 
   build-cross:
     name: Cross-compile for ${{ matrix.platform }}

@@ -4,10 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <io.h>
-
 #include <unistd.h>
-
 
 #include "includes/larncons.h"
 #include "includes/larndata.h"

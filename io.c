@@ -55,18 +55,7 @@
 #include <stdarg.h>
 #include <time.h> 
 #include <ctype.h>
-#if defined(_WIN32) && !defined(WINDOWS_VS)
-#include <ncursesw/curses.h>
-#elif defined (WINDOWS_VS)
 #include <curses.h>
-#else
-#include <curses.h>
-#endif
-
-#if defined WINDOWS_VS
-#define _INC_CONIO
-#include <io.h>
-#endif
 
 #include <sys/stat.h>
 #include <setjmp.h>
@@ -79,14 +68,15 @@
 
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
-#include <unistd.h>
 #endif
+
+#include <unistd.h>
+
 #include "includes/display.h"
 #include "includes/global.h"
 #include "includes/io.h"
 #include "includes/monster.h"
 #include "includes/scores.h"
-#include "includes/tgoto.h"
 
 #define LINBUFSIZE 128		/* size of the lgetw() and lgetl() buffer       */
 int lfd = 0;		/*  output file numbers     */
@@ -383,31 +373,21 @@ lwrite (char *buf, int len)
 *  Returns 0 if EOF, otherwise the character
 */
 char
-lgetc (void)
+lgetc(void)
 {
-  int i = 0;
-
-  if (ipoint != iepoint)
-    return (inbuffer[ipoint++]);
-  if (iepoint != MAXIBUF)
-    return (0);
-#if defined WINDOWS_VS
-	if ((i = _read(fd, inbuffer, MAXIBUF)) <= 0)
-#endif
-#if defined NIX
-	if ((i = read(fd, inbuffer, MAXIBUF)) <= 0)
-#endif
+    if (ipoint >= iepoint)
     {
-      if (i != 0)
-	fprintf (stderr, "error reading from input file\n");
-      iepoint = ipoint = 0;
-      return (0);
+        int n = read(fd, inbuffer, MAXIBUF);
+        if (n <= 0)
+        {
+            return EOF;   /* distinguishable */
+        }
+        ipoint = 0;
+        iepoint = n;
     }
-  ipoint = 1;
-  iepoint = i;
-  return (*inbuffer);
-}
 
+    return inbuffer[ipoint++];
+}
 
 /*
 *  int larint()            Read one integer from input buffer
@@ -444,47 +424,33 @@ larint (void)
 *  Returns nothing of value
 */
 void
-lrfill (char *adr, int num)
+lrfill(char* adr, int num)
 {
-  char *pnt;
-  int num2;
-
-  while (num)
+    while (num > 0)
     {
-      if (iepoint == ipoint)
-	{
-	  if (num > 5)		/* fast way */
-	    {
-#if defined WINDOWS_VS
-	if (_read(fd, adr, num) != num)
-#endif
-#if defined NIX
-	if (read(fd, adr, num) != num)
-#endif
-		fprintf (stderr, "error reading from input file\n");
-	      num = 0;
-	    }
-	  else
-	    {
-	      *adr++ = lgetc();
-	      --num;
-	    }
-	}
-      else
-	{
-	  num2 = iepoint - ipoint;	/*  # of bytes left in the buffer   */
-	  if (num2 > num)
-	    num2 = num;
-	  pnt = inbuffer + ipoint;
-	  num -= num2;
-	  ipoint += num2;
-	  while (num2--)
-	    *adr++ = *pnt++;
-	}
+        if (ipoint >= iepoint)
+        {
+            int n = read(fd, inbuffer, MAXIBUF);
+            if (n <= 0)
+            {
+                fprintf(stderr, "lrfill: unexpected EOF or read error\n");
+                memset(adr, 0, num);
+                return;
+            }
+            ipoint = 0;
+            iepoint = n;
+        }
+
+        int available = iepoint - ipoint;
+        int tocopy = (available < num) ? available : num;
+
+        memcpy(adr, inbuffer + ipoint, tocopy);
+
+        adr += tocopy;
+        ipoint += tocopy;
+        num -= tocopy;
     }
 }
-
-
 
 /*
 *  char *lgetw()           Get a whitespace ended word from input
@@ -562,31 +528,28 @@ lgetl (void)
 *  Modernised this function and made it cleaner. ~Gibbon
 */
 int
-lcreat (char *str)
+lcreat(char* str)
 {
-  lpnt = lpbuf;
-  lpend = lpbuf + BUFBIG;
-  if (str == NULL)
-    return (lfd = 1);
-#if defined WINDOWS_VS
-		if ((lfd = _creat(str, S_IWRITE)) < 0)
+    lpnt = lpbuf;
+    lpend = lpbuf + BUFBIG;
+
+    if (str == NULL)
+        return -1;
+
+#ifdef _WIN32
+    lfd = open(str, O_RDWR | O_CREAT | O_TRUNC | O_BINARY, 0666);
+#else
+    lfd = open(str, O_RDWR | O_CREAT | O_TRUNC, 0666);
 #endif
-#if defined NIX
-	if ((lfd = open(str, O_RDWR | O_CREAT, 0666)) < 0)
-#endif
-	{
-		lfd = 1;
-		lprintf("error creating file <%s>\n", str);
-		lflush();
-		return(-1);
-	}
-#if defined WINDOWS_VS
-  _setmode (lfd, O_BINARY);
-#endif
-  return lfd;
+
+    if (lfd < 0)
+    {
+        fprintf(stderr, "lcreat: cannot create %s\n", str);
+        return -1;
+    }
+
+    return lfd;
 }
-
-
 
 /*
 *  lopen(filename)         Open a file for read
@@ -596,31 +559,27 @@ lcreat (char *str)
 *  Returns -1 if error, otherwise the file descriptor opened.
 */
 int
-lopen (char *str)
+lopen(char* str)
 {
-  ipoint = iepoint = MAXIBUF;
+    ipoint = iepoint = 0;
 
-  if (str == NULL)
-    return (fd = 0);
-#if defined WINDOWS_VS
-	if ((fd = _open(str, 0)) < 0)
+    if (str == NULL)
+        return -1;
+
+#ifdef _WIN32
+    fd = open(str, O_RDONLY | O_BINARY);
+#else
+    fd = open(str, O_RDONLY);
 #endif
-#if defined NIX
-	if ((fd = open(str, 0)) < 0)
-#endif
+
+    if (fd < 0)
     {
-      lwclose ();
-      lfd = 1;
-      lpnt = lpbuf;
-      return (-1);
+        fprintf(stderr, "lopen: cannot open %s\n", str);
+        return -1;
     }
-#if defined WINDOWS_VS
-  _setmode (fd, O_BINARY);
-#endif
-  return fd;
+
+    return fd;
 }
-
-
 
 /*
 *  lappend(filename)       Open for append to an existing file
@@ -636,23 +595,12 @@ lappend (char *str)
   lpend = lpbuf + BUFBIG;
   if (str == NULL)
     return (lfd = 1);
-#if defined WINDOWS_VS
-	if ((lfd = _open(str, 2)) < 0)
-#endif
-#if defined NIX
 	if ((lfd = open(str, 2)) < 0)
-#endif
     {
       lfd = 1;
       return (-1);
     }
-#if defined WINDOWS_VS
-  _setmode (lfd, O_BINARY);
-  _lseek (lfd, 0L, 2);		/* seek to end of file */
-#endif
-#if defined NIX
 	lseek (lfd, 0L, 2);		/* seek to end of file */
-#endif
   return lfd;
 }
 
@@ -666,12 +614,7 @@ lrclose (void)
 {
   if (fd > 0)
     {
-#if defined WINDOWS_VS
-		_close(fd);
-#endif
-#if defined NIX
 		close(fd);
-#endif
     }
 }
 
@@ -688,12 +631,7 @@ lwclose (void)
   lflush();
   if (lfd > 2)
     {
-#if defined WINDOWS_VS
-		_close(lfd);
-#endif
-#if defined NIX
 		close(lfd);
-#endif
     }
 }
 
@@ -852,12 +790,7 @@ lflush (void)
 #ifdef EXTRA
         c[BYTESOUT] += lpoint;
 #endif
-#if defined WINDOWS_VS
-            if (_write(lfd, lpbuf, lpoint) != lpoint)
-#endif
-#if defined NIX
             if (write(lfd, lpbuf, lpoint) != lpoint)
-#endif
             {
               fprintf(stderr,"Error writing output file\n");
             }
@@ -885,12 +818,7 @@ flush_buf (void)
 {
       if (lfd > 2)
 	{
-#if defined WINDOWS_VS
-		_write(lfd, outbuf, io_index);
-#endif
-#if defined NIX
 		write(lfd, outbuf, io_index);
-#endif
 	}
     io_index = 0;
 }

@@ -1,10 +1,4 @@
-﻿#if defined(_WIN32) && !defined(WINDOWS_VS)
-#include <ncursesw/curses.h>
-#elif defined (WINDOWS_VS)
-#include <curses.h>
-#else
-#include <curses.h>
-#endif
+﻿#include <curses.h>
 #include <stdlib.h>
 #include <string.h>
 #include "includes/action.h"
@@ -623,6 +617,10 @@ void
 show1cell(int x, int y)
 {
     int k;
+
+    /* do not reveal unseen tiles */
+    if (know[x][y] == 0)
+        return;
 
     cursor(x + 1, y + 1);
 

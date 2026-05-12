@@ -1,8 +1,5 @@
 /* main.c */
 #include <stdio.h>
-#if defined WINDOWS_VS
-#include "includes/larnwin32.h"
-#endif
 #include "includes/larn.h"
 #include "includes/tok.h"
 #include "includes/create.h"
@@ -21,6 +18,7 @@
 #include "includes/scores.h"
 #include "includes/spells.h"
 #include "includes/spheres.h"
+#include "includes/nap.h"
 
 		/* needed for hack fix to handle endwin()
 				   not being called after process commandline */	
@@ -50,6 +48,8 @@ int dropflag = 0;		/* if 1 then don't lookforobject() next round */
 int rmst = 80;			/*  random monster creation counter     */
 int nomove = 0;			/* if (nomove) then don't count next iteration as a
 				   move */
+int nowelcome = 0;		/* if (nowelcome) then skip welcome message at start of game */	
+int dayplay = 0;		/* if (dayplay) then we are playing a holiday game (permanently stubbed) */
 static char viewflag = 0;	/* if viewflag then we have done a 99 stay here
 				   and don't showcell in the main loop */
 int restorflag = 0;		/* 1 means restore has been done    */
@@ -69,15 +69,8 @@ signed int save_mode = 0;	/* 1 if doing a save game */
 MAIN PROGRAM
 ************
 */
-#if defined WINDOWS_VS
-INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PSTR lpCmdLine, INT nCmdShow)
-#endif
-
-#if !defined WINDOWS_VS
 int
 main (int argc, char *argv[])
-#endif
 {
   int i;
   int hard = -1;
@@ -109,13 +102,13 @@ main (int argc, char *argv[])
    */
 
   strcpy(savefilename, LARNHOME);
-  strcat(savefilename, "/lsave");
+  strcat(savefilename, "/Larn.sav");
 
   strcpy(scorefile, LARNHOME);
-  strcat(scorefile, "/lscore26.4");
+  strcat(scorefile, "/lscore");
 
   strcpy(logfile, LARNHOME);
-  strcat(logfile, "/llog26.4");
+  strcat(logfile, "/llog");
 
   strcpy(fortfile, LARNHOME);
   strcat(fortfile, "/lfortune");
@@ -129,6 +122,9 @@ main (int argc, char *argv[])
   strcpy(diagfile, LARNHOME);
   strcat(diagfile, "/Diagfile");
 
+  strcpy(holifile, LARNHOME);
+  strcat(holifile, "/holidays");
+
   /*
    *  now make scoreboard if it is not there (don't clear) 
    */
@@ -139,29 +135,13 @@ main (int argc, char *argv[])
   else
     fclose (pFile);
 
-#if defined WINDOWS_VS
-  LPWSTR* szArgList;
-  int argCount;
-
-  szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
-#endif
-
   /*
    *  now process the command line arguments 
    */
-#if defined WINDOWS_VS
-  for (i = 1; i < argCount; i++)
-#else
   for (i = 1; i < argc; i++)
-#endif
     {
-#if defined WINDOWS_VS
-	  if (szArgList[i][0] == '-')
-		  switch (szArgList[i][1])
-#else
       if (argv[i][0] == '-')
 		  switch (argv[i][1])
-#endif
 	  {
 	  case 's':		/* show scoreboard   */
 	    showscores ();
@@ -177,6 +157,10 @@ main (int argc, char *argv[])
 	    ansiterm_clean_up ();
 	    exit (EXIT_SUCCESS);
 
+	  case 'n': /* no welcome msg */
+		  nowelcome = 1;
+		  break;
+
 	  case '0':
 	  case '1':
 	  case '2':
@@ -187,31 +171,19 @@ main (int argc, char *argv[])
 	  case '7':
 	  case '8':
 	  case '9':		/* for hardness */
-#if defined WINDOWS_VS
-		  hard = atol(&szArgList[i][1]);
-#else
 		  hard = atol(&argv[i][1]);
-#endif
 	    break;
 
 	  case 'h':		/* print out command line arguments */
 	  case '?':
-#if defined WINDOWS_VS
-		  MessageBox(NULL, L"-s = Show scores\n-i = Show all scores (including inventory at time of death)\n-0 to -9 = Difficulty setting\n-h or -? = This help text", L"HELP TEXT", MB_OK);
-#else
 	    lprcat(cmdhelp);
 		lprcat("Press any key to exit...");
 		ttgetch();
 	    ansiterm_clean_up ();
-#endif
 		exit (EXIT_SUCCESS);
 	  default:
 	    ansiterm_clean_up ();
-#if defined WINDOWS_VS
-		MessageBox(NULL, L"Unknown command line option.  Use -h or -? for help.\n", L"UNKNOWN OPTION", MB_OK);
-#else
 		printf("Unknown option <%s>\n", argv[i]);
-#endif
 	    puts (cmdhelp);
 	    exit (EXIT_SUCCESS);
 	  };
@@ -243,10 +215,23 @@ main (int argc, char *argv[])
     }
 
   setupvt100 ();		/*  setup the terminal special mode             */
+
+/*
+* this section of code checks to see if larn is allowed during working hours
+*/
+  if (dayplay == 0) /* check for not-during-daytime-hours */
+  {
+	  if (playable())
+	  {
+		  lstandout("Hey!, You are playing Larn during working hours!  Tsk tsk.\n\n");
+	  }
+  }
+
   if (c[HP] == 0)		/* create new game */
     {
       predostuff = 1;		/* tell signals that we are in the welcome screen */
-      welcome ();		/* welcome the player to the game */
+	  if (nowelcome == 0)
+		  welcome(); /* welcome the player to the game */
 
       makeplayer ();		/*  make the character that will play           */
       sethard (hard);		/* set up the desired difficulty                */
@@ -261,6 +246,7 @@ main (int argc, char *argv[])
 
   lprc (T_INIT);		/* Reinit the screen because of welcome and check mail
 				 * having embedded escape sequences.*/
+
   drawscreen ();		/*  show the initial dungeon */
 
   /* tell the trap functions that they must do a showplayer() from here on */
@@ -359,9 +345,6 @@ main (int argc, char *argv[])
 	    fillmonst (makemonst (level));
 	  }
     }
-#if defined WINDOWS_VS
-  return 0;
-#endif
 }
 
 /*
@@ -605,14 +588,13 @@ parse (void)
 	  /* And do the save.
 	   */
 	  cursors();
-	  lprintf("\nSaving to `%s' . . . ", savefilename);
+	  lprintf("\nSaving to `%s' . . . Larn will now quit. ", savefilename);
 	  lflush();
 	  save_mode = 1;
 	  savegame(savefilename);
-	  screen_clear();
+	  nap(1000);
 	  lflush();
-	  wizard = 1;
-	  died(-257);		/* doesn't return */
+	  exit(EXIT_SUCCESS);
 	  break;
 
 
@@ -1348,4 +1330,64 @@ readnum (int mx)
       }
   scbr ();
   return (amt);
+}
+
+/*
+* routine to check the time of day and return 1 if its during work hours
+* checks the file ".holidays" for forms like "mmm dd comment..."
+*/
+int
+playable(void)
+{
+	time_t g_time;
+	int hour, day, year;
+	char* date, * month, * p;
+
+	time(&g_time);
+	date = ctime(&g_time);
+
+	if (!date || strlen(date) < 24)
+		return 0;
+
+	year = atoi(date + 20);
+	hour = (date[11] - '0') * 10 + (date[12] - '0');
+
+	if (date[8] != ' ')
+		day = (date[8] - '0') * 10 + (date[9] - '0');
+	else
+		day = (date[9] - '0');
+
+	month = date + 4;
+	date[7] = '\0'; /* point to and NULL terminate month */
+
+	if (hour >= 8 && hour < 17 &&
+		strncmp("Sat", date, 3) != 0 &&
+		strncmp("Sun", date, 3) != 0)
+	{
+		/* now check for a .holidays datafile */
+		lflush();
+		if (lopen(holifile) >= 0)
+		{
+			for (;;)
+			{
+				p = lgetw();
+				if (p == 0)
+					break;
+				if (strlen(p) < 11)
+					continue;
+
+				if (strncmp(p, month, 3) == 0 &&
+					day == atoi(p + 4) &&
+					year == atoi(p + 7))
+				{
+					return 0; /* holiday */
+				}
+			}
+		}
+		lrclose();
+		lcreat((char*)0);
+		return 1;
+	}
+
+	return 0;
 }

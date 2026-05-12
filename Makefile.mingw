@@ -1,8 +1,8 @@
 SRC = action.c ansiterm.c bill.c config.c create.c data.c diag.c display.c fortune.c global.c \
 	help.c inventory.c io.c main.c monster.c moreobj.c movem.c nap.c object.c regen.c \
-	savelev.c scores.c spells.c spheres.c store.c tgoto.c tok.c
-CFLAGS = -Wall -g -std=c17 -pedantic -DMULTIPLE_SCORE_ENTRY -DEXTRA
-LDFLAGS = -lm -lncursesw
+	savelev.c scores.c spells.c spheres.c store.c tok.c
+CFLAGS = -Wall -g -std=c17 -pedantic -DMULTIPLE_SCORE_ENTRY
+LDFLAGS = -lm -lpdcurses
 
 larn: $(SRC)
 	gcc -o $@ $^ $(CFLAGS) $(LDFLAGS)

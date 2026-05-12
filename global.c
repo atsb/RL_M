@@ -37,9 +37,6 @@
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"
-#if defined WINDOWS_VS
-#include "includes/larnwin32.h"
-#endif
 #include "includes/display.h"
 #include "includes/global.h"
 #include "includes/inventory.h"

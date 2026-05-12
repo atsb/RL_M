@@ -35,13 +35,7 @@ olrs          larn revenue service function
 #include "includes/scores.h"
 #include "includes/store.h"
 #include "includes/nap.h"
-#if defined(_WIN32) && !defined(WINDOWS_VS)
-#include <ncursesw/curses.h>
-#elif defined (WINDOWS_VS)
 #include <curses.h>
-#else
-#include <curses.h>
-#endif
 
 static void dnd_2hed (void);
 static void dnd_hed (void);

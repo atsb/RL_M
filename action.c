@@ -36,13 +36,7 @@ act_open_door           open a door
 */
 
 #include <stdlib.h>
-#if defined(_WIN32) && !defined(WINDOWS_VS)
-#include <ncursesw/curses.h>
-#elif defined (WINDOWS_VS)
 #include <curses.h>
-#else
-#include <curses.h>
-#endif
 #include "includes/action.h"
 #include "includes/larncons.h"
 #include "includes/larndata.h"

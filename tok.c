@@ -3,9 +3,7 @@
 yylex()
 sethard()
 */
-#if defined NIX
 #include <fcntl.h>
-#endif
 
 #include <stdlib.h>
 #include <string.h>

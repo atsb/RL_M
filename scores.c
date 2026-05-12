@@ -19,15 +19,8 @@
 *  getplid(name)       Function to get players id # from id file
 */
 
-#if defined WINDOWS_VS 
-#include <io.h>
-#include <fcntl.h>
-#endif
-
-#ifdef NIX
 #include <unistd.h>
 #include <fcntl.h>
-#endif
 
 #include <string.h>
 #include <sys/types.h>
@@ -215,13 +208,7 @@ makeboard (void)
     	printf("ERROR: unable to write a new scoreboard\n");
     	return(-1);
   	}
-/* Why bother redefining a function?  Just use standard *NIX functions
-	and be done with it. Windows won't even need to set permissions anyway
-	so no need for 'cross platform' here. Sheesh.. ~Gibbon
-*/
-#if defined NIX
   chmod(scorefile, 0666);
-#endif
   return(0);
 }
 
@@ -983,22 +970,12 @@ getplid (char *nam)
   sprintf (name, "%s\n", nam);	/* append a \n to name */
   if (lopen (playerids) < 0)	/* no file, make it */
     {
-#if defined(WINDOWS_VS)
-      fd7 = _open(playerids, _S_IREAD);
-#elif defined(NIX)
       fd7 = open(playerids, S_IWUSR);
-#else
-      fd7 = -1;   /* or handle other platforms */
-#endif
 
       if (fd7 < 0)
           return -1;
 
-#if defined(WINDOWS_VS)
-      _close(fd7);
-#else
       close(fd7);
-#endif
       goto addone;		/* now append new playerid record to file */
     }
   for (;;)			/* now search for the name in the player id file */

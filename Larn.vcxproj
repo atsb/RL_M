@@ -177,7 +177,6 @@
     <ClCompile Include="spells.c" />
     <ClCompile Include="spheres.c" />
     <ClCompile Include="store.c" />
-    <ClCompile Include="tgoto.c" />
     <ClCompile Include="tok.c" />
   </ItemGroup>
   <ItemGroup>
@@ -208,9 +207,7 @@
     <ClInclude Include="includes\spells.h" />
     <ClInclude Include="includes\spheres.h" />
     <ClInclude Include="includes\store.h" />
-    <ClInclude Include="includes\tgoto.h" />
     <ClInclude Include="includes\tok.h" />
-    <ClInclude Include="includes\larnwin32.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

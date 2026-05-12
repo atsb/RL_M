@@ -90,9 +90,9 @@ extern char logname[];
 extern char mazefile[];
 extern char diagfile[];
 extern char fortfile[];
-extern char helpfile[];
 extern char logfile[];
 extern char playerids[];
+extern char holifile[];
 
 extern int predostuff, restorflag;
 extern char savefilename[];

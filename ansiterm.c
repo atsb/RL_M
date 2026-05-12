@@ -6,13 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-#if defined(_WIN32) && !defined(WINDOWS_VS)
-#include <ncursesw/curses.h>
-#elif defined (WINDOWS_VS)
 #include <curses.h>
-#else
-#include <curses.h>
-#endif
 #include "includes/ansiterm.h"
 
 
@@ -117,18 +111,6 @@ llgetch (void)
       return 'h';
     case KEY_RIGHT:
       return 'l';
-#ifdef WINDOWS_VS
-    case KEY_A2:
-      return 'k';
-    case KEY_B1:
-      return 'h';
-    case KEY_B3:
-      return 'l';
-    case KEY_C2:
-      return 'j';
-    case PADENTER:
-      return 13;
-#endif
     case KEY_A1:
       return 'y';
     case KEY_A3:

@@ -5,8 +5,8 @@ on:
     types: [published]
 
 jobs:
-  build-release:
-    name: Release build for ${{ matrix.platform }}
+  build-linux:
+    name: Linux release build for ${{ matrix.platform }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -52,6 +52,41 @@ jobs:
         SAFE="${SAFE//\//_}"
         mkdir -p dist
         tar -czf dist/larn-${SAFE}.tar.gz -C out-${SAFE} .
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v2
+      with:
+        files: dist/*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    name: Windows release build
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          base-devel
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-ncurses
+
+    - name: Build (Windows)
+      shell: msys2 {0}
+      run: make
+
+    - name: Create tarball
+      shell: bash
+      run: |
+        mkdir -p dist
+        tar -czf dist/larn-windows-x86_64.tar.gz larn.exe
 
     - name: Upload release assets
       uses: softprops/action-gh-release@v2

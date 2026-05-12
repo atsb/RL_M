@@ -75,7 +75,7 @@ llgetch (void)
   int key;
   key = wgetch(stdscr);
 
-#ifdef WINDOWS_VS
+#ifdef PDC_KEY_MODIFIER_SHIFT
   if (PDC_get_key_modifiers () & PDC_KEY_MODIFIER_SHIFT)
     {
       switch (key)

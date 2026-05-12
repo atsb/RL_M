@@ -32,7 +32,7 @@ ansiterm_init (void)
 	curs_set(0);
 	refresh();
 
-#if defined WINDOWS_VS
+#if defined PDC_KEY_MODIFIER_SHIFT
   PDC_save_key_modifiers (1);
 #endif
 }

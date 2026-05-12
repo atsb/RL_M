@@ -1,0 +1,12 @@
+FROM --platform=$BUILDPLATFORM debian:stable AS build
+
+RUN apt-get update && \
+    apt-get install -y build-essential ncurses-dev
+
+WORKDIR /src
+COPY . .
+
+RUN make
+
+FROM scratch AS export
+COPY --from=build /src/larn /larn

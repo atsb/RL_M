@@ -6,7 +6,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#if defined(_WIN32) && !defined(WINDOWS_VS)
+#include <ncursesw/curses.h>
+#elif defined (WINDOWS_VS)
 #include <curses.h>
+#else
+#include <curses.h>
+#endif
 #include "includes/ansiterm.h"
 
 

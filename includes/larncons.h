@@ -19,7 +19,7 @@
 #define T_END    8
 #define CL_DOWN 14
 #define CURSOR  15
-
+#define CURSOR_BLOCK  16
 
 
 #define KNOWNOT   0x00
@@ -39,14 +39,14 @@
 #define FALSE 0
 
 #define MAXLEVEL 11		/*  max # levels in the dungeon         */
-#define MAXVLEVEL 3		/*  max # of levels in the temple of the luran  */
+#define MAXVLEVEL 4		/*  max # of levels in the temple of the luran  */
 #define MAXX 67
 #define MAXY 17
 
 #define SCORESIZE 10		/* this is the number of people on a scoreboard max */
 #define MAXPLEVEL 100		/* maximum player level allowed        */
 #define SPNUM 38		/* maximum number of spells in existance   */
-#define TIMELIMIT 30000		/* maximum number of moves before the game is called */
+#define TIMELIMIT 35000		/* maximum number of moves before the game is called */
 #define TAXRATE 1/20		/* tax rate for the LRS */
 
 #define BUFBIG  4096		/* size of the output buffer */
@@ -129,7 +129,7 @@
 
 
 /*
-* defines for the character attribute array   cdesc[]
+* defines for the character attribute array   c[]
 */
 #define STRENGTH 0		/* characters physical strength not due to objects */
 #define INTELLIGENCE 1
@@ -213,8 +213,7 @@
 
 
 /* nap related */
-#define NAPTIME 1000
-
+#define NAPTIME 3000
 
 /*
 * object related constants
@@ -225,10 +224,10 @@
 #define MAXPOTION 35		/* maximum number of potions that are possible */
 #define MAXPOTIONNAME	32
 
-#define MAXOBJ 94		/* the maximum number of objects   n < MAXOBJ */
+#define MAXOBJ 95		/* the maximum number of objects   n < MAXOBJ */
 
 /*  defines for the objects in the game     */
-#define MAXOBJECT  93
+#define MAXOBJECT  94
 
 #define OALTAR 1
 #define OTHRONE 2
@@ -333,5 +332,6 @@
 #define OSPHTAILSMAN 87		/* tailsman of the sphere */
 #define OWWAND 88		/* wand of wonder */
 #define OPSTAFF 89		/* staff of power */
-#define OPUDDLE 93		/* puddle object */
-/* used up to 93. ~Gibbon */
+#define OWATER 93		/* puddle object */
+#define OSHOREWATER 94		/* puddle object */
+/* used up to 94. ~Gibbon */

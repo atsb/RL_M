@@ -23,6 +23,7 @@ pray_at_altar()
 */
 #include <stdlib.h>
 #include "includes/action.h"
+#include "includes/ansiterm.h"
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"
@@ -234,27 +235,27 @@ fntchange (int how)
     {
     case 1:
       lprcat ("Your strength");
-      fch (how, &cdesc[STRENGTH]);
+      fch (how, &c[STRENGTH]);
       break;
     case 2:
       lprcat ("Your intelligence");
-      fch (how, &cdesc[INTELLIGENCE]);
+      fch (how, &c[INTELLIGENCE]);
       break;
     case 3:
       lprcat ("Your wisdom");
-      fch (how, &cdesc[WISDOM]);
+      fch (how, &c[WISDOM]);
       break;
     case 4:
       lprcat ("Your constitution");
-      fch (how, &cdesc[CONSTITUTION]);
+      fch (how, &c[CONSTITUTION]);
       break;
     case 5:
       lprcat ("Your dexterity");
-      fch (how, &cdesc[DEXTERITY]);
+      fch (how, &c[DEXTERITY]);
       break;
     case 6:
       lprcat ("Your charm");
-      fch (how, &cdesc[CHARISMA]);
+      fch (how, &c[CHARISMA]);
       break;
     case 7:
       j = rnd (level + 1);
@@ -555,7 +556,7 @@ open_something (void)
   cursors ();
   /* check for confusion.
    */
-  if (cdesc[CONFUSE])
+  if (c[CONFUSE])
     {
       lprcat ("You're too confused!");
       return;
@@ -617,7 +618,7 @@ close_something (void)
   cursors ();
   /* check for confusion.
    */
-  if (cdesc[CONFUSE])
+  if (c[CONFUSE])
     {
       lprcat ("You're too confused!");
       return;
@@ -727,6 +728,7 @@ specify_obj_nocurs (void)
   char i;
   int j, flag;
 
+  curs_set(0);
   lprcat ("\nType object character:");
   switch (i = ttgetch ())
     {
@@ -778,6 +780,7 @@ specify_obj_cursor (void)
   int objx, objy;
   int i;
 
+  curs_set(1);
   lprcat ("\nMove the cursor to an unknown item.");
   lprcat ("\n(For instructions type a ?)");
 
@@ -887,6 +890,7 @@ specify_obj_cursor (void)
 	  break;
 	}
     }
+	curs_set(0);
 }
 
 
@@ -894,7 +898,7 @@ specify_obj_cursor (void)
 static void
 move_cursor (int *xx, int *yy, int cdir)
 {
-
+	curs_set(1);
   *xx += diroffx[cdir];
   *yy += diroffy[cdir];
 

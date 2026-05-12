@@ -103,52 +103,31 @@ main (int argc, char *argv[])
   if ((lpbuf == 0) || (inbuffer == 0))
     died (-285);		/* malloc() failure */
 
-#if defined WINDOWS_VS
-  strcpy(savefilename,getenv("APPDATA"));
-  strcat(savefilename,"/Larn/larnsavefile");
+  /*
+   * Portable Larn file paths using LARNHOME = "." (same as 12.0)
+   * Works on all systems, all architectures.  Using 12.0 names.
+   */
 
-  strcpy(scorefile,getenv("APPDATA"));
-  strcat(scorefile,"/Larn/larnscorefile");
+  strcpy(savefilename, LARNHOME);
+  strcat(savefilename, "/lsave");
 
-  strcpy(logfile,getenv("APPDATA"));
-  strcat(logfile,"/Larn/larnlogfile");
+  strcpy(scorefile, LARNHOME);
+  strcat(scorefile, "/lscore26.4");
 
-  strcpy(fortfile,getenv("APPDATA"));
-  strcat(fortfile,"/Larn/larnforts");
+  strcpy(logfile, LARNHOME);
+  strcat(logfile, "/llog26.4");
 
-  strcpy(playerids,getenv("APPDATA"));
-  strcat(playerids,"/Larn/larnplayerid");
+  strcpy(fortfile, LARNHOME);
+  strcat(fortfile, "/lfortune");
 
-  strcpy(mazefile,getenv("APPDATA"));
-  strcat(mazefile,"/Larn/larnmazefile");
-#ifdef EXTRA
-  strcpy(diagfile,getenv("APPDATA"));
-  strcat(diagfile,"/Larn/larndiagfile");
-#endif
-#else
-  strcpy(savefilename,getenv("HOME"));
-  strcat(savefilename,"/.larn/larnsavefile");
+  strcpy(playerids, LARNHOME);
+  strcat(playerids, "/playerids");
 
-  strcpy(scorefile,getenv("HOME"));
-  strcat(scorefile,"/.larn/larnscorefile");
+  strcpy(mazefile, LARNHOME);
+  strcat(mazefile, "/larnmaze");
 
-  strcpy(logfile,getenv("HOME"));
-  strcat(logfile,"/.larn/larnlogfile");
-
-  strcpy(fortfile,getenv("HOME"));
-  strcat(fortfile,"/.larn/larnforts");
-
-  strcpy(playerids,getenv("HOME"));
-  strcat(playerids,"/.larn/larnplayerid");
-
-  strcpy(mazefile,getenv("HOME"));
-  strcat(mazefile,"/.larn/larnmazefile");
-#ifdef EXTRA
-  strcpy(diagfile,getenv("HOME"));
-  strcat(diagfile,"/.larn/larndiagfile");
-#endif
-#endif
-
+  strcpy(diagfile, LARNHOME);
+  strcat(diagfile, "/Diagfile");
 
   /*
    *  now make scoreboard if it is not there (don't clear) 

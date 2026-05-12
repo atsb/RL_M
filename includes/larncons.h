@@ -29,7 +29,7 @@
 
 #define PATHLEN   80
 
-#define LARNHOME ""
+#define LARNHOME "."
 
 #ifndef WIZID
 #define WIZID  1000

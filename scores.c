@@ -983,19 +983,21 @@ getplid (char *nam)
   sprintf (name, "%s\n", nam);	/* append a \n to name */
   if (lopen (playerids) < 0)	/* no file, make it */
     {
-#if defined WINDOWS_VS
-      if ((fd7 = _open(playerids, _S_IREAD)) < 0)
-      {
-        return (-1);		/* can't make it */
-      }
-      _close(fd7);
+#if defined(WINDOWS_VS)
+      fd7 = _open(playerids, _S_IREAD);
+#elif defined(NIX)
+      fd7 = open(playerids, S_IWUSR);
+#else
+      fd7 = -1;   /* or handle other platforms */
 #endif
-#if defined NIX
-      if ((fd7 = open(playerids, S_IWUSR)) < 0)
-      {
-        return (-1);		/* can't make it */
-      }
-      close (fd7);
+
+      if (fd7 < 0)
+          return -1;
+
+#if defined(WINDOWS_VS)
+      _close(fd7);
+#else
+      close(fd7);
 #endif
       goto addone;		/* now append new playerid record to file */
     }

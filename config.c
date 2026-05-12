@@ -25,7 +25,4 @@ char logfile[PATHLEN];
 char mazefile[PATHLEN];
 char fortfile[PATHLEN];
 char playerids[PATHLEN];
-
-#ifdef EXTRA
 char diagfile[PATHLEN];		/* the diagnostic filename  */
-#endif

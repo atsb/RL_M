@@ -385,7 +385,7 @@ lwrite (char *buf, int len)
 char
 lgetc (void)
 {
-  int i;
+  int i = 0;
 
   if (ipoint != iepoint)
     return (inbuffer[ipoint++]);

@@ -2,7 +2,7 @@ SRC = action.c ansiterm.c bill.c config.c create.c data.c diag.c display.c fortu
 	help.c inventory.c io.c main.c monster.c moreobj.c movem.c nap.c object.c regen.c \
 	savelev.c scores.c spells.c spheres.c store.c tgoto.c tok.c
 CFLAGS = -Wall -g -std=c17 -pedantic -DWINDOWS_VS -DMULTIPLE_SCORE_ENTRY -DEXTRA
-LDFLAGS = -lm -lpdcurseslarn -lSDL2main -lSDL2
+LDFLAGS = -lm -lncursesw
 
 larn: $(SRC)
 	gcc -o $@ $^ $(CFLAGS) $(LDFLAGS)

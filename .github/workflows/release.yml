@@ -50,10 +50,8 @@ jobs:
       run: |
         SAFE="${{ matrix.platform }}"
         SAFE="${SAFE//\//_}"
-
         mkdir -p dist
-        tar -czf dist/larn-${SAFE}.tar.gz \
-          -C out-${SAFE} .
+        tar -czf dist/larn-${SAFE}.tar.gz -C out-${SAFE} .
 
     - name: Upload release assets
       uses: softprops/action-gh-release@v2

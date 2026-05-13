@@ -153,7 +153,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="action.c" />
-    <ClCompile Include="ansiterm.c" />
     <ClCompile Include="bill.c" />
     <ClCompile Include="config.c" />
     <ClCompile Include="create.c" />
@@ -181,7 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\action.h" />
-    <ClInclude Include="includes\ansiterm.h" />
     <ClInclude Include="includes\bill.h" />
     <ClInclude Include="includes\create.h" />
     <ClInclude Include="includes\diag.h" />

@@ -35,7 +35,6 @@ olrs          larn revenue service function
 #include "includes/scores.h"
 #include "includes/store.h"
 #include "includes/nap.h"
-#include <curses.h>
 
 static void dnd_2hed (void);
 static void dnd_hed (void);

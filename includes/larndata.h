@@ -81,18 +81,20 @@ extern int mitem[MAXX][MAXY], monstlevel[];
 extern int nch[], ndgg[], nlpts[], nomove;
 extern int nplt[], nsw[];
 extern int potprob[];
+extern int name_set;
 
 extern char monstnamelist[];
 extern char *levelname[];
 extern char objnamelist[];
 extern char logname[];
-
+extern char loginname[];
 extern char mazefile[];
 extern char diagfile[];
 extern char fortfile[];
 extern char logfile[];
 extern char playerids[];
 extern char holifile[];
+extern char optsfile[];
 
 extern int predostuff, restorflag;
 extern char savefilename[];

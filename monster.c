@@ -43,8 +43,6 @@
 */
 #include <stdlib.h>
 #include <ctype.h>
-#include <curses.h>
-#include "includes/ansiterm.h"
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"

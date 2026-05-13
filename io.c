@@ -55,14 +55,12 @@
 #include <stdarg.h>
 #include <time.h> 
 #include <ctype.h>
-#include <curses.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <setjmp.h>
 #include <fcntl.h>		/* For O_BINARY */
 
 #include "includes/larn.h"
-#include "includes/ansiterm.h"
 
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
@@ -80,15 +78,119 @@ int fd;				/*  input file numbers      */
 static int curx = 0;
 static int cury = 0;
 
-
-
 static int ipoint = MAXIBUF, iepoint = MAXIBUF;	/*  input buffering pointers    */
 static char lgetwbuf[LINBUFSIZE];	/* get line (word) buffer               */
-
 
 static int (*getchfn) (void);
 
 static void flush_buf (void);
+
+/********************************************
+*              CURSES BACK-END             *
+********************************************/
+
+/* wgetch() is the modern way. -Gibbon */
+static int
+llgetch(void)
+{
+    int key;
+    key = wgetch(stdscr);
+
+#ifdef PDC_KEY_MODIFIER_SHIFT
+    if (PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT)
+    {
+        switch (key)
+        {
+        case '1':
+            return 'B';
+        case '2':
+            return 'J';
+        case '3':
+            return 'N';
+        case '4':
+            return 'H';
+        case '5':
+            return '.';
+        case '6':
+            return 'L';
+        case '7':
+            return 'Y';
+        case '8':
+            return 'K';
+        case '9':
+            return 'U';
+        }
+    }
+#endif
+    switch (key)
+    {
+    case KEY_UP:
+        return 'k';
+    case KEY_DOWN:
+        return 'j';
+    case KEY_LEFT:
+        return 'h';
+    case KEY_RIGHT:
+        return 'l';
+    case KEY_A1:
+        return 'y';
+    case KEY_A3:
+        return 'u';
+    case KEY_C1:
+        return 'b';
+    case KEY_C3:
+        return 'n';
+    case KEY_B2:
+        return '.';
+    case KEY_ENTER:
+        return 13;
+    default:
+        return key;
+    }
+}
+
+/*
+* get char
+*/
+int
+term_getch(void)
+{
+    return llgetch();
+}
+
+/*
+* get char (with echo)
+*/
+int
+term_getche(void)
+{
+    int key;
+    echo();
+    key = llgetch();
+    noecho();
+    return key;
+}
+
+void
+term_delch(void)
+{
+    delch();
+}
+
+static void cleanup_term(void)
+{
+    /* Restore terminal modes */
+    nocbreak();
+    echo();
+    nl();
+
+    /* End curses mode */
+    endwin();
+
+    /* Ensure cursor is visible again */
+    printf("\033[?25h");
+    fflush(stdout);
+}
 
 /*
 *  Subroutine to set up terminal in correct mode for game
@@ -98,15 +200,12 @@ static void flush_buf (void);
 void
 setupvt100 (void)
 {
-
   screen_clear();
 
   setscroll ();
 
   scbr ();			/* system("stty cbreak -echo"); */
 }
-
-
 
 /*
 *  Subroutine to clean up terminal when the game is over
@@ -116,8 +215,7 @@ setupvt100 (void)
 void
 clearvt100 (void)
 {
-
-  ansiterm_clean_up ();
+  cleanup_term();
 
   resetscroll ();
 
@@ -125,8 +223,6 @@ clearvt100 (void)
 
   sncbr ();			/* system("stty -cbreak echo"); */
 }
-
-
 
 /*
 * ttgetch()       Routine to read in one character from the terminal
@@ -167,7 +263,7 @@ scbr (void)
    * Set up to use the direct console input call which may
    * read from the keypad;
    */
-  getchfn = ansiterm_getch;
+  getchfn = term_getch;
   curs_set(0);
 }
 
@@ -185,7 +281,7 @@ sncbr (void)
   /* 
    * Set up to use the direct console input call with echo, getche()
    */
-  getchfn = ansiterm_getche;
+  getchfn = term_getche;
   curs_set(1);
 }
 
@@ -697,18 +793,45 @@ static char *outbuf = NULL;
 * init_term()      Terminal initialization
 */
 void
-init_term (void)
+init_term(void)
 {
-  /* get memory for decoded output buffer */
-  outbuf = malloc (BUFBIG + 16);
-  if (outbuf == NULL)
-    {
-      fprintf (stderr, "Error malloc'ing memory for decoded output buffer\n");
-      /* malloc() failure */
-      died (-285);
+    /* allocate decoded output buffer (Larn legacy requirement) */
+    outbuf = malloc(BUFBIG + 16);
+    if (!outbuf) {
+        fprintf(stderr, "Error malloc'ing memory for decoded output buffer\n");
+        died(-285);
     }
-  ansiterm_init ();
+
+    /* --- CURSES INITIALIZATION --- */
+
+    initscr();              /* initialize curses and stdscr */
+    cbreak();               /* disable line buffering */
+    noecho();               /* do not echo typed characters */
+    nonl();                 /* disable NL -> CRLF translation */
+    intrflush(stdscr, FALSE); /* don't flush input on interrupts */
+    keypad(stdscr, TRUE);   /* enable arrow keys, function keys */
+
+    /* --- COLORS --- */
+
+    if (has_colors()) {
+        start_color();
+        use_default_colors();   /* allow -1 as transparent background */
+        init_pair(1, COLOR_WHITE, COLOR_RED);
+    }
+
+    /* --- CURSOR --- */
+
+    curs_set(0);            /* hide cursor */
+
+    /* --- FINAL REFRESH --- */
+
+    refresh();
+
+#if defined PDC_KEY_MODIFIER_SHIFT
+    PDC_save_key_modifiers(1);
+#endif
 }
+
 
 /*
 * cl_line(x,y)  Clear the whole line indicated by 'y' and leave cursor at [x,y]
@@ -835,6 +958,12 @@ lflushall (void)
 void
 enter_name (void)
 {
+  if (name_set)
+  {
+      /* Name already loaded from larnopts */
+      return;
+  }
+
   int i;
 
   lprcat ("\n\nEnter character name:\n");
@@ -856,7 +985,7 @@ enter_name (void)
 	  if (i > 0)
 	    {
 	      --i;
-	      ansiterm_delch ();
+	      term_delch ();
 	    }
 	}
       else if (isprint (c))

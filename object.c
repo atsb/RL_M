@@ -1,6 +1,5 @@
 /* object.c */
 #include <stdlib.h>
-#include <curses.h>
 #include "includes/action.h"
 #include "includes/larncons.h"
 #include "includes/larndata.h"

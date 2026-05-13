@@ -1,11 +1,9 @@
-﻿#include <curses.h>
-#include <stdlib.h>
+﻿#include <stdlib.h>
 #include <string.h>
 #include "includes/action.h"
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"
-#include "includes/ansiterm.h"
 #include "includes/create.h"
 #include "includes/display.h"
 #include "includes/global.h"

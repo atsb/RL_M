@@ -1,4 +1,4 @@
-#include <curses.h>
+#include "io.h"
 
 /*
 *
@@ -78,4 +78,4 @@
 * function declarations
 *
 */
-#define _getch ansiterm_getch
+#define _getch term_getch

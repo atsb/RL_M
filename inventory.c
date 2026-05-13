@@ -5,7 +5,6 @@
 #include "includes/global.h"
 #include "includes/inventory.h"
 #include "includes/io.h"
-#include <curses.h>
 
 static int qshowstr (char);
 

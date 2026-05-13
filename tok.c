@@ -17,6 +17,7 @@ sethard()
 #include "includes/display.h"
 #include "includes/io.h"
 #include "includes/scores.h"
+#include "includes/nap.h"
 
 #define CHKPTINT   400
 
@@ -24,7 +25,61 @@ static char lastok = 0;
 int yrepcount = 0;
 int move_no_pickup = FALSE;
 
+void
+readopts(void)
+{
+    FILE* fp = fopen(optsfile, "r");
+    char line[256];
 
+    name_set = 0;
+
+    if (!fp) {
+		printf("No larnopts file found!\n");
+        nap(2000);
+        strcpy(logname, loginname);
+        return;
+    }
+    while (fgets(line, sizeof(line), fp)) {
+
+        /* strip leading whitespace */
+        char* p = line;
+        while (*p == ' ' || *p == '\t')
+            p++;
+
+        /* skip empty lines and comments */
+        if (*p == '\0' || *p == '\n' || *p == '#')
+            continue;
+
+        /* match "name:" or "name" */
+        if (strncmp(p, "name", 4) == 0) {
+
+            /* find value after the colon */
+            char* value = strchr(p, ':');
+            if (value)
+                value++;   /* skip ':' */
+            else
+                value = p + 4; /* "name" */
+
+            /* strip whitespace */
+            while (*value == ' ' || *value == '\t')
+                value++;
+
+            /* strip newline */
+            value[strcspn(value, "\r\n")] = '\0';
+
+            if (*value) {
+                strncpy(logname, value, LOGNAMESIZE - 1);
+                logname[LOGNAMESIZE - 1] = '\0';
+                name_set = 1; /* use the name from opts file */
+            }
+            continue;
+        }
+    }
+    fclose(fp);
+
+    if (!name_set)
+        strcpy(logname, loginname);
+}
 
 /*
 * lexical analyzer for larn

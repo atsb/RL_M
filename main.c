@@ -46,8 +46,7 @@ static int whatitem (char *);
 
 int dropflag = 0;		/* if 1 then don't lookforobject() next round */
 int rmst = 80;			/*  random monster creation counter     */
-int nomove = 0;			/* if (nomove) then don't count next iteration as a
-				   move */
+int nomove = 0;			/* if (nomove) then don't count next iteration as a move */
 int nowelcome = 0;		/* if (nowelcome) then skip welcome message at start of game */	
 static char viewflag = 0;	/* if viewflag then we have done a 99 stay here
 				   and don't showcell in the main loop */
@@ -75,25 +74,6 @@ main (int argc, char *argv[])
   int hard = -1;
 
   FILE *pFile;
-	
-  
-  /*
-   *  first task is to identify the player
-   */
-  /*init curses ~Gibbon */
-  init_term ();			/* setup the terminal (find out what type) for termcap */
-  scbr ();
-  /*
-   *  second task is to prepare the pathnames the player will need
-   */
-
-
-  /* Set up the input and output buffers.
-   */
-  lpbuf = (char *) malloc ((5 * BUFBIG) >> 2);	/* output buffer */
-  inbuffer = (char *) malloc ((5 * MAXIBUF) >> 2);	/* output buffer */
-  if ((lpbuf == 0) || (inbuffer == 0))
-    died (-285);		/* malloc() failure */
 
   /*
    * Portable Larn file paths using LARNHOME = "." (same as 12.0)
@@ -124,6 +104,22 @@ main (int argc, char *argv[])
   strcpy(holifile, LARNHOME);
   strcat(holifile, "/holidays");
 
+  strcpy(optsfile, LARNHOME);
+  strcat(optsfile, "/larnopts");
+
+  readopts(); /* read the options file if there is one */
+	
+  /*init curses ~Gibbon */
+  init_term ();			/* setup the terminal */
+  scbr ();
+
+  /* Set up the input and output buffers.
+   */
+  lpbuf = (char *) malloc ((5 * BUFBIG) >> 2);	/* output buffer */
+  inbuffer = (char *) malloc ((5 * MAXIBUF) >> 2);	/* output buffer */
+  if ((lpbuf == 0) || (inbuffer == 0))
+    died (-285);		/* malloc() failure */
+
   /*
    *  now make scoreboard if it is not there (don't clear) 
    */
@@ -146,14 +142,14 @@ main (int argc, char *argv[])
 	    showscores ();
 	    lprcat ("Press any key to exit...");
 	    ttgetch ();
-	    ansiterm_clean_up ();	/* hacky way */
+		clearvt100();
 	    exit (EXIT_SUCCESS);
 
 	  case 'i':		/* show all scoreboard */
 	    showallscores ();
 	    lprcat ("Press any key to exit...");
 	    ttgetch ();
-	    ansiterm_clean_up ();
+		clearvt100();
 	    exit (EXIT_SUCCESS);
 
 	  case 'n': /* no welcome msg */
@@ -178,10 +174,10 @@ main (int argc, char *argv[])
 	    lprcat(cmdhelp);
 		lprcat("Press any key to exit...");
 		ttgetch();
-	    ansiterm_clean_up ();
+		clearvt100();
 		exit (EXIT_SUCCESS);
 	  default:
-	    ansiterm_clean_up ();
+		clearvt100();
 		printf("Unknown option <%s>\n", argv[i]);
 	    puts (cmdhelp);
 	    exit (EXIT_SUCCESS);
@@ -199,7 +195,6 @@ main (int argc, char *argv[])
       died (-285);
     }
 
-  lcreat ((char *) 0);
   newgame ();			/*  set the initial clock  */
 
   pFile = fopen (savefilename, "r");
@@ -212,6 +207,8 @@ main (int argc, char *argv[])
       restoregame (savefilename);	/* restore last game    */
       remove (savefilename);
     }
+
+  setupvt100();
 
   if (c[HP] == 0)		/* create new game */
     {

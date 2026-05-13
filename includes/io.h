@@ -1,3 +1,9 @@
+#include <curses.h>
+
+int term_getch(void);
+int term_getche(void);
+void term_delch(void);
+
 void setupvt100 (void);
 void clearvt100 (void);
 

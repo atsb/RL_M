@@ -79,21 +79,27 @@ extern char *lpnt, *lpbuf, *lpend, *inbuffer;
 extern int level;
 extern int mitem[MAXX][MAXY], monstlevel[];
 extern int nch[], ndgg[], nlpts[], nomove;
+extern int nowelcome;
 extern int nplt[], nsw[];
 extern int potprob[];
+extern int name_set;
 
 extern char monstnamelist[];
 extern char *levelname[];
 extern char objnamelist[];
 extern char logname[];
-
+extern char loginname[];
 extern char mazefile[];
 extern char diagfile[];
 extern char fortfile[];
-extern char helpfile[];
 extern char logfile[];
 extern char playerids[];
+extern char holifile[];
+extern char optsfile[];
+extern char helpfile[];
+extern char ckpfile[];
 
+extern int ckpflag;
 extern int predostuff, restorflag;
 extern char savefilename[];
 extern char scorefile[];
@@ -116,7 +122,7 @@ extern int diroffx[], diroffy[], hitflag, hit2flag, hit3flag,
 extern int iarg[MAXX][MAXY], ivenarg[], lasthx, lasthy, lastnum, lastpx,
   lastpy;
 extern int oldx, oldy, playerx, playery;
-extern int enable_scroll, yrepcount, wisid, lfd, fd;
+extern int dayplay, enable_scroll, yrepcount, wisid, lfd, fd;
 extern long outstanding_taxes, skill[], gtime;
 extern long c[], cbak[];
 extern time_t initialtime;

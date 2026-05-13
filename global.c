@@ -37,9 +37,6 @@
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"
-#if defined WINDOWS_VS
-#include "includes/larnwin32.h"
-#endif
 #include "includes/display.h"
 #include "includes/global.h"
 #include "includes/inventory.h"
@@ -50,6 +47,7 @@
 
 int water_anim_toggle = 0;
 long last_water_anim = 0;
+int name_set = 0;
 
 /*
 * raiselevel()

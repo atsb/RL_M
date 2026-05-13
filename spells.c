@@ -18,13 +18,6 @@ genmonst()         Function to ask for monster and genocide from game
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#if defined(_WIN32) && !defined(WINDOWS_VS)
-#include <ncursesw/curses.h>
-#elif defined (WINDOWS_VS)
-#include <curses.h>
-#else
-#include <curses.h>
-#endif
 
 #include "includes/create.h"
 #include "includes/larncons.h"

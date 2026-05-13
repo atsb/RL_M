@@ -5,9 +5,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined NIX
 #include <fcntl.h>
-#endif
 
 #include "includes/larncons.h"
 #include "includes/larndata.h"
@@ -52,11 +50,7 @@ msdosfortune (void)
       return;
     }
 
-#ifdef WINDOWS_VS
-  fopen_s(&fp, fortfile, "r");
-#else
   fp = fopen (fortfile, "r");
-#endif
 
   if (fp == 0)
     {

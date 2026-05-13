@@ -96,8 +96,10 @@ int predostuff = 0;		/*  2 means that the trap handling routines must do a
 				   2 - we are in the normal game   */
 
 char logname[LOGNAMESIZE];	/* the player's name */
-
+char loginname[20];
 int cheat = 0;			/*  1 if the player has fudged save file            */
+int sex = 1;			/* default is a man 0=woman */
+int ckpflag = 0;		/* 1 if want checkpointing of game, 0 otherwise */
 int level = 0;			/*  cavelevel player is on = c[CAVELEVEL]           */
 int wizard = 0;			/*  the wizard mode flag                            */
 int lastnum = 0;		/* the number of the monster last hitting player    */

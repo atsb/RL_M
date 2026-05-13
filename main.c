@@ -1,8 +1,5 @@
-/* main.c */
+﻿/* main.c */
 #include <stdio.h>
-#if defined WINDOWS_VS
-#include "includes/larnwin32.h"
-#endif
 #include "includes/larn.h"
 #include "includes/tok.h"
 #include "includes/create.h"
@@ -21,6 +18,7 @@
 #include "includes/scores.h"
 #include "includes/spells.h"
 #include "includes/spheres.h"
+#include "includes/nap.h"
 
 		/* needed for hack fix to handle endwin()
 				   not being called after process commandline */	
@@ -48,8 +46,8 @@ static int whatitem (char *);
 
 int dropflag = 0;		/* if 1 then don't lookforobject() next round */
 int rmst = 80;			/*  random monster creation counter     */
-int nomove = 0;			/* if (nomove) then don't count next iteration as a
-				   move */
+int nomove = 0;			/* if (nomove) then don't count next iteration as a move */
+int nowelcome = 0;		/* if (nowelcome) then skip welcome message at start of game */	
 static char viewflag = 0;	/* if viewflag then we have done a 99 stay here
 				   and don't showcell in the main loop */
 int restorflag = 0;		/* 1 means restore has been done    */
@@ -69,39 +67,13 @@ signed int save_mode = 0;	/* 1 if doing a save game */
 MAIN PROGRAM
 ************
 */
-#if defined WINDOWS_VS
-INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PSTR lpCmdLine, INT nCmdShow)
-#endif
-
-#if !defined WINDOWS_VS
 int
 main (int argc, char *argv[])
-#endif
 {
   int i;
   int hard = -1;
 
   FILE *pFile;
-	
-  
-  /*
-   *  first task is to identify the player
-   */
-  /*init curses ~Gibbon */
-  init_term ();			/* setup the terminal (find out what type) for termcap */
-  scbr ();
-  /*
-   *  second task is to prepare the pathnames the player will need
-   */
-
-
-  /* Set up the input and output buffers.
-   */
-  lpbuf = (char *) malloc ((5 * BUFBIG) >> 2);	/* output buffer */
-  inbuffer = (char *) malloc ((5 * MAXIBUF) >> 2);	/* output buffer */
-  if ((lpbuf == 0) || (inbuffer == 0))
-    died (-285);		/* malloc() failure */
 
   /*
    * Portable Larn file paths using LARNHOME = "." (same as 12.0)
@@ -109,13 +81,13 @@ main (int argc, char *argv[])
    */
 
   strcpy(savefilename, LARNHOME);
-  strcat(savefilename, "/lsave");
+  strcat(savefilename, "/Larn.sav");
 
   strcpy(scorefile, LARNHOME);
-  strcat(scorefile, "/lscore26.4");
+  strcat(scorefile, "/lscore");
 
   strcpy(logfile, LARNHOME);
-  strcat(logfile, "/llog26.4");
+  strcat(logfile, "/llog");
 
   strcpy(fortfile, LARNHOME);
   strcat(fortfile, "/lfortune");
@@ -129,6 +101,31 @@ main (int argc, char *argv[])
   strcpy(diagfile, LARNHOME);
   strcat(diagfile, "/Diagfile");
 
+  strcpy(holifile, LARNHOME);
+  strcat(holifile, "/holidays");
+
+  strcpy(optsfile, LARNHOME);
+  strcat(optsfile, "/larnopts");
+
+  strcpy(helpfile, LARNHOME);
+  strcat(helpfile, "/larn.help");
+
+  strcpy(ckpfile, LARNHOME);
+  strcat(ckpfile, "/Larn.ckp");
+
+  readopts(); /* read the options file if there is one */
+	
+  /*init curses ~Gibbon */
+  init_term ();			/* setup the terminal */
+  scbr ();
+
+  /* Set up the input and output buffers.
+   */
+  lpbuf = (char *) malloc ((5 * BUFBIG) >> 2);	/* output buffer */
+  inbuffer = (char *) malloc ((5 * MAXIBUF) >> 2);	/* output buffer */
+  if ((lpbuf == 0) || (inbuffer == 0))
+    died (-285);		/* malloc() failure */
+
   /*
    *  now make scoreboard if it is not there (don't clear) 
    */
@@ -139,43 +136,31 @@ main (int argc, char *argv[])
   else
     fclose (pFile);
 
-#if defined WINDOWS_VS
-  LPWSTR* szArgList;
-  int argCount;
-
-  szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
-#endif
-
   /*
    *  now process the command line arguments 
    */
-#if defined WINDOWS_VS
-  for (i = 1; i < argCount; i++)
-#else
   for (i = 1; i < argc; i++)
-#endif
     {
-#if defined WINDOWS_VS
-	  if (szArgList[i][0] == '-')
-		  switch (szArgList[i][1])
-#else
       if (argv[i][0] == '-')
 		  switch (argv[i][1])
-#endif
 	  {
 	  case 's':		/* show scoreboard   */
 	    showscores ();
 	    lprcat ("Press any key to exit...");
 	    ttgetch ();
-	    ansiterm_clean_up ();	/* hacky way */
+		clearvt100();
 	    exit (EXIT_SUCCESS);
 
 	  case 'i':		/* show all scoreboard */
 	    showallscores ();
 	    lprcat ("Press any key to exit...");
 	    ttgetch ();
-	    ansiterm_clean_up ();
+		clearvt100();
 	    exit (EXIT_SUCCESS);
+
+	  case 'n': /* no welcome msg */
+		  nowelcome = 1;
+		  break;
 
 	  case '0':
 	  case '1':
@@ -187,35 +172,35 @@ main (int argc, char *argv[])
 	  case '7':
 	  case '8':
 	  case '9':		/* for hardness */
-#if defined WINDOWS_VS
-		  hard = atol(&szArgList[i][1]);
-#else
 		  hard = atol(&argv[i][1]);
-#endif
 	    break;
 
 	  case 'h':		/* print out command line arguments */
 	  case '?':
-#if defined WINDOWS_VS
-		  MessageBox(NULL, L"-s = Show scores\n-i = Show all scores (including inventory at time of death)\n-0 to -9 = Difficulty setting\n-h or -? = This help text", L"HELP TEXT", MB_OK);
-#else
 	    lprcat(cmdhelp);
 		lprcat("Press any key to exit...");
 		ttgetch();
-	    ansiterm_clean_up ();
-#endif
+		clearvt100();
 		exit (EXIT_SUCCESS);
 	  default:
-	    ansiterm_clean_up ();
-#if defined WINDOWS_VS
-		MessageBox(NULL, L"Unknown command line option.  Use -h or -? for help.\n", L"UNKNOWN OPTION", MB_OK);
-#else
+		clearvt100();
 		printf("Unknown option <%s>\n", argv[i]);
-#endif
 	    puts (cmdhelp);
 	    exit (EXIT_SUCCESS);
 	  };
     }
+  
+  if (dayplay == 0) /* check for not-during-daytime-hours */
+  {
+	  if (playable())
+	  {
+		  lprcat("Sorry, Larn can not be played during working hours.\n");
+		  lflush();
+		  nap(3000);
+		  exit(EXIT_SUCCESS);
+	  }
+  }
+
 
   /*
    *  He really wants to play, so malloc the memory for the dungeon.
@@ -228,7 +213,6 @@ main (int argc, char *argv[])
       died (-285);
     }
 
-  lcreat ((char *) 0);
   newgame ();			/*  set the initial clock  */
 
   pFile = fopen (savefilename, "r");
@@ -242,11 +226,13 @@ main (int argc, char *argv[])
       remove (savefilename);
     }
 
-  setupvt100 ();		/*  setup the terminal special mode             */
+  setupvt100();
+
   if (c[HP] == 0)		/* create new game */
     {
       predostuff = 1;		/* tell signals that we are in the welcome screen */
-      welcome ();		/* welcome the player to the game */
+	  if (nowelcome == 0)
+		  welcome(); /* welcome the player to the game */
 
       makeplayer ();		/*  make the character that will play           */
       sethard (hard);		/* set up the desired difficulty                */
@@ -261,6 +247,7 @@ main (int argc, char *argv[])
 
   lprc (T_INIT);		/* Reinit the screen because of welcome and check mail
 				 * having embedded escape sequences.*/
+
   drawscreen ();		/*  show the initial dungeon */
 
   /* tell the trap functions that they must do a showplayer() from here on */
@@ -359,9 +346,6 @@ main (int argc, char *argv[])
 	    fillmonst (makemonst (level));
 	  }
     }
-#if defined WINDOWS_VS
-  return 0;
-#endif
 }
 
 /*
@@ -559,7 +543,7 @@ parse (void)
 	  
 	case '?':
 		yrepcount=0;	
-		display_help_text();
+		help();
 		nomove = 1;
 		return;	/*give the help screen*/
 
@@ -605,14 +589,13 @@ parse (void)
 	  /* And do the save.
 	   */
 	  cursors();
-	  lprintf("\nSaving to `%s' . . . ", savefilename);
+	  lprintf("\nSaving to `%s' . . . Larn will now quit. ", savefilename);
 	  lflush();
 	  save_mode = 1;
 	  savegame(savefilename);
-	  screen_clear();
+	  nap(1000);
 	  lflush();
-	  wizard = 1;
-	  died(-257);		/* doesn't return */
+	  exit(EXIT_SUCCESS);
 	  break;
 
 
@@ -1348,4 +1331,68 @@ readnum (int mx)
       }
   scbr ();
   return (amt);
+}
+
+/*
+* routine to check the time of day and return 1 if its during work hours
+* checks the file ".holidays" for forms like "mmm dd comment..."
+*/
+int
+playable(void)
+{
+	FILE* fp;
+	char line[128];
+	char hol_month[4];
+	char cur_month[4];
+	int hol_day, hol_year;
+	int cur_day, cur_year, cur_hour;
+	time_t now;
+	char* date;
+
+	time(&now);
+	date = ctime(&now);  /* example format "Fri Jul  4 00:27:56 1986\n" */
+
+	/* year */
+	cur_year = atoi(date + 20);
+
+	/* hour */
+	cur_hour = (date[11] - '0') * 10 + (date[12] - '0');
+
+	/* day (handles leading space) */
+	if (date[8] != ' ')
+		cur_day = (date[8] - '0') * 10 + (date[9] - '0');
+	else
+		cur_day = (date[9] - '0');
+
+	/* month */
+	strncpy(cur_month, date + 4, 3);
+	cur_month[3] = '\0';
+
+	/* 8AM–5PM, Mon–Fri */
+	if (cur_hour >= 8 && cur_hour < 17 &&
+		strncmp(date, "Sat", 3) != 0 &&
+		strncmp(date, "Sun", 3) != 0)
+	{
+		/* check holidays */
+		fp = fopen(holifile, "r");
+		if (fp) {
+			while (fgets(line, sizeof(line), fp)) {
+
+				/* expected format "Jul 04 1986 comment" */
+				if (sscanf(line, "%3s %d %d", hol_month, &hol_day, &hol_year) == 3) {
+
+					if (strcmp(hol_month, cur_month) == 0 &&
+						hol_day == cur_day &&
+						hol_year == cur_year)
+					{
+						fclose(fp);
+						return 0;   /* holiday */
+					}
+				}
+			}
+			fclose(fp);
+		}
+		return 1;   /* not playable during work hours */
+	}
+	return 0;       /* outside work hours */
 }

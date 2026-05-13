@@ -1,10 +1,4 @@
-#if defined(_WIN32) && !defined(WINDOWS_VS)
-#include <ncursesw/curses.h>
-#elif defined (WINDOWS_VS)
-#include <curses.h>
-#else
-#include <curses.h>
-#endif
+#include "io.h"
 
 /*
 *
@@ -84,7 +78,4 @@
 * function declarations
 *
 */
-
-#ifndef WINDOWS_VS
-#define _getch ansiterm_getch
-#endif
+#define _getch term_getch

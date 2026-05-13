@@ -2,8 +2,13 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "includes/larncons.h"
 #include "includes/larndata.h"
 #include "includes/larnfunc.h"
@@ -52,10 +57,10 @@ ansihelp(const char* s)
 
                     /* SGR codes */
                     char buf[32];
-                    char* tok, * ctx;
+                    char* tok;
 
                     strcpy(buf, params);
-                    tok = strtok_r(buf, ";", &ctx);
+                    tok = strtok(buf, ";");
 
                     while (tok) {
                         int code = atoi(tok);
@@ -75,7 +80,7 @@ ansihelp(const char* s)
                         default:
                             break;
                         }
-                        tok = strtok_r(NULL, ";", &ctx);
+                        tok = strtok(NULL, ";");
                     }
                 }
                 continue;

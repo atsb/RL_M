@@ -95,6 +95,7 @@ extern char logfile[];
 extern char playerids[];
 extern char holifile[];
 extern char optsfile[];
+extern char helpfile[];
 
 extern int predostuff, restorflag;
 extern char savefilename[];

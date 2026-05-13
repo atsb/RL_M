@@ -28,3 +28,4 @@ char playerids[PATHLEN];
 char diagfile[PATHLEN];		/* the diagnostic filename  */
 char holifile[PATHLEN];
 char optsfile[PATHLEN];
+char helpfile[PATHLEN];

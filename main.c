@@ -107,6 +107,9 @@ main (int argc, char *argv[])
   strcpy(optsfile, LARNHOME);
   strcat(optsfile, "/larnopts");
 
+  strcpy(helpfile, LARNHOME);
+  strcat(helpfile, "/larn.help");
+
   readopts(); /* read the options file if there is one */
 	
   /*init curses ~Gibbon */
@@ -525,7 +528,7 @@ parse (void)
 	  
 	case '?':
 		yrepcount=0;	
-		display_help_text();
+		help();
 		nomove = 1;
 		return;	/*give the help screen*/
 

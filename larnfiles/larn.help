@@ -80,7 +80,7 @@ sequences to change video modes (see ch 13 of the DOS 2.0 manual).  See the
 
 When in the store, trading post, school, or home, an [7m<escape>[m will get you out.
 
-When casting a spell, if you need a list of spells you can cast, type '[7mI[m' as
+When casting a spell, if you need a list of spells you can cast, type [7m'I[m' as
 the first letter of your spell.  The available list of spells will be shown,
 after which you may enter the spell code.  This only works on the 1st letter
 of the spell you are casting.
@@ -89,7 +89,7 @@ When an inventory list is on the screen from a drop, quaff, read, or similar
 command, you can type the letter of the object that you wish to act apon,
 without having to type a space to get back to the prompt.
 
-This version of Larn is by Kevin Routley.
+
                         [7mLarn Command Line Options[m
 
 larn ++                 restore checkpointed game

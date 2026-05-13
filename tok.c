@@ -18,11 +18,17 @@ sethard()
 #include "includes/io.h"
 #include "includes/scores.h"
 #include "includes/nap.h"
+#include "includes/diag.h"
+#include "includes/main.h"
 
 #define CHKPTINT   400
 
 static char lastok = 0;
-int yrepcount = 0;
+int yrepcount = 0, dayplay = 0;
+#define MAXUM 52 /* maximum number of user re-named monsters */
+#define MAXMNAME 40 /* max length of a monster re-name */
+static char usermonster[MAXUM][MAXMNAME]; /* the user named monster name goes here */
+static int usermpoint = 0; /* the user monster pointer */
 int move_no_pickup = FALSE;
 
 void
@@ -30,19 +36,19 @@ readopts(void)
 {
     FILE* fp = fopen(optsfile, "r");
     char line[256];
+    char* p;
 
     name_set = 0;
 
     if (!fp) {
-		printf("No larnopts file found!\n");
-        nap(2000);
         strcpy(logname, loginname);
         return;
     }
+
     while (fgets(line, sizeof(line), fp)) {
 
         /* strip leading whitespace */
-        char* p = line;
+        p = line;
         while (*p == ' ' || *p == '\t')
             p++;
 
@@ -50,31 +56,119 @@ readopts(void)
         if (*p == '\0' || *p == '\n' || *p == '#')
             continue;
 
-        /* match "name:" or "name" */
+        /* --- name: --- */
         if (strncmp(p, "name", 4) == 0) {
-
-            /* find value after the colon */
             char* value = strchr(p, ':');
             if (value)
-                value++;   /* skip ':' */
+                value++;
             else
-                value = p + 4; /* "name" */
+                value = p + 4;
 
-            /* strip whitespace */
             while (*value == ' ' || *value == '\t')
                 value++;
 
-            /* strip newline */
             value[strcspn(value, "\r\n")] = '\0';
 
             if (*value) {
                 strncpy(logname, value, LOGNAMESIZE - 1);
                 logname[LOGNAMESIZE - 1] = '\0';
-                name_set = 1; /* use the name from opts file */
+                name_set = 1;
             }
             continue;
         }
+
+        /* --- savefile: --- */
+        if (strncmp(p, "savefile:", 9) == 0) {
+            char* value = p + 9;
+
+            while (*value == ' ' || *value == '\t')
+                value++;
+
+            value[strcspn(value, "\r\n")] = '\0';
+
+            if (*value) {
+                strncpy(savefilename, value, SAVEFILENAMESIZE - 1);
+                savefilename[SAVEFILENAMESIZE - 1] = '\0';
+            }
+            continue;
+        }
+
+        /* --- checkpoint: --- */
+        if (strncmp(p, "checkpoint:", 11) == 0) {
+            char* value = p + 11;
+
+            while (*value == ' ' || *value == '\t')
+                value++;
+
+            value[strcspn(value, "\r\n")] = '\0';
+
+            if (*value) {
+                strncpy(ckpfile, value, SAVEFILENAMESIZE - 1);
+                ckpfile[SAVEFILENAMESIZE - 1] = '\0';
+            }
+            continue;
+        }
+
+        /* --- monster: "name" --- */
+        if (strncmp(p, "monster:", 8) == 0) {
+            char* value = p + 8;
+
+            while (*value == ' ' || *value == '\t')
+                value++;
+
+            value[strcspn(value, "\r\n")] = '\0';
+
+            if (*value && usermpoint < MAXUM) {
+                if (strlen(value) >= MAXMNAME)
+                    value[MAXMNAME - 1] = '\0';
+
+                strcpy(usermonster[usermpoint], value);
+
+                /* match first letter to monster list */
+                {
+                    int j = usermonster[usermpoint][0];
+                    int k;
+
+                    if (isalpha(j)) {
+                        for (k = 1; k < MAXMONST + 8; k++) {
+                            if (monstnamelist[k] == j) {
+                                monster[k].name = &usermonster[usermpoint][0];
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                usermpoint++;
+            }
+            continue;
+        }
+
+        if (strncmp(p, "enable-checkpointing", 20) == 0) {
+            ckpflag = 1;
+            continue;
+        }
+
+        if (strncmp(p, "male", 4) == 0) {
+            sex = 1;
+            continue;
+        }
+        if (strncmp(p, "female", 6) == 0) {
+            sex = 0;
+            continue;
+        }
+
+        if (strncmp(p, "no-introduction", 15) == 0) {
+            nowelcome = 1;
+            continue;
+        }
+
+        if (strncmp(p, "play-day-play", 13) == 0) {
+            dayplay = 1;
+            continue;
+        }
     }
+
     fclose(fp);
 
     if (!name_set)
@@ -114,6 +208,26 @@ yylex (void)
   for (;;)
     {
       c[BYTESIN]++;
+
+      /* periodic checkpointing */
+      if (ckpflag) {
+          if ((c[BYTESIN] % 400) == 0) {
+              savegame(ckpfile);
+          }
+
+          if (dayplay == 0) {
+              if (playable()) {
+                  cursor(1, 19);
+                  lprcat("\nSorry, but it is now time for work. Your game has been saved.\n");
+                  lflush();
+                  savegame(savefilename);
+                  wizard = 1;
+                  nomove = 1;
+                  nap(4000);
+                  died(-257);
+              }
+          }
+      }
 
       cc = ttgetch ();
 

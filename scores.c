@@ -77,7 +77,6 @@ struct log_fmt			/* 102 bytes struct for the log file                */
   char what[46];		/* what happened to player                          */
 };
 
-
 static int winshou (void);
 static int shou (int);
 static int sortboard (void);
@@ -774,9 +773,13 @@ died (int x)
       i = ttgetch();
 
 invalid:
-  /*clearvt100(); */
+  clearvt100();
   lflush ();
   f = 0;
+  if (ckpflag)
+  {
+      unlink(ckpfile); /* remove checkpoint file if used */
+  }
 
   /* if we are not to display the scores */
   if (x < 0)

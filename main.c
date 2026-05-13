@@ -1,4 +1,4 @@
-/* main.c */
+﻿/* main.c */
 #include <stdio.h>
 #include "includes/larn.h"
 #include "includes/tok.h"
@@ -110,6 +110,9 @@ main (int argc, char *argv[])
   strcpy(helpfile, LARNHOME);
   strcat(helpfile, "/larn.help");
 
+  strcpy(ckpfile, LARNHOME);
+  strcat(ckpfile, "/Larn.ckp");
+
   readopts(); /* read the options file if there is one */
 	
   /*init curses ~Gibbon */
@@ -186,6 +189,18 @@ main (int argc, char *argv[])
 	    exit (EXIT_SUCCESS);
 	  };
     }
+  
+  if (dayplay == 0) /* check for not-during-daytime-hours */
+  {
+	  if (playable())
+	  {
+		  lprcat("Sorry, Larn can not be played during working hours.\n");
+		  lflush();
+		  nap(3000);
+		  exit(EXIT_SUCCESS);
+	  }
+  }
+
 
   /*
    *  He really wants to play, so malloc the memory for the dungeon.
@@ -1316,4 +1331,68 @@ readnum (int mx)
       }
   scbr ();
   return (amt);
+}
+
+/*
+* routine to check the time of day and return 1 if its during work hours
+* checks the file ".holidays" for forms like "mmm dd comment..."
+*/
+int
+playable(void)
+{
+	FILE* fp;
+	char line[128];
+	char hol_month[4];
+	char cur_month[4];
+	int hol_day, hol_year;
+	int cur_day, cur_year, cur_hour;
+	time_t now;
+	char* date;
+
+	time(&now);
+	date = ctime(&now);  /* example format "Fri Jul  4 00:27:56 1986\n" */
+
+	/* year */
+	cur_year = atoi(date + 20);
+
+	/* hour */
+	cur_hour = (date[11] - '0') * 10 + (date[12] - '0');
+
+	/* day (handles leading space) */
+	if (date[8] != ' ')
+		cur_day = (date[8] - '0') * 10 + (date[9] - '0');
+	else
+		cur_day = (date[9] - '0');
+
+	/* month */
+	strncpy(cur_month, date + 4, 3);
+	cur_month[3] = '\0';
+
+	/* 8AM–5PM, Mon–Fri */
+	if (cur_hour >= 8 && cur_hour < 17 &&
+		strncmp(date, "Sat", 3) != 0 &&
+		strncmp(date, "Sun", 3) != 0)
+	{
+		/* check holidays */
+		fp = fopen(holifile, "r");
+		if (fp) {
+			while (fgets(line, sizeof(line), fp)) {
+
+				/* expected format "Jul 04 1986 comment" */
+				if (sscanf(line, "%3s %d %d", hol_month, &hol_day, &hol_year) == 3) {
+
+					if (strcmp(hol_month, cur_month) == 0 &&
+						hol_day == cur_day &&
+						hol_year == cur_year)
+					{
+						fclose(fp);
+						return 0;   /* holiday */
+					}
+				}
+			}
+			fclose(fp);
+		}
+		return 1;   /* not playable during work hours */
+	}
+	return 0;       /* outside work hours */
 }

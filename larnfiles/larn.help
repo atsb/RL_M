@@ -1,0 +1,185 @@
+7    Welcome to the game of Larn.  At this moment, you face a great problem.
+Your daughter has contracted a strange disease, and none of your home remedies
+seem to have any effect.  You sense that she is in mortal danger, and you must
+try to save her.  Time ago you heard of a land of great danger and opportunity.
+Perhaps here is the solution you need.
+
+    It has been said that there once was a great magician who called himself
+Polinneaus.  Many years ago, after having many miraculous successes, Polinneaus
+retired to the caverns of Larn, where he devoted most of his time to the
+creation of magic.   Rumors have it that one day Polinneaus set out to dispel
+an attacking army in a forest some distance to the north.  It is believed that
+here he met his demise.
+
+    The caverns of Larn, it is thought, must be magnificent in design,
+and contain much magic and treasure.  One option you have is to undertake a
+journey into these caverns.
+
+
+    Good Luck!  You're going to need it!
+
+
+
+
+                [7mHelp File for The Caverns of Larn, Prompt Mode[m
+
+b  move southwest          B  run southwest            S  save the game
+h  move left               H  run left                 .  stay here
+j  move down               J  run down                 ^  identify a trap
+k  move up                 K  run up                   T  take off armor
+l  move right              L  run right
+n  move southeast          N  run southeast
+u  move northeast          U  run northeast
+y  move northwest          Y  run northwest            ^L redraw the screen
+c  cast a spell            Z  teleport yourself
+d  drop an item            e  eat something
+g  get present pack weight P  give tax status
+i  inventory your pockets  I  list all items found     ?  this help screen
+q  quaff a potion          Q  quit the game
+r  read a scroll           v  print program version
+w  wield a weapon          W  wear armor               ^L redraw the screen
+
+
+
+
+
+
+                [7mHelp File for The Caverns of Larn, Command Mode[m
+
+b  move southwest          B  run southwest            A  desecrate an altar
+c  cast a spell            C  close a door             Z  teleport yourself
+d  drop an item            D  drink at a fountain      <  go up stairs or
+e  eat something           E  enter a store, dungeon      volcanic shaft
+g  get present pack weight                             >  go down stairs or
+h  move left               H  run left                    volcanic shaft
+i  inventory your pockets  I  list all items found     ?  this help screen
+j  move down               J  run down                 ^  identify a trap
+k  move up                 K  run up                   ,  pick up item
+l  move right              L  run right                :  look at object you
+n  move southeast          N  run southeast               are standing on
+                           O  open a door or chest     .  stay here
+p  pray at an altar        P  give tax status          m  move without picking
+q  quaff a potion          Q  quit the game               up an object
+r  read a scroll           R  remove gems from throne  @  toggle auto-pickup
+s  sit on a throne         S  save the game            /  identify objects in
+t  tidy up at a fountain   T  take off armor              the game
+u  move northeast          U  run northeast
+v  print program version
+w  wield a weapon          W  wear armor
+y  move northwest          Y  run northwest            ^L redraw the screen
+                [7mSpecial Notes[m
+
+When [7mdropping gold[m, if you type '*' as your amount, all your gold gets dropped.
+In general, typing in '*' means all of what your interested in.  This is true
+when visiting the bank, or when contributing at altars.
+
+Larn needs the ANSI.SYS (or preferably, the NANSI.SYS) device driver installed
+in your CONFIG.SYS file.  The supplied "termcap" file describes the escape
+sequences to change video modes (see ch 13 of the DOS 2.0 manual).  See the
+"TERMCAP" section in LARN.DOC for further details.
+
+When in the store, trading post, school, or home, an [7m<escape>[m will get you out.
+
+When casting a spell, if you need a list of spells you can cast, type '[7mI[m' as
+the first letter of your spell.  The available list of spells will be shown,
+after which you may enter the spell code.  This only works on the 1st letter
+of the spell you are casting.
+
+When an inventory list is on the screen from a drop, quaff, read, or similar
+command, you can type the letter of the object that you wish to act apon,
+without having to type a space to get back to the prompt.
+
+This version of Larn is by Kevin Routley.
+                        [7mLarn Command Line Options[m
+
+larn ++                 restore checkpointed game
+larn -s                 list the scoreboard
+larn -i                 list scores with inventories
+larn -n                 suppress welcome message when beginning a game
+larn -h                 print out all the command line options
+larn -?                 print out all the command line options
+larn -<number>          specify difficulty of the game
+larn -o<optsfile>       specify the option file to be used
+larn -c                 create new scoreboards -- prompts for a password
+larn -l                 print out the larn log file
+larn -p                 play in prompt mode
+
+
+
+
+
+
+
+
+
+
+            [7mBackground Information for Larn[m
+
+    Welcome to the game of Larn.  At this moment, you face a great problem.
+Your daughter has contracted a strange disease, and none of your home remedies
+seem to have any effect.  You sense that she is in mortal danger, and you must
+try to save her.  Time ago you heard of a land of great danger and opportunity.
+Perhaps here is the solution you need.
+
+    It has been said that there once was a great magician who called himself
+Polinneaus.  Many years ago, after having many miraculous successes, Polinneaus
+retired to the caverns of Larn, where he devoted most of his time to the
+creation of magic.   Rumors have it that one day Polinneaus set out to dispel
+an attacking army in a forest some distance to the north.  It is believed that
+here he met his demise.
+
+    The caverns of Larn, it is thought, must be magnificent in design,
+and contain much magic and treasure.  One option you have is to undertake a
+journey into these caverns.
+
+    Good Luck!  You're going to need it!
+
+
+
+            [7mHow to use the larn.opt option file[m
+
+The file "larn.opt", if used, should be in a directory along your PATH.
+A sequence of words terminated by whitespace is used to specify options.
+
+    Word                      Meaning
+    cursor: lowscan highscan  change the shape of the cursor
+    DECRainbow                tell LARN you have that computer
+    enable-checkpointing      turn on periodic checkpointing
+    graphics: wallc floorc    select graphics maze characters
+    keypad                    enable the numeric keypad for moving
+    larndir:  directory       the directory to use for larn files
+    monster:  "monst name"    choose a name for a monster
+    name:     "your name"     choose your playing name
+    no-beep                   disable beeping of the terminal
+    no-introduction           do not display intro message
+    savefile: save-file-name  define what the savegame filename will be
+    swapfile: swap-file-name  define the name of the swapfile
+
+Your name and monster names must be enclosed in double quotation marks and may
+be up to 34 characters long.  Longer names are truncated.  Anything enclosed in
+quotation marks is considered one word, and must be separated from other words
+by whitespace.
+           [7mExplanation of the Larn scoreboard facility[m
+
+    Larn supports TWO scoreboards, one for winners, and one for deceased
+characters.  Each player (by userid or playerid, see UIDSCORE in Makefile)
+is allowed one slot on each scoreboard, if the score is in the top ten for
+that scoreboard.  This design helps insure that frequent players of Larn
+do not hog the scoreboard, and gives more players a chance for glory.  Level
+of difficulty is also noted on the scoreboards, and this takes precedence
+over score for determining what entry is on the scoreboard.  For example:
+if "Yar, the Bug Slayer" has a score of 128003 on the scoreboard at diff 0,
+then a game at diff 1 and a score of 4112 would replace the previous
+entry on the scoreboard.  Note that when a player dies, the inventory is
+stored in the scoreboard so that everyone can see what items the player had
+at the time of death.
+
+
+
+
+
+
+
+
+
+.

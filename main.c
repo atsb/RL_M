@@ -49,7 +49,6 @@ int rmst = 80;			/*  random monster creation counter     */
 int nomove = 0;			/* if (nomove) then don't count next iteration as a
 				   move */
 int nowelcome = 0;		/* if (nowelcome) then skip welcome message at start of game */	
-int dayplay = 0;		/* if (dayplay) then we are playing a holiday game (permanently stubbed) */
 static char viewflag = 0;	/* if viewflag then we have done a 99 stay here
 				   and don't showcell in the main loop */
 int restorflag = 0;		/* 1 means restore has been done    */
@@ -213,19 +212,6 @@ main (int argc, char *argv[])
       restoregame (savefilename);	/* restore last game    */
       remove (savefilename);
     }
-
-  setupvt100 ();		/*  setup the terminal special mode             */
-
-/*
-* this section of code checks to see if larn is allowed during working hours
-*/
-  if (dayplay == 0) /* check for not-during-daytime-hours */
-  {
-	  if (playable())
-	  {
-		  lstandout("Hey!, You are playing Larn during working hours!  Tsk tsk.\n\n");
-	  }
-  }
 
   if (c[HP] == 0)		/* create new game */
     {
@@ -1330,64 +1316,4 @@ readnum (int mx)
       }
   scbr ();
   return (amt);
-}
-
-/*
-* routine to check the time of day and return 1 if its during work hours
-* checks the file ".holidays" for forms like "mmm dd comment..."
-*/
-int
-playable(void)
-{
-	time_t g_time;
-	int hour, day, year;
-	char* date, * month, * p;
-
-	time(&g_time);
-	date = ctime(&g_time);
-
-	if (!date || strlen(date) < 24)
-		return 0;
-
-	year = atoi(date + 20);
-	hour = (date[11] - '0') * 10 + (date[12] - '0');
-
-	if (date[8] != ' ')
-		day = (date[8] - '0') * 10 + (date[9] - '0');
-	else
-		day = (date[9] - '0');
-
-	month = date + 4;
-	date[7] = '\0'; /* point to and NULL terminate month */
-
-	if (hour >= 8 && hour < 17 &&
-		strncmp("Sat", date, 3) != 0 &&
-		strncmp("Sun", date, 3) != 0)
-	{
-		/* now check for a .holidays datafile */
-		lflush();
-		if (lopen(holifile) >= 0)
-		{
-			for (;;)
-			{
-				p = lgetw();
-				if (p == 0)
-					break;
-				if (strlen(p) < 11)
-					continue;
-
-				if (strncmp(p, month, 3) == 0 &&
-					day == atoi(p + 4) &&
-					year == atoi(p + 7))
-				{
-					return 0; /* holiday */
-				}
-			}
-		}
-		lrclose();
-		lcreat((char*)0);
-		return 1;
-	}
-
-	return 0;
 }

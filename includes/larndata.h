@@ -135,7 +135,8 @@ extern struct monst monster[];
 
 extern struct _itm dnd_item[];
 
-
+extern int moncolor[MAXMONST + 9];
+extern int objcolor[MAXOBJECT + 1];
 
 /*
 * config.c

@@ -527,6 +527,14 @@ makestream(int level)
                 }
 
                 item[sx][sy] = OWATER;
+
+                if (item[sx - 1][sy] != OWATER ||
+                    item[sx + 1][sy] != OWATER ||
+                    item[sx][sy - 1] != OWATER ||
+                    item[sx][sy + 1] != OWATER)
+                {
+                    item[sx][sy] = OSHOREWATER;
+                }
                 iarg[sx][sy] = 0;
             }
         }
@@ -622,6 +630,14 @@ makestream(int level)
                 continue;
             }
             item[sx][sy] = OWATER;
+
+            if (item[sx - 1][sy] != OWATER ||
+                item[sx + 1][sy] != OWATER ||
+                item[sx][sy - 1] != OWATER ||
+                item[sx][sy + 1] != OWATER)
+            {
+                item[sx][sy] = OSHOREWATER;
+            }
             iarg[sx][sy] = 0;
         }
     }
@@ -714,7 +730,19 @@ expand_puddle(void)
             int ny = gy[pick];
 
             /* grow puddle */
-            item[nx][ny] = OWATER;
+            /* if touching non-water, it's a shore tile */
+            if (item[x][y] == OWATER &&
+                (item[nx - 1][ny] != OWATER ||
+                    item[nx + 1][ny] != OWATER ||
+                    item[nx][ny - 1] != OWATER ||
+                    item[nx][ny + 1] != OWATER))
+            {
+                item[nx][ny] = OSHOREWATER;
+            }
+            else
+            {
+                item[nx][ny] = OWATER;
+            }
             iarg[nx][ny] = 0;
         }
     }
@@ -762,7 +790,15 @@ makepuddle(int level)
             {
                 for (x = px; x < px + puddle_width; x++)
                 {
-                    item[x][y] = OWATER;
+                    if (x == px || x == px + puddle_width - 1 ||
+                        y == py || y == py + puddle_height - 1)
+                    {
+                        item[x][y] = OSHOREWATER;
+                    }
+                    else
+                    {
+                        item[x][y] = OWATER;
+                    }
                     iarg[x][y] = 0;
                 }
             }

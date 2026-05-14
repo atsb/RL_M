@@ -804,24 +804,38 @@ init_term(void)
 
     /* --- CURSES INITIALIZATION --- */
 
-    initscr();              /* initialize curses and stdscr */
-    cbreak();               /* disable line buffering */
-    noecho();               /* do not echo typed characters */
-    nonl();                 /* disable NL -> CRLF translation */
-    intrflush(stdscr, FALSE); /* don't flush input on interrupts */
-    keypad(stdscr, TRUE);   /* enable arrow keys, function keys */
+    initscr();
+    cbreak();
+    noecho();
+    nonl();
+    intrflush(stdscr, FALSE);
+    keypad(stdscr, TRUE);
 
     /* --- COLORS --- */
 
     if (has_colors()) {
         start_color();
-        use_default_colors();   /* allow -1 as transparent background */
-        init_pair(1, COLOR_WHITE, COLOR_RED);
+        use_default_colors();
+
+        /*
+         * Initialise 256 colour pairs:
+         * pair N = foreground colour N, background = default
+         *
+         * This allows:
+         *   attrset(COLOR_PAIR(moncolor[id]));
+         *   attrset(COLOR_PAIR(objcolor[id]));
+         *
+         * where moncolor[] and objcolor[] contain COLOR_* constants.
+         */
+        for (int i = 0; i < 256; i++) {
+            int fg = i % 8;   /* cycle through 8 standard colours */
+            init_pair(i, fg, -1);
+        }
     }
 
     /* --- CURSOR --- */
 
-    curs_set(0);            /* hide cursor */
+    curs_set(0);
 
     /* --- FINAL REFRESH --- */
 
@@ -831,7 +845,6 @@ init_term(void)
     PDC_save_key_modifiers(1);
 #endif
 }
-
 
 /*
 * cl_line(x,y)  Clear the whole line indicated by 'y' and leave cursor at [x,y]

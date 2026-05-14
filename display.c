@@ -1,9 +1,7 @@
 ﻿#include <stdlib.h>
 #include <string.h>
 #include "includes/action.h"
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
+#include "includes/larn.h"
 #include "includes/create.h"
 #include "includes/display.h"
 #include "includes/global.h"
@@ -365,22 +363,18 @@ drawscreen(void)
 
     if (d_xmin == 0 && d_xmax == MAXX && d_ymin == 0 && d_ymax == MAXY)
     {
-
         /* clear the screen */
         d_flag = 1;
         screen_clear();
-
     }
     else
     {
-
         d_flag = 0;
         cursor(1, 1);
     }
 
     if (d_xmin < 0)
     {
-
         /* d_xmin=-1 means display all without bottomline */
         d_xmin = 0;
     }
@@ -388,30 +382,12 @@ drawscreen(void)
     /* display lines of the screen */
     for (j = d_ymin; j < d_ymax; j++)
     {
-
-        /* When we show a spot of the dungeon, we have 4 cases:
-           squares we know nothing about
-           - know == 0
-           squares we've been at and still know whats there
-           - know == KNOWALL (== KNOWHERE | HAVESEEN)
-           squares we've been at, but don't still recall because
-           something else happened there.
-           - know == HAVESEEN
-           squares we recall, but haven't been at (an error condition)
-           - know == KNOWHERE
-
-           to minimize printing of spaces, scan from left of line until
-           we reach a location that the user knows.
-         */
-
         ileft = d_xmin - 1;
 
         while (++ileft < d_xmax)
         {
-
             if (know[ileft][j])
             {
-
                 break;
             }
         }
@@ -419,56 +395,46 @@ drawscreen(void)
         /* if blank line ... */
         if (ileft >= d_xmax)
         {
-
             continue;
         }
 
-
-
         /* scan from right of line until we reach a location that the
-           user knows.
-         */
+            user knows.
+        */
         iright = d_xmax;
 
         while (--iright > ileft)
         {
-
             if (know[iright][j])
             {
-
                 break;
             }
         }
 
         /*
-         * now print the line, after positioning the cursor.
-         * print the line with bold objects in a different
-         * loop for effeciency
-         */
+        * now print the line, after positioning the cursor.
+        * print the line with bold objects in a different
+        * loop for effeciency
+        */
         cursor(ileft + 1, j + 1);
 
         for (i = ileft; i <= iright; i++)
         {
-
             /* we still need to check for the location being known,
-               for we might have an unknown spot in the middle of
-               an otherwise known line.
-             */
+                for we might have an unknown spot in the middle of
+                an otherwise known line.
+            */
             if (know[i][j] == 0)
             {
-
                 nlprc(' ');
-
             }
             else if (know[i][j] & HAVESEEN)
             {
-
                 /*
-                 * if monster there and the user still knows the place,
-                 * then show the monster.  Otherwise, show what was
-                 * there before.
-                 */
-
+                * if monster there and the user still knows the place,
+                * then show the monster.  Otherwise, show what was
+                * there before.
+                */
                 if (i == playerx && j == playery)
                 {
                     nlprc(' ');
@@ -479,27 +445,22 @@ drawscreen(void)
 
                 if (k && know[i][j] & KNOWHERE)
                 {
-
-                    nlprc(monstnamelist[k]);
-
+                    /* nlprc(monstnamelist[k]); */
+                    show1cell(i, j);   /* ⭐ REQUIRED FIX */
                 }
                 else
                 {
-
-                    nlprc(objnamelist[item[i][j]]);
+                    /* nlprc(objnamelist[item[i][j]]); */
+                    show1cell(i, j);   /* ⭐ REQUIRED FIX */
                 }
-
             }
             else
             {
-
                 /*
-                 * error condition.  recover by resetting location
-                 * to an 'unknown' state.
-                 */
-
+                * error condition.  recover by resetting location
+                * to an 'unknown' state.
+                */
                 nlprc(' ');
-
                 mitem[i][j] = item[i][j] = 0;
             }
         }
@@ -509,22 +470,17 @@ drawscreen(void)
 
     if (d_flag)
     {
-
         always = 1;
         botside();
         always = 1;
         bot_linex();
     }
 
-    /* oldx=99; */
     /* for limited screen drawing */
     d_xmin = d_ymin = 0;
     d_xmax = MAXX;
     d_ymax = MAXY;
 }
-
-
-
 
 /*
 showcell(x,y)
@@ -581,22 +537,30 @@ showcell(int x, int y)
                 for (i = m; i <= x; i++)
                 {
                     if ((k = mitem[i][j]) != 0)
-                        lprc(monstnamelist[k]);
+                    {
+                        int id = k;
+
+                        if (has_colors())
+                            attrset(COLOR_PAIR(moncolor[id]));
+
+                        lprc(monstnamelist[id]);
+
+                        if (has_colors())
+                            attrset(COLOR_PAIR(0));
+                    }
                     else
-                        switch (k = item[i][j])
-                        {
-                        case OWALL:
-                        case 0:
-                        case OIVTELETRAP:
-                        case OTRAPARROWIV:
-                        case OIVDARTRAP:
-                        case OIVTRAPDOOR:
-                            lprc(objnamelist[k]);
-                            break;
-                        default:
-                            lprc(objnamelist[k]);
-                            break;
-                        };
+                    {
+                        int id = item[i][j];
+
+                        if (has_colors())
+                            attrset(COLOR_PAIR(objcolor[id]));
+
+                        lprc(objnamelist[id]);
+
+                        if (has_colors())
+                            attrset(COLOR_PAIR(0));
+                    }
+
                     know[i][j] = KNOWALL;
                 }
                 m = maxx;
@@ -630,33 +594,58 @@ show1cell(int x, int y)
         return;
     }
 
-    /* Monster overrides */
+    /* mobs */
     k = mitem[x][y];
     if (k)
     {
-        lprc(monstnamelist[k]);
+        int id = k;
+
+        if (has_colors())
+            attrset(COLOR_PAIR(moncolor[id]));
+
+        lprc(monstnamelist[id]);
+
+        if (has_colors())
+            attrset(COLOR_PAIR(0));
+
         know[x][y] = KNOWALL;
         return;
     }
 
-    /* Animated water that flickers per tile every 3 tics*/
-    if (item[x][y] == OWATER)
+    /* animated water tiles */
+    if (item[x][y] == OWATER || item[x][y] == OSHOREWATER)
     {
         static const char flicker_chars[] = { '~', '=', '~', '=' };
         int idx = (x * 7 + y * 13 + water_anim_toggle) & 3;
+
+        if (has_colors())
+            attrset(COLOR_PAIR(objcolor[item[x][y]]));
+
         lprc(flicker_chars[idx]);
+
+        if (has_colors())
+            attrset(COLOR_PAIR(0));
+
         know[x][y] = KNOWALL;
         return;
     }
 
-    /* Normal tile */
+    /* object tiles */
     k = item[x][y];
-    lprc(objnamelist[k]);
+    {
+        int id = k;
+
+        if (has_colors())
+            attrset(COLOR_PAIR(objcolor[id]));
+
+        lprc(objnamelist[id]);
+
+        if (has_colors())
+            attrset(COLOR_PAIR(0));
+    }
 
     know[x][y] = KNOWALL;
 }
-
-
 
 /*
 showplayer()

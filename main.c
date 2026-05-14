@@ -70,7 +70,7 @@ MAIN PROGRAM
 int
 main (int argc, char *argv[])
 {
-  int i;
+  int i = 0;
   int hard = -1;
 
   FILE *pFile;
@@ -115,6 +115,18 @@ main (int argc, char *argv[])
 
   strcpy(colourfile, LARNHOME);
   strcat(colourfile, "/larn.clr");
+
+  if (argv[i][0] == '+')
+  {
+	  clear();
+	  restorflag = 1;
+	  if (argv[i][1] == '+')
+	  {
+		  hitflag = 1;
+		  restoregame(ckpfile); /* restore checkpointed game */
+	  }
+	  i = argc;
+  }
 
   readopts(); /* read the options file if there is one */
 

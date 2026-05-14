@@ -182,11 +182,3 @@ extern int save_mode;
 * store.c
 */
 extern int lasttime;
-
-
-/*
-* tok.c
-*/
-extern int move_no_pickup;
-
-//extern int larn_die(char, char *);

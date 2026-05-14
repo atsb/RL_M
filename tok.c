@@ -29,7 +29,6 @@ int yrepcount = 0, dayplay = 0;
 #define MAXMNAME 40 /* max length of a monster re-name */
 static char usermonster[MAXUM][MAXMNAME]; /* the user named monster name goes here */
 static int usermpoint = 0; /* the user monster pointer */
-int move_no_pickup = FALSE;
 
 void
 readopts(void)
@@ -221,7 +220,6 @@ yylex (void)
     {
       bottomdo ();
       showplayer ();		/* show where the player is */
-      move_no_pickup = FALSE;	/* clear 'm' flag */
     }
 
   lflush ();
@@ -271,13 +269,6 @@ yylex (void)
 	}
       else
 	{
-	  /* check for multi-character commands and handle.
-	   */
-	  if (cc == 'm')
-	    {
-	      move_no_pickup = TRUE;
-	      cc = ttgetch ();
-	    }
 	  if (yrepcount > 0)
 	    --yrepcount;
 	  return (lastok = cc);

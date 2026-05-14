@@ -711,7 +711,9 @@ drop_object (int k)
       lprintf ("\nYou don't have item %c! ", k + 'a');
       return (1);
     }
-  if (item[playerx][playery])
+  if (item[playerx][playery] &&
+      item[playerx][playery] != OWATER &&
+      item[playerx][playery] != OSHOREWATER)
     {
       lprintf ("\nThere's something here already: %s",
 	       objectname[item[playerx][playery]]);

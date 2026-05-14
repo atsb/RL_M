@@ -340,6 +340,17 @@ main (int argc, char *argv[])
       else
 	viewflag = 0;
 
+	  /* Reset water entry flags when stepping out of water */
+	  {
+		  int tile = item[playerx][playery];
+
+		  if (tile != OWATER)
+			  in_water = 0;
+
+		  if (tile != OSHOREWATER)
+			  in_shorewater = 0;
+	  }
+
 	  if (hit3flag)
 		  flushinp();
       hitflag = hit3flag = 0;
@@ -1095,7 +1106,7 @@ dropobj (void)
 	{
 	  if (i == '.')		/* drop some gold */
 	    {
-	      if (*p)
+		  if (*p && *p != OWATER && *p != OSHOREWATER) {
 		{
 		  lprintf ("\nThere's something here already: %s",
 			   objectname[item[playerx][playery]]);

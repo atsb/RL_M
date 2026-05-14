@@ -84,6 +84,8 @@ extern int nplt[], nsw[];
 extern int potprob[];
 extern int name_set;
 extern int use_color;
+extern int in_water;
+extern int in_shorewater;
 
 extern char monstnamelist[];
 extern char *levelname[];

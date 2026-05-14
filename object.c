@@ -388,14 +388,19 @@ lookforobject (char do_ident, char do_pickup, char do_action)
       return;
 
     case OWATER:
-      if (do_ident)
-          lprcat("\nYou wade into water.");
-      return;
+        if (do_ident && !in_water) {
+            lprcat("\nYou wade into water.");
+            in_water = 1;
+        }
+        return;
 
     case OSHOREWATER:
-        if (do_ident)
+        if (do_ident && !in_shorewater) {
             lprcat("\nYou walk into shallow water.");
+            in_shorewater = 1;
+        }
         return;
+
 
     case OWALL:
       break;

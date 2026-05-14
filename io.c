@@ -812,25 +812,22 @@ init_term(void)
     keypad(stdscr, TRUE);
 
     /* --- COLORS --- */
-
-    if (has_colors()) {
+    if (use_color && has_colors()) {
         start_color();
         use_default_colors();
 
-        /*
-         * Initialise 256 colour pairs:
-         * pair N = foreground colour N, background = default
-         *
-         * This allows:
-         *   attrset(COLOR_PAIR(moncolor[id]));
-         *   attrset(COLOR_PAIR(objcolor[id]));
-         *
-         * where moncolor[] and objcolor[] contain COLOR_* constants.
-         */
         for (int i = 0; i < 256; i++) {
-            int fg = i % 8;   /* cycle through 8 standard colours */
+            int fg = i % 8;
             init_pair(i, fg, -1);
         }
+    }
+    else {
+        /* otherwise monochrome */
+        for (int i = 0; i < MAXMONST + 10; i++)
+            moncolor[i] = COLOR_WHITE;
+
+        for (int i = 0; i < MAXOBJECT + 1; i++)
+            objcolor[i] = COLOR_WHITE;
     }
 
     /* --- CURSOR --- */

@@ -48,6 +48,7 @@
 int water_anim_toggle = 0;
 long last_water_anim = 0;
 int name_set = 0;
+int use_color = 1;   /* default: colour ON */
 
 /*
 * raiselevel()

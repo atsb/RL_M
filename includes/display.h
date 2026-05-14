@@ -11,3 +11,4 @@ void show1cell (int, int);
 void showplayer (void);
 int moveplayer (int);
 void seemagic (int);
+void readcolors(void);

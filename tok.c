@@ -56,7 +56,7 @@ readopts(void)
         if (*p == '\0' || *p == '\n' || *p == '#')
             continue;
 
-        /* --- name: --- */
+        /* name: */
         if (strncmp(p, "name", 4) == 0) {
             char* value = strchr(p, ':');
             if (value)
@@ -77,7 +77,7 @@ readopts(void)
             continue;
         }
 
-        /* --- savefile: --- */
+        /* savefile: */
         if (strncmp(p, "savefile:", 9) == 0) {
             char* value = p + 9;
 
@@ -93,7 +93,7 @@ readopts(void)
             continue;
         }
 
-        /* --- checkpoint: --- */
+        /* checkpoint: */
         if (strncmp(p, "checkpoint:", 11) == 0) {
             char* value = p + 11;
 
@@ -109,7 +109,7 @@ readopts(void)
             continue;
         }
 
-        /* --- monster: "name" --- */
+        /* monster: "name" */
         if (strncmp(p, "monster:", 8) == 0) {
             char* value = p + 8;
 
@@ -140,6 +140,28 @@ readopts(void)
                 }
 
                 usermpoint++;
+            }
+            continue;
+        }
+
+        /* color: on/off */
+        if (strncmp(p, "color:", 6) == 0) {
+            char* value = p + 6;
+
+            while (*value == ' ' || *value == '\t')
+                value++;
+
+            value[strcspn(value, "\r\n")] = '\0';
+
+            if (!strcasecmp(value, "on") ||
+                !strcasecmp(value, "yes") ||
+                !strcasecmp(value, "true"))
+            {
+                use_color = 1;
+            }
+            else
+            {
+                use_color = 0;
             }
             continue;
         }

@@ -113,7 +113,12 @@ main (int argc, char *argv[])
   strcpy(ckpfile, LARNHOME);
   strcat(ckpfile, "/Larn.ckp");
 
+  strcpy(colourfile, LARNHOME);
+  strcat(colourfile, "/larn.clr");
+
   readopts(); /* read the options file if there is one */
+
+  readcolors(); /* reads the larn.clr file */
 	
   /*init curses ~Gibbon */
   init_term ();			/* setup the terminal */

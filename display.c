@@ -959,3 +959,45 @@ static int is_metal_armor(int item_id) {
         return 0; // False
     }
 }
+
+void
+readcolors(void)
+{
+    FILE* fp = fopen(colourfile, "r");
+    if (!fp) return;
+
+    char line[256], key[64], val[64];
+
+    while (fgets(line, sizeof(line), fp))
+    {
+        if (line[0] == '#' || line[0] == '\n')
+            continue;
+
+        if (sscanf(line, "%63s = %63s", key, val) != 2)
+            continue;
+
+        int color = -1;
+
+        if (!strcmp(val, "COLOR_BLACK"))   color = COLOR_BLACK;
+        else if (!strcmp(val, "COLOR_RED"))     color = COLOR_RED;
+        else if (!strcmp(val, "COLOR_GREEN"))   color = COLOR_GREEN;
+        else if (!strcmp(val, "COLOR_YELLOW"))  color = COLOR_YELLOW;
+        else if (!strcmp(val, "COLOR_BLUE"))    color = COLOR_BLUE;
+        else if (!strcmp(val, "COLOR_MAGENTA")) color = COLOR_MAGENTA;
+        else if (!strcmp(val, "COLOR_CYAN"))    color = COLOR_CYAN;
+        else if (!strcmp(val, "COLOR_WHITE"))   color = COLOR_WHITE;
+
+        if (color < 0) continue;
+
+        /* Monsters */
+        for (int i = 0; monster_map[i].name; i++)
+            if (!strcmp(key, monster_map[i].name))
+                moncolor[monster_map[i].id] = color;
+
+        /* Objects */
+        for (int i = 0; object_map[i].name; i++)
+            if (!strcmp(key, object_map[i].name))
+                objcolor[object_map[i].id] = color;
+    }
+    fclose(fp);
+}

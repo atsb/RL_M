@@ -533,7 +533,7 @@ move_smart(int i, int j)
     /* attack player */
     if (x == playerx && y == playery)
     {
-        hitmonster(x, y);
+        hitplayer(i, j);
         return;
     }
 

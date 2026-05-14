@@ -228,7 +228,7 @@ yylex (void)
       c[BYTESIN]++;
 
       /* periodic checkpointing */
-      if (ckpflag) {
+      if (ckpflag && cc != 0) {
           if ((c[BYTESIN] % 400) == 0) {
               savegame(ckpfile);
           }
@@ -247,7 +247,16 @@ yylex (void)
           }
       }
 
-      cc = ttgetch ();
+      {
+          int ch = ttgetch_noblock();
+
+          if (ch == -1) {
+
+              /* no input available */
+              return 0;
+          }
+          cc = (char)ch;
+      }
 
       /* get repeat count, showing to player
        */

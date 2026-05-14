@@ -285,9 +285,9 @@ main (int argc, char *argv[])
    */
   for (;;)
     {
-	  /* water animation every ~6 player moves and puddle growth every ~30 player moves */
+	  /* water animation is now in a real time state machine - animates every 2 seconds */
 	  long now = time(NULL);
-	  if (now - last_water_anim >= 3)
+	  if (now - last_water_anim >= 2)
 	  {
 		  last_water_anim = now;
 		  water_anim_toggle = !water_anim_toggle;
@@ -301,7 +301,7 @@ main (int argc, char *argv[])
 
 		  refresh();
 	  }
-      if (dropflag == 0)
+	  if (dropflag == 0 && nomove == 0)
 	{
 	  /* see if there is an object here.
 
@@ -319,7 +319,7 @@ main (int argc, char *argv[])
          update game time, move spheres, move walls, move monsters
          all the stuff affected by TIMESTOP and HASTESELF
        */
-      if (c[TIMESTOP] <= 0)
+	  if (c[TIMESTOP] <= 0 && nomove == 0)
 	if (c[HASTESELF] == 0 || (c[HASTESELF] & 1) == 0)
 	  {
 	    gtime++;
@@ -358,16 +358,16 @@ main (int argc, char *argv[])
 
       /* get commands and make moves
        */
-      nomove = 1;
-      while (nomove)
-	{
+	  nomove = 1;
+
 	  if (hit3flag)
 		  flushinp();
+
 	  nomove = 0;
-	  parse ();
-	}
+	  parse();
       regen ();			/*  regenerate hp and spells            */
-      if (c[TIMESTOP] == 0)
+
+	  if (c[TIMESTOP] == 0 && nomove == 0)
 	if (--rmst <= 0)
 	  {
 	    rmst = 120 - (level << 2);
@@ -414,6 +414,13 @@ parse (void)
   for (;;)
     {
       k = yylex ();
+	  if (k == 0) {
+
+		  /* no input this tick, continue with main loop */
+		  nomove = 1;
+		  nap(50);   /* sleep 50 millis for CPU runaway prevention */
+		  return;
+	  }
       switch (k)		/*  get the token from the input and switch on it   */
 	{
 	case 'h':
@@ -477,13 +484,13 @@ parse (void)
 
 	case 'd':
 	  yrepcount = 0;
-	  if (c[TIMESTOP] == 0)
+	  if (c[TIMESTOP] == 0 && nomove == 0)
 	    dropobj ();
 	  return;		/*  to drop an object   */
 
 	case 'e':
 	  yrepcount = 0;
-	  if (c[TIMESTOP] == 0)
+	  if (c[TIMESTOP] == 0 && nomove == 0)
 	    if (!floor_consume (OCOOKIE, "eat"))
 	      consume (OCOOKIE, "eat", showeat);
 	  return;		/*  to eat a fortune cookie */
@@ -508,7 +515,7 @@ parse (void)
 
 	case 'q':		/* quaff a potion */
 	  yrepcount = 0;
-	  if (c[TIMESTOP] == 0)
+	  if (c[TIMESTOP] == 0 && nomove == 0)
 	    if (!floor_consume (OPOTION, "quaff"))
 	      consume (OPOTION, "quaff", showquaff);
 	  return;
@@ -520,7 +527,7 @@ parse (void)
 	      cursors ();
 	      lprcat ("\nYou can't read anything when you're blind!");
 	    }
-	  else if (c[TIMESTOP] == 0)
+	  else if (c[TIMESTOP] == 0 && nomove == 0)
 	    if (!floor_consume (OSCROLL, "read"))
 	      if (!floor_consume (OBOOK, "read"))
 		consume (OSCROLL, "read", showread);
@@ -822,6 +829,10 @@ parse (void)
 void
 parse2 (void)
 {
+	if (nomove != 0)
+	{
+		return;
+	}
 
   /* move the monsters */
   if (c[HASTEMONST])
@@ -837,50 +848,22 @@ parse2 (void)
   regen ();
 }
 
-
-
 static void
-run (int dir)
+run(int dir)
 {
-  int i;
+	int i = 1;
 
-  i = 1;
-
-  while (i)
-    {
-
-      i = moveplayer (dir);
-
-      if (i > 0)
+	while (i)
 	{
+		i = moveplayer(dir);
 
-	  if (c[HASTEMONST])
-	    {
+		if (hitflag)
+			i = 0;
 
-	      movemonst ();
-	    }
-
-	  movemonst ();
-	  randmonst ();
-	  regen ();
+		if (i != 0)
+			showcell(playerx, playery);
 	}
-
-      if (hitflag)
-	{
-
-	  i = 0;
-	}
-
-      if (i != 0)
-	{
-
-	  showcell (playerx, playery);
-	}
-  gtime++;
-    }
 }
-
-
 
 /*
 * function to wield a weapon

@@ -249,6 +249,29 @@ ttgetch (void)
   return byt;
 }
 
+/* non‑blocking ttgetch: returns -1 if no key available */
+int
+ttgetch_noblock(void)
+{
+    int ch;
+
+    lflush();
+
+    nodelay(stdscr, TRUE);
+    ch = (*getchfn)();
+    nodelay(stdscr, FALSE);
+
+    if (ch == ERR)
+        return -1;
+
+    if (ch == '\r')
+        ch = '\n';
+
+    /* count real input bytes for checkpointing */
+    c[BYTESIN]++;
+
+    return ch;
+}
 
 /*
 * scbr()      Function to set cbreak -echo for the terminal

@@ -612,7 +612,7 @@ show1cell(int x, int y)
         return;
     }
 
-    /* animated water tiles */
+    /* real time animated water tiles */
     if (item[x][y] == OWATER || item[x][y] == OSHOREWATER)
     {
         static const char flicker_chars[] = { '~', '=', '~', '=' };

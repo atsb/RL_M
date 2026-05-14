@@ -1106,7 +1106,7 @@ dropobj (void)
 	{
 	  if (i == '.')		/* drop some gold */
 	    {
-		  if (*p && *p != OWATER && *p != OSHOREWATER) {
+		  if (*p && *p != OWATER && *p != OSHOREWATER)
 		{
 		  lprintf ("\nThere's something here already: %s",
 			   objectname[item[playerx][playery]]);

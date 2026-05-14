@@ -67,3 +67,5 @@ char *tmcapcnv (char *, char *);
 void enter_name (void);
 
 void cursor_block (void);
+
+int lstrcasecmp(const char*, const char*);

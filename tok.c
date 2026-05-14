@@ -153,9 +153,9 @@ readopts(void)
 
             value[strcspn(value, "\r\n")] = '\0';
 
-            if (!strcasecmp(value, "on") ||
-                !strcasecmp(value, "yes") ||
-                !strcasecmp(value, "true"))
+            if (!lstrcasecmp(value, "on") ||
+                !lstrcasecmp(value, "yes") ||
+                !lstrcasecmp(value, "true"))
             {
                 use_color = 1;
             }

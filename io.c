@@ -1020,3 +1020,22 @@ cursor_block(void)
     addch(' ');
     attroff(A_REVERSE);
 }
+
+int
+lstrcasecmp(const char* a, const char* b)
+{
+    unsigned char ca, cb;
+
+    while (*a && *b) {
+        ca = (unsigned char)tolower((unsigned char)*a);
+        cb = (unsigned char)tolower((unsigned char)*b);
+
+        if (ca != cb)
+            return ca - cb;
+
+        a++;
+        b++;
+    }
+
+    return (unsigned char)*a - (unsigned char)*b;
+}

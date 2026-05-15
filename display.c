@@ -944,12 +944,12 @@ show1cell(int x, int y)
         int idx = (x * 13 + y * 7 + lava_anim_toggle) & 3;
 
         if (has_colors())
-            attron(COLOR_PAIR(COLOR_RED));
+            attrset(COLOR_PAIR(objcolor[item[x][y]]));
 
         lprc(lava_chars[idx]);
 
         if (has_colors())
-            attroff(COLOR_PAIR(COLOR_RED));
+            attrset(COLOR_PAIR(0));
 
         know[x][y] = KNOWALL;
 

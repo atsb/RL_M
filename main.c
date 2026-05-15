@@ -866,7 +866,7 @@ parse2 (void)
   randmonst ();
 
   if (c[TIMESTOP] == 0 && nomove == 0)
-	  regen ();
+regen ();
 }
 
 static void
@@ -1215,8 +1215,8 @@ floor_consume (int search_item, char *cons_verb)
   switch (i)
     {
     case OCOOKIE:
-      outfortune ();
-      forget ();
+		lprcat("\n\nYou have found a fortune cookie.");
+		ocookie();
       break;
     case OBOOK:
       readbook (iarg[playerx][playery]);
@@ -1282,7 +1282,7 @@ consume (int search_item, char *prompt, int (*showfunc) (void))
 		      lprintf ("\nYou can't %s that.", prompt);
 		      return;
 		    }
-		  outfortune ();
+		  ocookie();
 		  break;
 		case OPOTION:
 		  if (search_item != OPOTION)

@@ -15,3 +15,5 @@ void ohome (void);
 void iopts (void);
 
 void ignore (void);
+
+void ocookie(void);

@@ -31,8 +31,6 @@ static void ostatue (void);
 static void omirror (void);
 static void obook (void);
 
-static void ocookie (void);
-
 static void ogold (int);
 
 static void prompt_enter (void);
@@ -1254,39 +1252,58 @@ readbook (int lev)
     }
 }
 
-
-
-static void
-ocookie (void)
+void
+ocookie(void)
 {
+    char* p;
 
-  lprcat ("\nDo you (e) eat it, (t) take it");
-  iopts ();
-  for (;;)
+    lprcat("\nDo you (e) eat it, (t) take it");
+    iopts();
+
+    for (;;)
     {
-      switch (ttgetch ())
-	{
-	case '\33':
-	case 'i':
-	  ignore ();
-	  return;
+        switch (ttgetch())
+        {
+        case '\33':
+        case 'i':
+            ignore();
+            return;
 
-	case 'e':
-	  lprcat ("eat");
-	  forget ();		/* no more cookie */
-	  outfortune ();
-	  return;
+        case 'e':
+            lprcat("eat\nThe cookie tasted good.");
+            forget();
 
-	case 't':
-	  lprcat ("take");
-	  if (take (OCOOKIE, 0) == 0)
-	    forget ();		/* no more book */
-	  return;
-	};
+            if (c[BLINDCOUNT])
+                return;
+
+            p = fortune(fortfile);
+            if (p == 0)
+                return;
+
+            lprcat(" A message inside the cookie reads:\n");
+            if (has_colors())
+            {
+                attron(A_BOLD);
+                attron(COLOR_PAIR(COLOR_YELLOW));
+            }
+
+            lprcat(p);
+
+            if (has_colors())
+            {
+                attroff(A_BOLD);
+                attroff(COLOR_PAIR(COLOR_YELLOW));
+            }
+            return;
+
+        case 't':
+            lprcat("take");
+            if (take(OCOOKIE, 0) == 0)
+                forget();
+            return;
+        }
     }
 }
-
-
 
 /*
 * routine to pick up some gold -- if arg==OMAXGOLD then the pile is worth

@@ -1,1 +1,1 @@
-void outfortune (void);
+char* fortune(const char* file);

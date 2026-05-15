@@ -767,6 +767,11 @@ died (int x)
       return;			/* only case where died() returns */
     }
 
+  cursors();
+  lprcat("\nYou have been slain.");
+  lflush();
+  refresh();
+
   cursors ();
   lprcat("\nPress 'x' to continue.\n");
   while ((i = getch()) != 'x')

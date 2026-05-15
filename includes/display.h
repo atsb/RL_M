@@ -12,3 +12,4 @@ void showplayer (void);
 int moveplayer (int);
 void seemagic (int);
 void readcolors(void);
+void compareequipped(int);

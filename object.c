@@ -428,6 +428,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
       if (do_ident)
 	{
 	  lprintf ("\nYou have found %s ", objectname[i]);
+      compareequipped(i);
 	  switch (i)
 	    {
 	    case ODIAMOND:
@@ -929,7 +930,8 @@ adjtimel (int tim)
       if ((c[time_change[j]] -= tim) < 1)
 	c[time_change[j]] = 1;
 
-  regen ();
+  if (c[TIMESTOP] == 0 && nomove == 0)
+      regen ();
 }
 
 

@@ -160,14 +160,10 @@ loseexperience (long x)
 *  warning -- will kill player if hp goes to zero
 */
 void
-losehp (int x)
+losehp(int x)
 {
-  if ((c[HP] -= x) <= 0)
-    {
-      lprcat ("\nYou have been slain.");
-      nap (NAPTIME);
-      died (lastnum);
-    }
+    if ((c[HP] -= x) <= 0)
+        died(lastnum);
 }
 
 void

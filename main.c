@@ -383,7 +383,9 @@ main (int argc, char *argv[])
 
 	  nomove = 0;
 	  parse();
-      regen ();			/*  regenerate hp and spells            */
+
+	  if (c[TIMESTOP] == 0 && nomove == 0)
+		  regen ();			/*  regenerate hp and spells            */
 
 	  if (c[TIMESTOP] == 0 && nomove == 0)
 	if (--rmst <= 0)
@@ -863,7 +865,8 @@ parse2 (void)
 
   randmonst ();
 
-  regen ();
+  if (c[TIMESTOP] == 0 && nomove == 0)
+	  regen ();
 }
 
 static void

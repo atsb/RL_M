@@ -482,6 +482,313 @@ drawscreen(void)
     d_ymax = MAXY;
 }
 
+static void
+isbetter(void)
+{
+    if (has_colors())
+        attron(COLOR_PAIR(COLOR_GREEN));
+
+    lprcat("(better) ");
+
+    if (has_colors())
+        attroff(COLOR_PAIR(COLOR_GREEN));
+}
+
+static void
+isworse(void)
+{
+    if (has_colors())
+        attron(COLOR_PAIR(COLOR_RED));
+
+    lprcat("(worse) ");
+
+    if (has_colors())
+        attroff(COLOR_PAIR(COLOR_RED));
+}
+
+static void
+isequal(void)
+{
+    if (has_colors())
+        attron(COLOR_PAIR(COLOR_CYAN));
+
+    lprcat("(equal) ");
+
+    if (has_colors())
+        attroff(COLOR_PAIR(COLOR_CYAN));
+}
+
+static void
+isnone(void)
+{
+    if (has_colors())
+        attron(COLOR_PAIR(COLOR_YELLOW));
+
+    lprcat("(none equipped) ");
+
+    if (has_colors())
+        attroff(COLOR_PAIR(COLOR_YELLOW));
+}
+
+void
+compareequipped(int obj)
+{
+    int wielded = iven[c[WIELD]];
+    int worn = iven[c[WEAR]];
+    int newv = 0, oldv = 0;
+
+    switch (obj)
+    {
+    case OSWORDofSLASHING:
+    case OHAMMER:
+    case OSWORD:
+    case O2SWORD:
+    case OHSWORD:
+    case OSPEAR:
+    case ODAGGER:
+    case OBATTLEAXE:
+    case OLONGSWORD:
+    case OLANCE:
+    case OVORPAL:
+    case OSLAYER:
+
+        if (wielded <= 0)
+        {
+            isnone();
+            return;
+        }
+
+        switch (obj)
+        {
+        case OSWORDofSLASHING:
+            newv = 14;
+            break;
+
+        case OHAMMER:
+            newv = 12;
+            break;
+
+        case OSWORD:
+            newv = 10;
+            break;
+
+        case O2SWORD:
+            newv = 15;
+            break;
+
+        case OHSWORD:
+            newv = 25;
+            break;
+
+        case OSPEAR:
+            newv = 6;
+            break;
+
+        case ODAGGER:
+            newv = 3;
+            break;
+
+        case OBATTLEAXE:
+            newv = 18;
+            break;
+
+        case OLONGSWORD:
+            newv = 22;
+            break;
+
+        case OLANCE:
+            newv = 30;
+            break;
+
+        case OVORPAL:
+            newv = 40;
+            break;
+
+        case OSLAYER:
+            newv = 50;
+            break;
+        }
+        newv += ivenarg[obj];
+
+        switch (wielded)
+        {
+        case OSWORDofSLASHING:
+            oldv = 14;
+            break;
+
+        case OHAMMER:
+            oldv = 12;
+            break;
+
+        case OSWORD:
+            oldv = 10;
+            break;
+
+        case O2SWORD:
+            oldv = 15;
+            break;
+
+        case OHSWORD:
+            oldv = 25;
+            break;
+
+        case OSPEAR:
+            oldv = 6;
+            break;
+
+        case ODAGGER:
+            oldv = 3;
+            break;
+
+        case OBATTLEAXE:
+            oldv = 18;
+            break;
+
+        case OLONGSWORD:
+            oldv = 22;
+            break;
+
+        case OLANCE:
+            oldv = 30;
+            break;
+
+        case OVORPAL:
+            oldv = 40;
+            break;
+
+        case OSLAYER:
+            oldv = 50;
+            break;
+
+        default:
+            oldv = 0;
+            break;
+        }
+        oldv += ivenarg[wielded];
+
+        if (newv > oldv)
+            isbetter();
+        else if (newv < oldv)
+            isworse();
+        else
+            isequal();
+
+        return;
+    }
+
+    switch (obj)
+    {
+    case OPLATE:
+    case OCHAIN:
+    case OLEATHER:
+    case ORING:
+    case OSTUDLEATHER:
+    case OSPLINT:
+    case OPLATEARMOR:
+    case OSSPLATE:
+    case OELVENCHAIN:
+
+        if (worn <= 0)
+        {
+            isnone();
+            return;
+        }
+
+        switch (obj)
+        {
+        case OPLATE:
+            newv = 7;
+            break;
+
+        case OCHAIN:
+            newv = 5;
+            break;
+
+        case OLEATHER:
+            newv = 2;
+            break;
+
+        case ORING:
+            newv = 4;
+            break;
+
+        case OSTUDLEATHER:
+            newv = 3;
+            break;
+
+        case OSPLINT:
+            newv = 6;
+            break;
+
+        case OPLATEARMOR:
+            newv = 8;
+            break;
+
+        case OSSPLATE:
+            newv = 9;
+            break;
+
+        case OELVENCHAIN:
+            newv = 10;
+            break;
+        }
+        newv += ivenarg[obj];
+
+        switch (worn)
+        {
+        case OPLATE:
+            oldv = 7;
+            break;
+
+        case OCHAIN:
+            oldv = 5;
+            break;
+
+        case OLEATHER:
+            oldv = 2;
+            break;
+
+        case ORING:
+            oldv = 4;
+            break;
+
+        case OSTUDLEATHER:
+            oldv = 3;
+            break;
+
+        case OSPLINT:
+            oldv = 6;
+            break;
+
+        case OPLATEARMOR:
+            oldv = 8;
+            break;
+
+        case OSSPLATE:
+            oldv = 9;
+            break;
+
+        case OELVENCHAIN:
+            oldv = 10;
+            break;
+
+        default:
+            oldv = 0;
+            break;
+        }
+        oldv += ivenarg[worn];
+
+        if (newv > oldv)
+            isbetter();
+        else if (newv < oldv)
+            isworse();
+        else
+            isequal();
+
+        return;
+    }
+}
+
 /*
 showcell(x,y)
 
@@ -997,7 +1304,8 @@ void
 readcolors(void)
 {
     FILE* fp = fopen(colourfile, "r");
-    if (!fp) return;
+    if (!fp)
+        return;
 
     char line[256], key[64], val[64];
 
@@ -1011,7 +1319,7 @@ readcolors(void)
 
         int color = -1;
 
-        if (!strcmp(val, "COLOR_BLACK"))   color = COLOR_BLACK;
+        if (!strcmp(val, "COLOR_BLACK"))        color = COLOR_BLACK;
         else if (!strcmp(val, "COLOR_RED"))     color = COLOR_RED;
         else if (!strcmp(val, "COLOR_GREEN"))   color = COLOR_GREEN;
         else if (!strcmp(val, "COLOR_YELLOW"))  color = COLOR_YELLOW;
@@ -1020,7 +1328,8 @@ readcolors(void)
         else if (!strcmp(val, "COLOR_CYAN"))    color = COLOR_CYAN;
         else if (!strcmp(val, "COLOR_WHITE"))   color = COLOR_WHITE;
 
-        if (color < 0) continue;
+        if (color < 0)
+            continue;
 
         /* Monsters */
         for (int i = 0; monster_map[i].name; i++)

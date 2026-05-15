@@ -29,7 +29,6 @@ int yrepcount = 0, dayplay = 0;
 #define MAXMNAME 40 /* max length of a monster re-name */
 static char usermonster[MAXUM][MAXMNAME]; /* the user named monster name goes here */
 static int usermpoint = 0; /* the user monster pointer */
-int move_no_pickup = FALSE;
 
 void
 readopts(void)
@@ -56,7 +55,7 @@ readopts(void)
         if (*p == '\0' || *p == '\n' || *p == '#')
             continue;
 
-        /* --- name: --- */
+        /* name: */
         if (strncmp(p, "name", 4) == 0) {
             char* value = strchr(p, ':');
             if (value)
@@ -77,7 +76,7 @@ readopts(void)
             continue;
         }
 
-        /* --- savefile: --- */
+        /* savefile: */
         if (strncmp(p, "savefile:", 9) == 0) {
             char* value = p + 9;
 
@@ -93,7 +92,7 @@ readopts(void)
             continue;
         }
 
-        /* --- checkpoint: --- */
+        /* checkpoint: */
         if (strncmp(p, "checkpoint:", 11) == 0) {
             char* value = p + 11;
 
@@ -109,7 +108,7 @@ readopts(void)
             continue;
         }
 
-        /* --- monster: "name" --- */
+        /* monster: "name" */
         if (strncmp(p, "monster:", 8) == 0) {
             char* value = p + 8;
 
@@ -140,6 +139,26 @@ readopts(void)
                 }
 
                 usermpoint++;
+            }
+            continue;
+        }
+
+        /* color: on/off */
+        if (strncmp(p, "color:", 6) == 0) {
+            char* value = p + 6;
+
+            while (*value == ' ' || *value == '\t')
+                value++;
+
+            value[strcspn(value, "\r\n")] = '\0';
+
+            if (!lstrcasecmp(value, "on"))
+            {
+                use_color = 1;
+            }
+            else
+            {
+                use_color = 0;
             }
             continue;
         }
@@ -201,7 +220,6 @@ yylex (void)
     {
       bottomdo ();
       showplayer ();		/* show where the player is */
-      move_no_pickup = FALSE;	/* clear 'm' flag */
     }
 
   lflush ();
@@ -210,7 +228,7 @@ yylex (void)
       c[BYTESIN]++;
 
       /* periodic checkpointing */
-      if (ckpflag) {
+      if (ckpflag && cc != 0) {
           if ((c[BYTESIN] % 400) == 0) {
               savegame(ckpfile);
           }
@@ -229,7 +247,16 @@ yylex (void)
           }
       }
 
-      cc = ttgetch ();
+      {
+          int ch = ttgetch_noblock();
+
+          if (ch == -1) {
+
+              /* no input available */
+              return 0;
+          }
+          cc = (char)ch;
+      }
 
       /* get repeat count, showing to player
        */
@@ -251,13 +278,6 @@ yylex (void)
 	}
       else
 	{
-	  /* check for multi-character commands and handle.
-	   */
-	  if (cc == 'm')
-	    {
-	      move_no_pickup = TRUE;
-	      cc = ttgetch ();
-	    }
 	  if (yrepcount > 0)
 	    --yrepcount;
 	  return (lastok = cc);

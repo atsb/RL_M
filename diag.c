@@ -406,6 +406,19 @@ restoregame (char *fname)
     }				/* died a post mortem death */
 
 #ifdef ANTICHEAT
+  if (strcmp(fname, ckpfile) == 0)
+  {
+      if (lappend(fname) < 0)
+          fcheat();
+      else
+      {
+          lprc(' '); lwclose();
+      }
+      lcreat((char*)0);
+  }
+  else if (unlink(fname) < 0)
+      fcheat(); /* can't unlink save file */
+
   if (_unlink (fname) < 0)
     fcheat ();
   for (k = 0; k < 6; k++)

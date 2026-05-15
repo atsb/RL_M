@@ -106,10 +106,13 @@ void
 newcavelevel(int x)
 {
     int i, j;
+    int ponds;
+    int n;
+    int cx, cy;
 
     if (beenhere[level])
-        savelevel();		/* put the level back into storage  */
-    level = x;			/* get the new level and put in working storage */
+        savelevel();        /* put the level back into storage  */
+    level = x;              /* get the new level and put in working storage */
     if (beenhere[x])
     {
         getlevel();
@@ -119,17 +122,44 @@ newcavelevel(int x)
         return;
     }
 
-    /* fill in new level
-     */
+    /* fill in new level */
     for (i = 0; i < MAXY; i++)
         for (j = 0; j < MAXX; j++)
-            know[j][i] = mitem[j][i] = 0;
+        {
+            know[j][i] = 0;
+            mitem[j][i] = 0;
+        }
+
     makemaze(x);
+
+    /*  lava generation only on volcano levels */
+    if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
+    {
+        /* small lava ponds */
+        ponds = rnd(3) + 2;
+        for (n = 0; n < ponds; n++)
+        {
+            cx = rnd(MAXX - 4) + 2;
+            cy = rnd(MAXY - 4) + 2;
+
+            if (item[cx][cy] == 0)
+                make_lavapool(cx, cy);
+
+        }
+
+        /* crying lava pools */
+        for (n = 0; n < ponds; n++)
+        {
+            make_lavapool(cx, cy);
+            make_cryinglava(cx, cy);
+        }
+    }
+
     makeobject(x);
     beenhere[x] = 1;
     sethp(1);
     positionplayer();
-    checkgen();			/* wipe out any genocided monsters */
+    checkgen();         /* wipe out any genocided monsters */
 
 #if WIZID
     if (wizard || x == 0)
@@ -144,29 +174,44 @@ newcavelevel(int x)
 /*
 makecorridor_caverns(int x1, int y1, int x2, int y2)
 
-subroutine to make the caverns corridoor connections.
+subroutine to make the caverns corridor connections.
 */
 static void
 makecorridor_caverns(int x1, int y1, int x2, int y2)
 {
-    int x = x1, y = y1;
-    int steps = 0;
+    int x, y;
+    int steps;
 
-    while ((x != x2 || y != y2) && steps < 500) {
+    x = x1;
+    y = y1;
+    steps = 0;
+
+    while ((x != x2 || y != y2) && steps < 500)
+    {
         if (x > 0 && x < MAXX - 1 && y > 0 && y < MAXY - 1)
             item[x][y] = 0;
 
-        if (rnd(100) < 60) {
-            if (x < x2) x++;
-            else if (x > x2) x--;
-            else if (y < y2) y++;
-            else if (y > y2) y--;
+        if (rnd(100) < 60)
+        {
+            if (x < x2)
+                x++;
+            else if (x > x2)
+                x--;
+            else if (y < y2)
+                y++;
+            else if (y > y2)
+                y--;
         }
-        else {
-            if (y < y2) y++;
-            else if (y > y2) y--;
-            else if (x < x2) x++;
-            else if (x > x2) x--;
+        else
+        {
+            if (y < y2)
+                y++;
+            else if (y > y2)
+                y--;
+            else if (x < x2)
+                x++;
+            else if (x > x2)
+                x--;
         }
         steps++;
     }
@@ -181,6 +226,15 @@ static void
 makemaze_caverns(int k)
 {
     int i, j;
+    int cell_w, cell_h;
+    int rx[3][3], ry[3][3], rw[3][3], rh[3][3];
+    int gone[3][3];
+    int gx, gy;
+    int max_w, max_h;
+    int cell_x, cell_y;
+    int off_x_max, off_y_max;
+    int x1, y1, x2, y2;
+    int xx, yy;
 
     /* SEA OF WALL!!! */
     for (i = 0; i < MAXY; i++)
@@ -188,51 +242,53 @@ makemaze_caverns(int k)
             item[j][i] = OWALL;
 
     /* solid outer boundary */
-    for (i = 0; i < MAXY; i++) {
+    for (i = 0; i < MAXY; i++)
+    {
         item[0][i] = OWALL;
         item[MAXX - 1][i] = OWALL;
     }
-    for (j = 0; j < MAXX; j++) {
+    for (j = 0; j < MAXX; j++)
+    {
         item[j][0] = OWALL;
         item[j][MAXY - 1] = OWALL;
     }
 
     /* 3x3 grid */
-    int cell_w = (MAXX - 2) / 3;
-    int cell_h = (MAXY - 2) / 3;
+    cell_w = (MAXX - 2) / 3;
+    cell_h = (MAXY - 2) / 3;
     if (cell_w < 6) cell_w = 6;
     if (cell_h < 6) cell_h = 6;
 
-    int rx[3][3], ry[3][3], rw[3][3], rh[3][3];
-    int gone[3][3];
-
     /* gone rooms */
-    for (int gy = 0; gy < 3; gy++)
-        for (int gx = 0; gx < 3; gx++)
+    for (gy = 0; gy < 3; gy++)
+        for (gx = 0; gx < 3; gx++)
             gone[gx][gy] = (rnd(4) == 0);
 
     /* carve rooms */
-    for (int gy = 0; gy < 3; gy++) {
-        for (int gx = 0; gx < 3; gx++) {
-
-            if (gone[gx][gy]) {
-                rw[gx][gy] = rh[gx][gy] = 0;
+    for (gy = 0; gy < 3; gy++)
+    {
+        for (gx = 0; gx < 3; gx++)
+        {
+            if (gone[gx][gy])
+            {
+                rw[gx][gy] = 0;
+                rh[gx][gy] = 0;
                 continue;
             }
 
-            int max_w = cell_w - 2;
-            int max_h = cell_h - 2;
+            max_w = cell_w - 2;
+            max_h = cell_h - 2;
             if (max_w < 4) max_w = 4;
             if (max_h < 4) max_h = 4;
 
             rw[gx][gy] = rnd(max_w - 3) + 4;
             rh[gx][gy] = rnd(max_h - 3) + 4;
 
-            int cell_x = 1 + gx * cell_w;
-            int cell_y = 1 + gy * cell_h;
+            cell_x = 1 + gx * cell_w;
+            cell_y = 1 + gy * cell_h;
 
-            int off_x_max = cell_w - rw[gx][gy];
-            int off_y_max = cell_h - rh[gx][gy];
+            off_x_max = cell_w - rw[gx][gy];
+            off_y_max = cell_h - rh[gx][gy];
             if (off_x_max < 1) off_x_max = 1;
             if (off_y_max < 1) off_y_max = 1;
 
@@ -241,49 +297,59 @@ makemaze_caverns(int k)
 
             /* carve interior */
             for (i = 0; i < rh[gx][gy]; i++)
-                for (j = 0; j < rw[gx][gy]; j++) {
-                    int x = rx[gx][gy] + j;
-                    int y = ry[gx][gy] + i;
-                    if (x > 0 && x < MAXX - 1 && y > 0 && y < MAXY - 1)
-                        item[x][y] = 0;
+                for (j = 0; j < rw[gx][gy]; j++)
+                {
+                    xx = rx[gx][gy] + j;
+                    yy = ry[gx][gy] + i;
+                    if (xx > 0 && xx < MAXX - 1 && yy > 0 && yy < MAXY - 1)
+                        item[xx][yy] = 0;
                 }
         }
     }
 
     /* horizontal connections */
-    for (int gy = 0; gy < 3; gy++) {
-        for (int gx = 0; gx < 2; gx++) {
-            if (rw[gx][gy] && rw[gx + 1][gy]) {
-                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
-                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
-                int x2 = rx[gx + 1][gy] + rw[gx + 1][gy] / 2;
-                int y2 = ry[gx + 1][gy] + rh[gx + 1][gy] / 2;
+    for (gy = 0; gy < 3; gy++)
+    {
+        for (gx = 0; gx < 2; gx++)
+        {
+            if (rw[gx][gy] && rw[gx + 1][gy])
+            {
+                x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                x2 = rx[gx + 1][gy] + rw[gx + 1][gy] / 2;
+                y2 = ry[gx + 1][gy] + rh[gx + 1][gy] / 2;
                 makecorridor_caverns(x1, y1, x2, y2);
             }
         }
     }
 
     /* vertical connections */
-    for (int gx = 0; gx < 3; gx++) {
-        for (int gy = 0; gy < 2; gy++) {
-            if (rh[gx][gy] && rh[gx][gy + 1]) {
-                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
-                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
-                int x2 = rx[gx][gy + 1] + rw[gx][gy + 1] / 2;
-                int y2 = ry[gx][gy + 1] + rh[gx][gy + 1] / 2;
+    for (gx = 0; gx < 3; gx++)
+    {
+        for (gy = 0; gy < 2; gy++)
+        {
+            if (rh[gx][gy] && rh[gx][gy + 1])
+            {
+                x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                x2 = rx[gx][gy + 1] + rw[gx][gy + 1] / 2;
+                y2 = ry[gx][gy + 1] + rh[gx][gy + 1] / 2;
                 makecorridor_caverns(x1, y1, x2, y2);
             }
         }
     }
 
     /* diagonal connections */
-    for (int gy = 0; gy < 2; gy++) {
-        for (int gx = 0; gx < 2; gx++) {
-            if (rw[gx][gy] && rw[gx + 1][gy + 1] && rnd(100) < 40) {
-                int x1 = rx[gx][gy] + rw[gx][gy] / 2;
-                int y1 = ry[gx][gy] + rh[gx][gy] / 2;
-                int x2 = rx[gx + 1][gy + 1] + rw[gx + 1][gy + 1] / 2;
-                int y2 = ry[gx + 1][gy + 1] + rh[gx + 1][gy + 1] / 2;
+    for (gy = 0; gy < 2; gy++)
+    {
+        for (gx = 0; gx < 2; gx++)
+        {
+            if (rw[gx][gy] && rw[gx + 1][gy + 1] && rnd(100) < 40)
+            {
+                x1 = rx[gx][gy] + rw[gx][gy] / 2;
+                y1 = ry[gx][gy] + rh[gx][gy] / 2;
+                x2 = rx[gx + 1][gy + 1] + rw[gx + 1][gy + 1] / 2;
+                y2 = ry[gx + 1][gy + 1] + rh[gx + 1][gy + 1] / 2;
                 makecorridor_caverns(x1, y1, x2, y2);
             }
         }
@@ -310,7 +376,8 @@ makemaze(int k)
     int z;
 
     /* ~30% chance to generate a caverns style maze */
-    if (k > 0 && k != MAXLEVEL - 1 && rnd(100) < 30) {
+    if (k > 0 && k != MAXLEVEL - 1 && rnd(100) < 30)
+    {
         makemaze_caverns(k);
         return;
     }
@@ -328,13 +395,10 @@ makemaze(int k)
 
     if (k == 0)
     {
-
         tmp = 0;
-
     }
     else
     {
-
         tmp = OWALL;
     }
 
@@ -342,7 +406,6 @@ makemaze(int k)
     {
         for (j = 0; j < MAXX; j++)
         {
-
             item[j][i] = tmp;
         }
     }
@@ -356,7 +419,6 @@ makemaze(int k)
 
     if (k == 1)
     {
-
         item[33][MAXY - 1] = OENTRANCE;
     }
 
@@ -387,6 +449,15 @@ makemaze(int k)
                 for (j = myl; j < myh; j++)
                 {
                     item[i][j] = 0;
+
+                    /* do not spawn mobs in lava except red dragons */
+                    if (item[i][j] == OLAVA)
+                    {
+                        mitem[i][j] = REDDRAGON;
+                        hitp[i][j] = monster[REDDRAGON].hitpoints;
+                        monster[REDDRAGON].resistance |= FIRERESISTANCE;
+                        continue;
+                    }
 
                     mitem[i][j] = z;
                     if (mitem[i][j] != 0)
@@ -468,6 +539,113 @@ eat(int xx, int yy)
     }
 }
 
+int
+lava_blocked(int x, int y)
+{
+    switch (item[x][y])
+    {
+    case OENTRANCE:
+    case ODNDSTORE:
+    case OSCHOOL:
+    case OBANK:
+    case OVOLDOWN:
+    case OHOME:
+    case OTRADEPOST:
+    case OLRS:
+    case OSTAIRSUP:
+    case OSTAIRSDOWN:
+    case OVOLUP:
+        return 1;
+    }
+    return 0;
+}
+
+void
+make_lavapool(int cx, int cy)
+{
+    int radius, x, y, dx, dy, jitter;
+
+    radius = rnd(2);
+    radius += 1;
+
+    for (y = cy - radius - 1; y <= cy + radius + 1; y++)
+    {
+        for (x = cx - radius - 1; x <= cx + radius + 1; x++)
+        {
+            if (x < 1 || x >= MAXX - 1 || y < 1 || y >= MAXY - 1)
+                continue;
+
+            if (mitem[x][y] != 0)
+                continue;
+
+            dx = x - cx;
+            dy = y - cy;
+
+            /* wobble */
+            jitter = rnd(3) - 1;
+
+            if (dx * dx + dy * dy <= radius * radius + jitter)
+                if (!lava_blocked(x, y))
+                    item[x][y] = OLAVA;
+        }
+    }
+}
+
+void
+make_cryinglava(int cx, int cy)
+{
+    int streaks, s;
+    int x, y, dx, dy;
+    int length, i;
+    int angle, dist;
+
+    /* streaks amount */
+    streaks = rnd(5) + 4;
+
+    for (s = 0; s < streaks; s++)
+    {
+        angle = rnd(360);
+
+        /* convert angle to dx/dy */
+        if (angle < 90) { dx = 1;  dy = -1; }
+        else if (angle < 180) { dx = 1;  dy = 1; }
+        else if (angle < 270) { dx = -1; dy = 1; }
+        else { dx = -1; dy = -1; }
+
+        /* begin just outside the pool */
+        dist = rnd(2) + 1;
+        x = cx + dx * dist;
+        y = cy + dy * dist;
+
+        /* streaks length */
+        length = rnd(2) + 1;
+
+        for (i = 0; i < length; i++)
+        {
+            if (x < 1 || x >= MAXX - 1 || y < 1 || y >= MAXY - 1)
+                break;
+
+            if (mitem[x][y] == 0 && !lava_blocked(x, y))
+                item[x][y] = OLAVA;
+
+            /* wiggle */
+            if (rnd(10) < 3)
+            {
+                if (dx == 0) x += (rnd(2) ? 1 : -1);
+                else if (dy == 0) y += (rnd(2) ? 1 : -1);
+                else
+                {
+                    if (rnd(2)) x += (rnd(2) ? 1 : -1);
+                    else        y += (rnd(2) ? 1 : -1);
+                }
+            }
+
+            x += dx;
+            y += dy;
+        }
+    }
+}
+
 /*
 * makestream(level)
 *
@@ -477,6 +655,10 @@ eat(int xx, int yy)
 static void
 makestream(int level)
 {
+    /* do not create water in the volcano */
+    if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
+        return;
+
     int x, y, dx, dy, len, i;
     int width = 2;
 
@@ -527,6 +709,14 @@ makestream(int level)
                 }
 
                 item[sx][sy] = OWATER;
+
+                if (item[sx - 1][sy] != OWATER ||
+                    item[sx + 1][sy] != OWATER ||
+                    item[sx][sy - 1] != OWATER ||
+                    item[sx][sy + 1] != OWATER)
+                {
+                    item[sx][sy] = OSHOREWATER;
+                }
                 iarg[sx][sy] = 0;
             }
         }
@@ -622,6 +812,14 @@ makestream(int level)
                 continue;
             }
             item[sx][sy] = OWATER;
+
+            if (item[sx - 1][sy] != OWATER ||
+                item[sx + 1][sy] != OWATER ||
+                item[sx][sy - 1] != OWATER ||
+                item[sx][sy + 1] != OWATER)
+            {
+                item[sx][sy] = OSHOREWATER;
+            }
             iarg[sx][sy] = 0;
         }
     }
@@ -635,6 +833,10 @@ makestream(int level)
 void
 expand_puddle(void)
 {
+    /* do not expand water in the volcano */
+    if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
+        return;
+
     const int MAX_RADIUS = 4;
 
     /* Chance per move that a puddle will grow */
@@ -714,7 +916,19 @@ expand_puddle(void)
             int ny = gy[pick];
 
             /* grow puddle */
-            item[nx][ny] = OWATER;
+            /* if touching non-water, it's a shore tile */
+            if (item[x][y] == OWATER &&
+                (item[nx - 1][ny] != OWATER ||
+                    item[nx + 1][ny] != OWATER ||
+                    item[nx][ny - 1] != OWATER ||
+                    item[nx][ny + 1] != OWATER))
+            {
+                item[nx][ny] = OSHOREWATER;
+            }
+            else
+            {
+                item[nx][ny] = OWATER;
+            }
             iarg[nx][ny] = 0;
         }
     }
@@ -728,8 +942,11 @@ expand_puddle(void)
 static void
 makepuddle(int level)
 {
-    int puddle_width, puddle_height, px, py, x, y, attempts;
-    _Bool suitable;
+    /* do not create water in the volcano */
+    if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
+        return;
+
+    int puddle_width, puddle_height, px, py, x, y, attempts, suitable;
 
     puddle_width = 2 + rnd(7);  /* 2 to 8 */
     puddle_height = 2 + rnd(5); /* 2 to 6 */
@@ -762,7 +979,15 @@ makepuddle(int level)
             {
                 for (x = px; x < px + puddle_width; x++)
                 {
-                    item[x][y] = OWATER;
+                    if (x == px || x == px + puddle_width - 1 ||
+                        y == py || y == py + puddle_height - 1)
+                    {
+                        item[x][y] = OSHOREWATER;
+                    }
+                    else
+                    {
+                        item[x][y] = OWATER;
+                    }
                     iarg[x][y] = 0;
                 }
             }
@@ -844,6 +1069,14 @@ cannedlevel(int k)
                 it = newobject(k + 1, &arg);
                 break;
             };
+
+            /* do not create water in volcano */
+            if (k >= VOLCANOLEVEL_START && k <= VOLCANOLEVEL_END)
+            {
+                if (it == OWATER || it == OSHOREWATER)
+                    it = 0;
+            }
+
             item[j][i] = it;
             iarg[j][i] = arg;
             mitem[j][i] = mit;
@@ -958,7 +1191,6 @@ troom(int lv, int xsize, int ysize, int tx, int ty, int glyph)
     }
 }
 
-
 /*
 * subroutine to create the objects in the maze for the given level
 */
@@ -1064,26 +1296,19 @@ makeobject(int j)
         }
     }
 
-    // Generate puddles of water
-    if (j > 0) // Not in town
+    /* Generate puddles and streams of water  but not in the volcano */
+    if (j > 0 && !(j >= VOLCANOLEVEL_START && j <= VOLCANOLEVEL_END))
     {
-        // And perhaps not on special levels if desired, e.g.
-        // if (j > 0 && j != MAXLEVEL -1 && j != MAXLEVEL + MAXVLEVEL - 1)
-        int num_puddles = rnd(3) + 1; // Generate 1 to 3 puddles
-        int num_streams = rnd(2); // Generate 1 to 2 streams
-        int i;
+        int num_puddles = rnd(3) + 1;
+        int num_streams = rnd(2);
+
         for (i = 0; i < num_puddles; i++)
-        {
             makepuddle(j);
-        }
+
         for (i = 0; i < num_streams; i++)
-        {
             makestream(j);
-        }
     }
 }
-
-
 
 /*
 *  subroutine to fill in a number of objects of the same kind

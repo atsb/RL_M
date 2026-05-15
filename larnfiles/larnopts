@@ -24,3 +24,4 @@ savefile: larn.sav
 play-day-play
 male
 checkpoint: lcpfile
+color: off

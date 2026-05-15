@@ -7,6 +7,8 @@ void term_delch(void);
 void setupvt100 (void);
 void clearvt100 (void);
 
+int ttgetch_noblock(void);
+
 char ttgetch (void);
 
 void scbr (void);
@@ -67,3 +69,5 @@ char *tmcapcnv (char *, char *);
 void enter_name (void);
 
 void cursor_block (void);
+
+int lstrcasecmp(const char*, const char*);

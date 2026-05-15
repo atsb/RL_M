@@ -249,6 +249,29 @@ ttgetch (void)
   return byt;
 }
 
+/* non‑blocking ttgetch: returns -1 if no key available */
+int
+ttgetch_noblock(void)
+{
+    int ch;
+
+    lflush();
+
+    nodelay(stdscr, TRUE);
+    ch = (*getchfn)();
+    nodelay(stdscr, FALSE);
+
+    if (ch == ERR)
+        return -1;
+
+    if (ch == '\r')
+        ch = '\n';
+
+    /* count real input bytes for checkpointing */
+    c[BYTESIN]++;
+
+    return ch;
+}
 
 /*
 * scbr()      Function to set cbreak -echo for the terminal
@@ -804,24 +827,35 @@ init_term(void)
 
     /* --- CURSES INITIALIZATION --- */
 
-    initscr();              /* initialize curses and stdscr */
-    cbreak();               /* disable line buffering */
-    noecho();               /* do not echo typed characters */
-    nonl();                 /* disable NL -> CRLF translation */
-    intrflush(stdscr, FALSE); /* don't flush input on interrupts */
-    keypad(stdscr, TRUE);   /* enable arrow keys, function keys */
+    initscr();
+    cbreak();
+    noecho();
+    nonl();
+    intrflush(stdscr, FALSE);
+    keypad(stdscr, TRUE);
 
     /* --- COLORS --- */
-
-    if (has_colors()) {
+    if (use_color && has_colors()) {
         start_color();
-        use_default_colors();   /* allow -1 as transparent background */
-        init_pair(1, COLOR_WHITE, COLOR_RED);
+        use_default_colors();
+
+        for (int i = 0; i < 256; i++) {
+            int fg = i % 8;
+            init_pair(i, fg, -1);
+        }
+    }
+    else {
+        /* otherwise monochrome */
+        for (int i = 0; i < MAXMONST + 10; i++)
+            moncolor[i] = COLOR_WHITE;
+
+        for (int i = 0; i < MAXOBJECT + 1; i++)
+            objcolor[i] = COLOR_WHITE;
     }
 
     /* --- CURSOR --- */
 
-    curs_set(0);            /* hide cursor */
+    curs_set(0);
 
     /* --- FINAL REFRESH --- */
 
@@ -831,7 +865,6 @@ init_term(void)
     PDC_save_key_modifiers(1);
 #endif
 }
-
 
 /*
 * cl_line(x,y)  Clear the whole line indicated by 'y' and leave cursor at [x,y]
@@ -1009,4 +1042,23 @@ cursor_block(void)
     attron(A_REVERSE);
     addch(' ');
     attroff(A_REVERSE);
+}
+
+int
+lstrcasecmp(const char* a, const char* b)
+{
+    unsigned char ca, cb;
+
+    while (*a && *b) {
+        ca = (unsigned char)tolower((unsigned char)*a);
+        cb = (unsigned char)tolower((unsigned char)*b);
+
+        if (ca != cb)
+            return ca - cb;
+
+        a++;
+        b++;
+    }
+
+    return (unsigned char)*a - (unsigned char)*b;
 }

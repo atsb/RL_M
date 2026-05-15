@@ -322,8 +322,6 @@ hitmonster (int x, int y)
       }
 }
 
-
-
 /*
 *  hitm(x,y,amt)       Function to just hit a monster at a given coordinates
 *      int x,y,amt;
@@ -486,6 +484,9 @@ hitplayer (int x, int y)
 static void
 dropsomething (int monst)
 {
+  /* if monster died in lava, the drop is removed */
+  if (item[playerx][playery] == OLAVA)
+      return;
 
   switch (monst)
     {
@@ -524,14 +525,17 @@ dropsomething (int monst)
 void
 dropgold (int amount)
 {
+    if (item[playerx][playery] == OLAVA)
+    {
+        lprcat("\nThe gold melts in the lava!");
+        return;
+    }
 
-  if (amount > 250)
-    createitem (OMAXGOLD, amount / 100);
-  else
-    createitem (OGOLDPILE, amount);
+    if (amount > 250)
+        createitem(OMAXGOLD, amount / 100);
+    else
+        createitem(OGOLDPILE, amount);
 }
-
-
 
 /*
 *  something(level)    Function to create a random item around player

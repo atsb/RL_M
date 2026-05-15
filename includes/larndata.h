@@ -42,6 +42,7 @@ struct monst
   int intelligence;		/* monsters intelligence -- used to choose movement */
   int gold;
   int hitpoints;
+  int resistance;		/* used for environment resistance */
   unsigned long experience;
 };
 
@@ -83,6 +84,10 @@ extern int nowelcome;
 extern int nplt[], nsw[];
 extern int potprob[];
 extern int name_set;
+extern int use_color;
+extern int in_water;
+extern int in_shorewater;
+extern int in_lava;
 
 extern char monstnamelist[];
 extern char *levelname[];
@@ -98,6 +103,7 @@ extern char holifile[];
 extern char optsfile[];
 extern char helpfile[];
 extern char ckpfile[];
+extern char colourfile[];
 
 extern int ckpflag;
 extern int predostuff, restorflag;
@@ -135,7 +141,16 @@ extern struct monst monster[];
 
 extern struct _itm dnd_item[];
 
+extern int moncolor[MAXMONST + 9];
+extern int objcolor[MAXOBJECT + 1];
 
+struct color_override_entry {
+    const char* name;
+    int id;
+};
+
+extern const struct color_override_entry monster_map[];
+extern const struct color_override_entry object_map[];
 
 /*
 * config.c
@@ -171,11 +186,3 @@ extern int save_mode;
 * store.c
 */
 extern int lasttime;
-
-
-/*
-* tok.c
-*/
-extern int move_no_pickup;
-
-//extern int larn_die(char, char *);

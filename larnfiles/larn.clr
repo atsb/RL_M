@@ -1,0 +1,178 @@
+# ============================================================
+# LARN COLOUR OVERRIDE FILE
+# Users may uncomment any line to override that monster/object.
+# Missing entries fall back to built‑in colours.
+# ============================================================
+
+# ------------------------------------------------------------
+# AVAILABLE COLOUR NAMES (valid values for the right-hand side)
+# ------------------------------------------------------------
+# COLOR_BLACK
+# COLOR_RED
+# COLOR_GREEN
+# COLOR_YELLOW
+# COLOR_BLUE
+# COLOR_MAGENTA
+# COLOR_CYAN
+# COLOR_WHITE
+
+# ------------------------------------------------------------
+# Example overrides (active)
+# ------------------------------------------------------------
+KOBOLD = COLOR_CYAN
+OWATER = COLOR_BLUE
+OSHOREWATER = COLOR_CYAN
+
+# ============================================================
+# MONSTER COLOURS (all commented out)
+# ============================================================
+
+# BAT = COLOR_???
+# GNOME = COLOR_???
+# HOBGOBLIN = COLOR_???
+# JACKAL = COLOR_???
+# KOBOLD = COLOR_???
+# ORC = COLOR_???
+# SNAKE = COLOR_???
+# CENTIPEDE = COLOR_???
+# JACULI = COLOR_???
+# TROGLODYTE = COLOR_???
+# ANT = COLOR_???
+# EYE = COLOR_???
+# LEPRECHAUN = COLOR_???
+# NYMPH = COLOR_???
+# QUASIT = COLOR_???
+# RUSTMONSTER = COLOR_???
+# ZOMBIE = COLOR_???
+# ASSASSINBUG = COLOR_???
+# BUGBEAR = COLOR_???
+# HELLHOUND = COLOR_???
+# ICELIZARD = COLOR_???
+# CENTAUR = COLOR_???
+# TROLL = COLOR_???
+# YETI = COLOR_???
+# WHITEDRAGON = COLOR_???
+# ELF = COLOR_???
+# CUBE = COLOR_???
+# METAMORPH = COLOR_???
+# VORTEX = COLOR_???
+# ZILLER = COLOR_???
+# VIOLETFUNGI = COLOR_???
+# WRAITH = COLOR_???
+# FORVALAKA = COLOR_???
+# LAMANOBE = COLOR_???
+# OSEQUIP = COLOR_???
+# ROTHE = COLOR_???
+# XORN = COLOR_???
+# VAMPIRE = COLOR_???
+# INVISIBLESTALKER = COLOR_???
+# POLTERGEIST = COLOR_???
+# DISENCHANTRESS = COLOR_???
+# SHAMBLINGMOUND = COLOR_???
+# YELLOWMOLD = COLOR_???
+# UMBERHULK = COLOR_???
+# GNOMEKING = COLOR_???
+# MIMIC = COLOR_???
+# WATERLORD = COLOR_???
+# BRONZEDRAGON = COLOR_???
+# GREENDRAGON = COLOR_???
+# PURPLEWORM = COLOR_???
+# XVART = COLOR_???
+# SPIRITNAGA = COLOR_???
+# SILVERDRAGON = COLOR_???
+# PLATINUMDRAGON = COLOR_???
+# GREENURCHIN = COLOR_???
+# REDDRAGON = COLOR_???
+# DEMONLORD = COLOR_???
+# DEMONPRINCE = COLOR_???
+
+# ============================================================
+# OBJECT COLOURS (all commented out)
+# ============================================================
+
+# NOTHING = COLOR_???
+# OALTAR = COLOR_???
+# OTHRONE = COLOR_???
+# OORB = COLOR_???
+# OPIT = COLOR_???
+# OSTAIRSUP = COLOR_???
+# OELEVATORUP = COLOR_???
+# OFOUNTAIN = COLOR_???
+# OSTATUE = COLOR_???
+# OTELEPORTER = COLOR_???
+# OSCHOOL = COLOR_???
+# OMIRROR = COLOR_???
+# ODNDSTORE = COLOR_???
+# OSTAIRSDOWN = COLOR_???
+# OELEVATORDOWN = COLOR_???
+# OBANK2 = COLOR_???
+# OBANK = COLOR_???
+# ODEADFOUNTAIN = COLOR_???
+# OGOLDPILE = COLOR_???
+# OOPENDOOR = COLOR_???
+# OCLOSEDDOOR = COLOR_???
+# OWALL = COLOR_???
+# OLARNEYE = COLOR_???
+# OPLATE = COLOR_???
+# OCHAIN = COLOR_???
+# OLEATHER = COLOR_???
+# ORING = COLOR_???
+# OSTUDLEATHER = COLOR_???
+# OSPLINT = COLOR_???
+# OPLATEARMOR = COLOR_???
+# OSSPLATE = COLOR_???
+# OSHIELD = COLOR_???
+# OELVENCHAIN = COLOR_???
+# OSWORDofSLASHING = COLOR_???
+# OHAMMER = COLOR_???
+# OSWORD = COLOR_???
+# O2SWORD = COLOR_???
+# OHSWORD = COLOR_???
+# OSPEAR = COLOR_???
+# ODAGGER = COLOR_???
+# OBATTLEAXE = COLOR_???
+# OLONGSWORD = COLOR_???
+# OLANCE = COLOR_???
+# OVORPAL = COLOR_???
+# OSLAYER = COLOR_???
+# ORINGOFEXTRA = COLOR_???
+# OREGENRING = COLOR_???
+# OPROTRING = COLOR_???
+# OENERGYRING = COLOR_???
+# ODEXRING = COLOR_???
+# OSTRRING = COLOR_???
+# OCLEVERRING = COLOR_???
+# ODAMRING = COLOR_???
+# OBELT = COLOR_???
+# OSCROLL = COLOR_???
+# OPOTION = COLOR_???
+# OBOOK = COLOR_???
+# OCHEST = COLOR_???
+# OAMULET = COLOR_???
+# OORBOFDRAGON = COLOR_???
+# OSPIRITSCARAB = COLOR_???
+# OCUBEofUNDEAD = COLOR_???
+# ONOTHEFT = COLOR_???
+# ODIAMOND = COLOR_???
+# ORUBY = COLOR_???
+# OEMERALD = COLOR_???
+# OSAPPHIRE = COLOR_???
+# OENTRANCE = COLOR_???
+# OVOLDOWN = COLOR_???
+# OVOLUP = COLOR_???
+# OHOME = COLOR_???
+# OKGOLD = COLOR_???
+# ODGOLD = COLOR_???
+# OIVDARTRAP = COLOR_???
+# ODARTRAP = COLOR_???
+# OTRAPDOOR = COLOR_???
+# OIVTRAPDOOR = COLOR_???
+# OTRADEPOST = COLOR_???
+# OIVTELETRAP = COLOR_???
+# ODEADTHRONE = COLOR_???
+# OANNIHILATION = COLOR_???
+# OTHRONE2 = COLOR_???
+# OLRS = COLOR_???
+# OCOOKIE = COLOR_???
+# OWATER = COLOR_???
+# OSHOREWATER = COLOR_???

@@ -43,6 +43,9 @@
 #define MAXX 67
 #define MAXY 17
 
+#define VOLCANOLEVEL_START   (MAXLEVEL)
+#define VOLCANOLEVEL_END     (MAXLEVEL + MAXVLEVEL - 1)
+
 #define SCORESIZE 10		/* this is the number of people on a scoreboard max */
 #define MAXPLEVEL 100		/* maximum player level allowed        */
 #define SPNUM 38		/* maximum number of spells in existance   */
@@ -224,10 +227,10 @@
 #define MAXPOTION 35		/* maximum number of potions that are possible */
 #define MAXPOTIONNAME	32
 
-#define MAXOBJ 95		/* the maximum number of objects   n < MAXOBJ */
+#define MAXOBJ 96		/* the maximum number of objects   n < MAXOBJ */
 
 /*  defines for the objects in the game     */
-#define MAXOBJECT  94
+#define MAXOBJECT  95
 
 #define OALTAR 1
 #define OTHRONE 2
@@ -334,4 +337,5 @@
 #define OPSTAFF 89		/* staff of power */
 #define OWATER 93		/* puddle object */
 #define OSHOREWATER 94		/* puddle object */
-/* used up to 94. ~Gibbon */
+#define OLAVA  95   /* lava */
+/* used up to 95. ~Gibbon */

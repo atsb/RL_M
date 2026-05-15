@@ -127,7 +127,7 @@ char* levelname[] =
 "V2", "V3", "V4"
 };
 
-char objnamelist[MAXOBJECT + 37] = ".ATOP<^F&^+M=>^$$f*OD#~][[)))(((||||||||{?!BC}o:@.%%%%EVV))([[]]](^ [H*** ^^ S tsTLc`ulhatwpV~=";
+char objnamelist[MAXOBJECT + 37] = ".ATOP<^F&^+M=>^$$f*OD#~][[)))(((||||||||{?!BC}o:@.%%%%EVV))([[]]](^ [H*** ^^ S tsTLc`ulhatwpV~=~";
 char monstnamelist[] = ".BGHJKOScjtAELNQRZabhiCTYdegmvzFWflorXV.pqsyUkMwDDPxnDDuD........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
 char floorc = '.';
@@ -860,7 +860,8 @@ int objcolor[MAXOBJECT + 1] = {
 	[OLRS] = COLOR_GREEN,
 	[OCOOKIE] = COLOR_YELLOW,
 	[OWATER] = COLOR_BLUE,
-	[OSHOREWATER] = COLOR_CYAN
+	[OSHOREWATER] = COLOR_CYAN,
+	[OLAVA] = COLOR_RED
 };
 
 const struct color_override_entry monster_map[] = {
@@ -1012,5 +1013,6 @@ const struct color_override_entry object_map[] = {
 	{ "OCOOKIE", OCOOKIE },
 	{ "OWATER", OWATER },
 	{ "OSHOREWATER", OSHOREWATER },
+	{ "OLAVA", OLAVA },
 	{ NULL, 0 }
 };

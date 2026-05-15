@@ -401,6 +401,12 @@ lookforobject (char do_ident, char do_pickup, char do_action)
         }
         return;
 
+    case OLAVA:
+        if (do_ident && !in_lava) {
+            lprcat("\nYou walk into lava.");
+            in_lava = 1;
+        }
+        return;
 
     case OWALL:
       break;

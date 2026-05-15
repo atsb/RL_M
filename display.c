@@ -615,18 +615,37 @@ show1cell(int x, int y)
     /* real time animated water tiles */
     if (item[x][y] == OWATER || item[x][y] == OSHOREWATER)
     {
-        static const char flicker_chars[] = { '~', '=', '~', '=' };
+        static const char water_chars[] = { '~', '=', '~', '=' };
         int idx = (x * 7 + y * 13 + water_anim_toggle) & 3;
 
         if (has_colors())
             attrset(COLOR_PAIR(objcolor[item[x][y]]));
 
-        lprc(flicker_chars[idx]);
+        lprc(water_chars[idx]);
 
         if (has_colors())
             attrset(COLOR_PAIR(0));
 
         know[x][y] = KNOWALL;
+        return;
+    }
+
+    /* real time animated lava tiles */
+    if (item[x][y] == OLAVA)
+    {
+        static const char lava_chars[] = { '~', '^', '"', '`' };
+        int idx = (x * 13 + y * 7 + lava_anim_toggle) & 3;
+
+        if (has_colors())
+            attron(COLOR_PAIR(COLOR_RED));
+
+        lprc(lava_chars[idx]);
+
+        if (has_colors())
+            attroff(COLOR_PAIR(COLOR_RED));
+
+        know[x][y] = KNOWALL;
+
         return;
     }
 
@@ -735,8 +754,22 @@ if direction=0, don't move--just show where he is */
         return (yrepcount = 0);
     }
 
-    /* check for the player ignoring an altar
-     */
+    /* check for the player walking into lava */
+    if (item[playerx][playery] == OLAVA && !(c[FIRERESISTANCE]))
+    {
+        cursors();
+        lprcat("\nYou are burned by lava!");
+
+        losehp(rnd(12) + 12);  /* a lot of damage but not instant death */
+        bottomhp();
+    }
+    else if(item[playerx][playery] == OLAVA && (c[FIRERESISTANCE]))
+    {
+        cursors();
+        lprcat("\nYou are protected from the lava!");
+    }
+
+    /* check for the player ignoring an altar */
     if (item[playerx][playery] == OALTAR && !prayed)
     {
         cursors();
@@ -759,7 +792,7 @@ if direction=0, don't move--just show where he is */
             if (ivenarg[worn_armor_idx] > -10) {
                 ivenarg[worn_armor_idx] -= 2;
                 if (ivenarg[worn_armor_idx] < -10) ivenarg[worn_armor_idx] = -10;
-                lprcat("\nYour armor rusts in the murky water!");
+                lprcat("\nYour armor rusts from the water!");
                 rusted_something = 1;
             }
         }
@@ -770,7 +803,7 @@ if direction=0, don't move--just show where he is */
             if (ivenarg[shield_idx] > -10) {
                 ivenarg[shield_idx] -= 2;
                 if (ivenarg[shield_idx] < -10) ivenarg[shield_idx] = -10;
-                lprcat("\nYour shield rusts in the murky water!");
+                lprcat("\nYour shield rusts from the water!");
                 rusted_something = 1;
             }
         }

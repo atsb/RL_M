@@ -42,6 +42,7 @@ struct monst
   int intelligence;		/* monsters intelligence -- used to choose movement */
   int gold;
   int hitpoints;
+  int resistance;		/* used for environment resistance */
   unsigned long experience;
 };
 
@@ -86,6 +87,7 @@ extern int name_set;
 extern int use_color;
 extern int in_water;
 extern int in_shorewater;
+extern int in_lava;
 
 extern char monstnamelist[];
 extern char *levelname[];

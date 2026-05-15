@@ -301,6 +301,21 @@ main (int argc, char *argv[])
 
 		  refresh();
 	  }
+	  /* lava animation is now in a real time state machine - animates every 3 seconds */
+	  if (now - last_lava_anim >= 3)
+	  {
+		  last_lava_anim = now;
+		  lava_anim_toggle = !lava_anim_toggle;
+
+		  /* redraw only lava for performance reasons (low cpu usage) */
+		  for (int yy = 0; yy < MAXY; yy++)
+			  for (int xx = 0; xx < MAXX; xx++)
+				  if (item[xx][yy] == OLAVA)
+					  show1cell(xx, yy);
+
+		  refresh();
+	  }
+
 	  if (dropflag == 0 && nomove == 0)
 	{
 	  /* see if there is an object here.
@@ -349,6 +364,9 @@ main (int argc, char *argv[])
 
 		  if (tile != OSHOREWATER)
 			  in_shorewater = 0;
+
+		  if (tile != OLAVA)
+			  in_lava = 0;
 	  }
 
 	  if (hit3flag)

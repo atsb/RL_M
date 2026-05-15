@@ -711,9 +711,20 @@ drop_object (int k)
       lprintf ("\nYou don't have item %c! ", k + 'a');
       return (1);
     }
+
+  /* dropping an item into lava destroys it */
+  if (item[playerx][playery] == OLAVA)
+  {
+      lprcat("\nThe object has been melted by lava!");
+      iven[k] = 0;
+      dropflag = 1;
+      return 0;
+  }
+
   if (item[playerx][playery] &&
       item[playerx][playery] != OWATER &&
-      item[playerx][playery] != OSHOREWATER)
+      item[playerx][playery] != OSHOREWATER &&
+      item[playerx][playery] != OLAVA)
     {
       lprintf ("\nThere's something here already: %s",
 	       objectname[item[playerx][playery]]);

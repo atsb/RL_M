@@ -497,6 +497,10 @@ move_smart(int i, int j)
         x = i + diroffx[z];
         y = j + diroffy[z];
 
+        /* lava must be avoided (unless the mob can go in lava) */
+        if (item[x][y] == OLAVA && !lava_safe_monster(mid))
+            continue;
+
         if (screen[x][y] < screen[i][j] && !mitem[x][y])
         {
             if (mid == VAMPIRE && item[x][y] == OMIRROR)
@@ -541,6 +545,19 @@ move_smart(int i, int j)
     mmove(i, j, w1x[0] = x, w1y[0] = y);
 }
 
+int
+lava_safe_monster(int mid)
+{
+    switch (mid)
+    {
+    case REDDRAGON:
+    case DEMONLORD:
+    case DEMONPRINCE:
+        return 1;
+    default:
+        return 0;
+    }
+}
 
 /*
 For monsters that are not moving in an intelligent fashion.  Move
@@ -604,6 +621,10 @@ move_dumb(int i, int j)
                 tmpy = m;
                 goto domove;
             }
+
+            /* lava must be avoided (unless the mob can go in lava) */
+            if (item[k][m] == OLAVA && !lava_safe_monster(mid))
+                continue;
 
             /* tile must be walkable */
             if (item[k][m] == OWALL ||

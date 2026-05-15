@@ -50,3 +50,5 @@ int packweight (void);
 
 extern int water_anim_toggle;
 extern long last_water_anim;
+extern long last_lava_anim;
+extern int lava_anim_toggle;

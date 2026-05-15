@@ -159,6 +159,7 @@ newcavelevel(int x)
     beenhere[x] = 1;
     sethp(1);
     positionplayer();
+    predostuff = 2;
     checkgen();         /* wipe out any genocided monsters */
 
 #if WIZID

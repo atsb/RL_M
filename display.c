@@ -8,25 +8,20 @@
 #include "includes/io.h"
 #include "includes/monster.h"
 
-#define botsub( _idx, _x, _y, _str )        \
-	if ( c[(_idx)] != cbak[(_idx)] )        \
-	{                                   \
-	cbak[(_idx)] = c[(_idx)];           \
-	cursor( (_x), (_y) );               \
-	lprintf( (_str), (int)c[(_idx)] ); \
-	}
-
 #define nlprc(_ch) lprc(_ch)
 
-static void bot_hpx(void);
-static void bot_spellx(void);
-static void botside(void);
 static void seepage(void);
 static int minx, maxx, miny, maxy;
-static int bot1f = 0, bot2f = 0, bot3f = 0;
-static int always = 0;
-int regen_bottom = 0;
 static int is_metal_armor(int);
+
+/* The entire bot_xx rendering has been rewritten
+* it was a legacy of the 80's and assumptions about terminal
+* windows and saving CPU cycles (updating incrementally).
+* It was broken, messy, and was unmaintainable.
+* Now it makes sense, can be extended and just updates the bottom line when needed.
+* 
+* Nobody else has ever done this.  You're welcome Larners! ~Gibbon
+*/
 
 /*
 bottomline()
@@ -36,164 +31,23 @@ now for the bottom line of the display
 void
 bottomline(void)
 {
-
     recalc();
-    bot1f = 1;
+    statusmessage_draw_lines();
+    statusmessage_draw_right_panel();
 }
-
 
 void
 bottomhp(void)
 {
-
-    bot2f = 1;
+    bottomline();
 }
 
 
 void
 bottomspell(void)
 {
-
-    bot3f = 1;
+    bottomline();
 }
-
-void
-bottomdo(void)
-{
-    if (bot1f)
-    {
-        bot3f = bot1f = bot2f = 0;
-        bot_linex();
-        return;
-    }
-    if (bot2f)
-    {
-        bot2f = 0;
-        bot_hpx();
-    }
-    if (bot3f)
-    {
-        bot3f = 0;
-        bot_spellx();
-    }
-}
-
-
-void
-bot_linex(void)
-{
-    int i;
-    /*int debugtmp; */
-
-    if (regen_bottom || (always))
-    {
-        regen_bottom = FALSE;
-        cursor(1, 18);
-        if (c[SPELLMAX] > 99) {
-            lprintf("Spells:");
-            lprintf("%3d(%3d)", (int)c[SPELLS],
-                (int)c[SPELLMAX]);
-        }
-        else {
-            lprintf("Spells:");
-            lprintf("%3d(%2d) ", (int)c[SPELLS],
-                (int)c[SPELLMAX]);
-        }
-        lprintf(" AC:");
-        lprintf(" %-3d ", (int)c[AC]);
-        lprintf(" WC:");
-        lprintf(" %-3d ", (int)c[WCLASS]);
-        lprintf("Level:");
-        if (c[LEVEL] > 99) {
-            lprintf("%3d", (int)c[LEVEL]);
-        }
-        else {
-            lprintf(" %-2d", (int)c[LEVEL]);
-        }
-        /*debugtmp = c[LEVEL]; */
-        lprintf(" Exp:");
-        lprintf(" %-9d %s\n", (int)c[EXPERIENCE],
-            classname[c[LEVEL] - 1]);
-        /*This is sill here to initially show the health stats. ~Gibbon*/
-        lprintf("HP:");
-        lprintf(" %3d(%3d)", (int)c[HP], (int)c[HPMAX]);
-        lprintf(" STR:");
-        lprintf("%-2d ", (int)(c[STRENGTH] + c[STREXTRA]));
-        lprintf("INT:");
-        lprintf("%-2d ", (int)c[INTELLIGENCE]);
-        lprintf("WIS:");
-        lprintf("%-2d ", (int)c[WISDOM]);
-        lprintf("CON:");
-        lprintf("%-2d ", (int)c[CONSTITUTION]);
-        lprintf("DEX:");
-        lprintf("%-2d ", (int)c[DEXTERITY]);
-        lprintf("CHA:");
-        lprintf("%-2d ", (int)c[CHARISMA]);
-        lprintf("LV:");
-
-        if ((level == 0) || (wizard))
-            c[TELEFLAG] = 0;
-        if (c[TELEFLAG])
-            lprcat(" ?");
-        else
-            lprcat(levelname[level]);
-        lprintf("  Gold:  ");
-        lprintf("%-6d", (int)c[GOLD]);
-        always = 1;
-        botside();
-        c[TMP] = c[STRENGTH] + c[STREXTRA];
-        for (i = 0; i < 100; i++)
-            cbak[i] = c[i];
-        return;
-    }
-
-    botsub(SPELLS, 8, 18, "%3d");
-    if (c[SPELLMAX] > 99)
-    {
-        botsub(SPELLMAX, 12, 18, "%3d)");
-    }
-    else
-        botsub(SPELLMAX, 12, 18, "%2d) ");
-    botsub(HP, 5, 19, "%3d");
-    botsub(HPMAX, 9, 19, "%3d");
-    botsub(AC, 21, 18, "%-3d");
-    botsub(WCLASS, 30, 18, "%-3d");
-    botsub(EXPERIENCE, 49, 18, "%-9d");
-    if (c[LEVEL] != cbak[LEVEL])
-    {
-        cursor(59, 18);
-        lprcat(classname[c[LEVEL] - 1]);
-    }
-    if (c[LEVEL] > 99)
-    {
-        botsub(LEVEL, 40, 18, "%3d");
-    }
-    else
-        botsub(LEVEL, 40, 18, " %-2d");
-    c[TMP] = c[STRENGTH] + c[STREXTRA];
-    botsub(TMP, 18, 19, "%-2d");
-    botsub(INTELLIGENCE, 25, 19, "%-2d");
-    botsub(WISDOM, 32, 19, "%-2d");
-    botsub(CONSTITUTION, 39, 19, "%-2d");
-    botsub(DEXTERITY, 46, 19, "%-2d");
-    botsub(CHARISMA, 53, 19, "%-2d");
-    if ((level != cbak[CAVELEVEL]) || (c[TELEFLAG] != cbak[TELEFLAG]))
-    {
-        if ((level == 0) || (wizard))
-            c[TELEFLAG] = 0;
-        cbak[TELEFLAG] = c[TELEFLAG];
-        cbak[CAVELEVEL] = level;
-        cursor(59, 19);
-        if (c[TELEFLAG])
-            lprcat(" ?");
-        else
-            lprcat(levelname[level]);
-    }
-    botsub(GOLD, 69, 19, "%-6d");
-    botside();
-}
-
-
 
 /*
 special subroutine to update only the gold number on the bottomlines
@@ -202,40 +56,8 @@ called from ogold()
 void
 bottomgold(void)
 {
-
-    botsub(GOLD, 69, 19, "%-6d");
+    bottomline();
 }
-
-
-
-/*
-special routine to update hp and level fields on bottom lines
-called in monster.c hitplayer() and spattack()
-*/
-static void
-bot_hpx(void)
-{
-    if (c[EXPERIENCE] != cbak[EXPERIENCE])
-    {
-        recalc();
-        bot_linex();
-    }
-    else
-        botsub(HP, 5, 19, "%3d");
-}
-
-
-/*
-special routine to update number of spells called from regen()
-*/
-static void
-bot_spellx(void)
-{
-
-    botsub(SPELLS, 9, 18, "%2d");
-}
-
-
 
 /*
 common subroutine for a more economical bottomline()
@@ -248,9 +70,7 @@ struct bot_side_def
 
 };
 
-
 static struct bot_side_def bot_data[] = {
-
   {STEALTH, "stealth"},
   {UNDEADPRO, "undead pro"},
   {SPIRITPRO, "spirit pro"},
@@ -268,43 +88,7 @@ static struct bot_side_def bot_data[] = {
   {ALTPRO, "Protect 3"},
   {PROTECTIONTIME, "Protect 2"},
   {WTW, "Wall-Walk"}
-
 };
-
-
-static void
-botside(void)
-{
-    int i, idx;
-    for (i = 0; i < 17; i++)
-    {
-        idx = bot_data[i].typ;
-        if ((always) || (c[idx] != cbak[idx]))
-        {
-            if ((always) || (cbak[idx] == 0))
-            {
-                if (c[idx])
-                {
-                    cursor(70, i + 1);
-                    lprcat(bot_data[i].string);
-
-                    /*Reset cursor position. ~Gibbon */
-                    cursors();
-                }
-            }
-            else if (c[idx] == 0)
-            {
-                cursor(70, i + 1);
-                lprcat("          ");
-
-                /*Reset cursor position. ~Gibbon */
-                cursors();
-            }
-            cbak[idx] = c[idx];
-        }
-    }
-    always = 0;
-}
 
 /*
 *  subroutine to draw only a section of the screen
@@ -346,8 +130,6 @@ draws(int xmin, int xmax, int ymin, int ymax)
         }
     }
 }
-
-
 
 /*
 drawscreen()
@@ -470,10 +252,8 @@ drawscreen(void)
 
     if (d_flag)
     {
-        always = 1;
-        botside();
-        always = 1;
-        bot_linex();
+        statusmessage_draw_right_panel();
+        statusmessage_draw_lines();
     }
 
     /* for limited screen drawing */
@@ -1282,21 +1062,20 @@ seepage(void)
     }
 }
 
-static int is_metal_armor(int item_id) {
+static int
+is_metal_armor(int item_id) {
     switch (item_id) {
     case OPLATE:
     case OCHAIN:
     case OSPLINT:
-    case ORING: // Ring mail, not finger rings
+    case ORING:
     case OPLATEARMOR:
-    case OSSPLATE: // Stainless steel plate
+    case OSSPLATE:
     case OELVENCHAIN:
-        // Shields that are metallic (assuming OSHIELD can be metal)
-        // If OSHIELD is always one type, and it's metal:
     case OSHIELD:
-        return 1; // True
+        return 1;
     default:
-        return 0; // False
+        return 0;
     }
 }
 
@@ -1331,15 +1110,68 @@ readcolors(void)
         if (color < 0)
             continue;
 
-        /* Monsters */
+        /* monsters */
         for (int i = 0; monster_map[i].name; i++)
             if (!strcmp(key, monster_map[i].name))
                 moncolor[monster_map[i].id] = color;
 
-        /* Objects */
+        /* objects */
         for (int i = 0; object_map[i].name; i++)
             if (!strcmp(key, object_map[i].name))
                 objcolor[object_map[i].id] = color;
     }
     fclose(fp);
+}
+
+/* the new and improved UX of Larn! ~Gibbon */
+void
+statusmessage_draw_lines(void)
+{
+    /* spells, AC, WC, level, exp, class */
+    cursor(1, 18);
+    lprintf("Spells:%3d(%2d)  AC:%-3d  WC:%-3d  Level:%-2d  Exp:%-9d (%s)",
+        (int)c[SPELLS],
+        (int)c[SPELLMAX],
+        (int)c[AC],
+        (int)c[WCLASS],
+        (int)c[LEVEL],
+        (int)c[EXPERIENCE],
+        classname[c[LEVEL] - 1]);
+
+    /* HP, stats, level name, gold */
+    cursor(1, 19);
+    lprintf("HP:%3d(%3d)  STR:%-2d  INT:%-2d  WIS:%-2d  CON:%-2d  DEX:%-2d  CHA:%-2d  LV:%s  Gold:%-6d",
+        (int)c[HP],
+        (int)c[HPMAX],
+        (int)(c[STRENGTH] + c[STREXTRA]),
+        (int)c[INTELLIGENCE],
+        (int)c[WISDOM],
+        (int)c[CONSTITUTION],
+        (int)c[DEXTERITY],
+        (int)c[CHARISMA],
+        levelname[level],
+        (int)c[GOLD]);
+
+    /* player name */
+    cursor(1, 20);
+    attron(A_BOLD);
+    lprintf("%s", logname);
+    attroff(A_BOLD);
+}
+
+void
+statusmessage_draw_right_panel(void)
+{
+    int i, idx;
+
+    for (i = 0; i < 17; i++)
+    {
+        idx = bot_data[i].typ;
+        cursor(70, i + 1);
+
+        if (c[idx])
+            lprintf("%-10s", bot_data[i].string);
+        else
+            lprintf("%-10s", "");
+    }
 }

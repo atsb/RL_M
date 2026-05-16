@@ -75,8 +75,6 @@ makeplayer(void)
     playerx = rnd(MAXX - 2);
     playery = rnd(MAXY - 2);
 
-    regen_bottom = TRUE;
-
     /* make the attributes, ie str, int, etc. */
     for (i = 0; i < 6; i++)
     {

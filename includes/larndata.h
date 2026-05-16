@@ -61,7 +61,6 @@ struct _itm
 * data declarations
 *
 */
-extern int regen_bottom;
 extern char floorc, wallc;
 
 /* extern char for the water. -Gibbon */
@@ -135,7 +134,6 @@ extern time_t initialtime;
 extern unsigned long lrandx;
 extern struct cel *cell;
 extern struct sphere *spheres;
-
 
 extern struct monst monster[];
 

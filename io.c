@@ -77,12 +77,9 @@ int lfd = 0;		/*  output file numbers     */
 int fd;				/*  input file numbers      */
 static int curx = 0;
 static int cury = 0;
-
 static int ipoint = MAXIBUF, iepoint = MAXIBUF;	/*  input buffering pointers    */
 static char lgetwbuf[LINBUFSIZE];	/* get line (word) buffer               */
-
 static int (*getchfn) (void);
-
 static void flush_buf (void);
 
 /********************************************
@@ -396,51 +393,44 @@ lprint (int x)
 }
 
 
-static int scrline = 18;	/* line # for wraparound instead of scrolling if no DL */
+static int scrline = 21;	/* line # for wraparound instead of scrolling if no DL */
 
 /* 
 * output one byte to the output buffer 
 */
+/* message scroll ring: lines 21–24 */
 void
-lprc (char ch)
+lprc(char ch)
 {
     if (lfd > 2) {
-      *lpnt++ = ch;
-
-      if (lpnt >= lpend)
-        {
-
-          lflush ();
-        }
+        *lpnt++ = ch;
+        if (lpnt >= lpend)
+            lflush();
     }
     else {
-       if (ch == '\n' && (cury == 23) && enable_scroll) {
-        if (++scrline > 23)
-          {
+        if (ch == '\n' && enable_scroll) {
+            if (cury >= 20) {
+                scrline++;
+                if (scrline > 24)
+                    scrline = 21;
+                move(scrline - 1, 0);
+                clrtoeol();
+                return;
+            } else {
+                addch('\n');
+                return;
+            }
+        }
+        else if (ch == '\t')
+            addstr("    ");
+        else
+            addch(ch);
 
-        scrline = 19;
-          }
-          
-        move(scrline+1, 0);
-        clrtoeol();
-        move(scrline, 0);
-        clrtoeol();
-       }
-       else if (ch=='\t')
-           addstr("    ");
-       else
-           addch(ch);
 #ifdef EXTRA
-       c[BYTESOUT]++;
+        c[BYTESOUT]++;
 #endif
     }
 }
-
-
-
-
-
-
 
 /*
 *  lwrite(buf,len)         write a buffer to the output buffer
@@ -798,7 +788,7 @@ void
 cursors (void)
 {
   curs_set(0);
-  cursor(1, 24);
+  cursor(1, 21);
 }
 
 /*

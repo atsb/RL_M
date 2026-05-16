@@ -1,8 +1,7 @@
 void bottomline (void);
 void bottomhp (void);
 void bottomspell (void);
-void bottomdo (void);
-void bot_linex (void);
+void bottomline (void);
 void bottomgold (void);
 void draws (int, int, int, int);
 void drawscreen (void);
@@ -13,3 +12,5 @@ int moveplayer (int);
 void seemagic (int);
 void readcolors(void);
 void compareequipped(int);
+void statusmessage_draw_lines(void);
+void statusmessage_draw_right_panel(void);

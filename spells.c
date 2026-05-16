@@ -1341,7 +1341,7 @@ genmonst (void)
 	  /* now wipe out monsters on this level */
 	  newcavelevel (level);
 	  draws (0, MAXX, 0, MAXY);
-	  bot_linex ();
+	  bottomline ();
 
 	  return;
 	}

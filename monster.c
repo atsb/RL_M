@@ -863,7 +863,7 @@ spattack (int x, int xx, int yy)
 	      lprintf ("\nThe ");
 	      lprintf("%s ",lastmonst);
 	      lprintf("hits you -- you feel a sense of loss");
-	      show3 (i);
+	      inventoryline_print (i);
 	      bottomline ();
 	      return (0);
 	    }

@@ -392,7 +392,7 @@ shou (int x)
 			  for (n = 0; n < 26; n++)
 			    {
 			      if (k == iven[n])
-				show3 (n);
+				inventoryline_print (n);
 			    }
 			}
 		      lprcat ("\n\n");

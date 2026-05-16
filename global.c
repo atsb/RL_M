@@ -647,7 +647,7 @@ stealsomething (void)
 	  c[WIELD] != i && c[SHIELD] != i)
 	{
 
-	  show3 (i);
+	  inventoryline_print (i);
 	  adjustcvalues (iven[i], ivenarg[i]);
 	  iven[i] = 0;
 

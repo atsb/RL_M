@@ -427,7 +427,7 @@ enter (void)
       mitem[33][MAXY - 1] = 0;
       draws (0, MAXX, 0, MAXY);
       showcell (playerx, playery);	/* to show around player */
-      bot_linex ();
+      bottomline ();
       break;
 
     case OTRADEPOST:

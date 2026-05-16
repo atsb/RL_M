@@ -372,7 +372,7 @@ main (int argc, char *argv[])
 	  if (hit3flag)
 		  flushinp();
       hitflag = hit3flag = 0;
-      bot_linex ();		/* update bottom line */
+      bottomline ();		/* update bottom line */
 
       /* get commands and make moves
        */
@@ -525,7 +525,7 @@ parse (void)
 	case 'i':		/* inventory */
 	  yrepcount = 0;
 	  nomove = 1;
-	  showstr (FALSE);
+	  showstr ();
 	  return;
 
 	case 'p':		/* pray at an altar */
@@ -1103,7 +1103,7 @@ dropobj (void)
 	return;
       if (i == '*')
 	{
-	  i = showstr (TRUE);
+	  i = showstr ();
 	  cursors ();
 	}
       if (i != '-')

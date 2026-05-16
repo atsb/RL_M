@@ -155,7 +155,7 @@ act_up_stairs (void)
 
       newcavelevel (level - 1);
       draws (0, MAXX, 0, MAXY);
-      bot_linex ();
+      bottomline();
       refresh();
 
     }
@@ -181,7 +181,7 @@ act_down_stairs (void)
 
       newcavelevel (level + 1);
       draws (0, MAXX, 0, MAXY);
-      bot_linex ();
+      bottomline ();
       refresh();
 
     }
@@ -306,7 +306,7 @@ act_down_shaft (void)
 
   newcavelevel (MAXLEVEL);
   draws (0, MAXX, 0, MAXY);
-  bot_linex ();
+  bottomline ();
   return;
 }
 
@@ -369,7 +369,7 @@ volshaft_climbed (int object)
 	  break;
 	}
   draws (0, MAXX, 0, MAXY);
-  bot_linex ();
+  bottomline ();
   return;
 }
 

@@ -218,7 +218,7 @@ yylex (void)
     yrepcount = 0;
   if (yrepcount == 0)
     {
-      bottomdo ();
+      bottomline();
       showplayer ();		/* show where the player is */
     }
 

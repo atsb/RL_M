@@ -364,7 +364,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
       nap(NAPTIME);
       newcavelevel(level + 1);
       draws(0, MAXX, 0, MAXY);
-      bot_linex();
+      bottomline();
       return;
 
     case OTRADEPOST:
@@ -555,7 +555,7 @@ oteleport (int err)
   	newcavelevel (tmp);
   	positionplayer ();
   	draws (0, MAXX, 0, MAXY);
-  	bot_linex ();
+  	bottomline ();
   	refresh();
   }
 }

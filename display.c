@@ -797,6 +797,9 @@ moveplayer(int dir)
 if direction=0, don't move--just show where he is */
 {
     int k, m, i, j;
+    int worn_armor_idx = c[WEAR];
+    int shield_idx = c[SHIELD];
+    int rusted_something = 0;
 
     if (c[CONFUSE])
         if (c[LEVEL] < rnd(30))
@@ -870,32 +873,37 @@ if direction=0, don't move--just show where he is */
     playerx = k;
     playery = m;
 
-    if (i == OWATER || i == OSHOREWATER)
+    if (i == OWATER)
     {
-        // Existing rusting logic for worn armor
-        int worn_armor_idx = c[WEAR];
-        int rusted_something = 0; // To track if recalc/bottomline is needed
-        if (worn_armor_idx != -1 && is_metal_armor(iven[worn_armor_idx])) {
-            if (ivenarg[worn_armor_idx] > -10) {
-                ivenarg[worn_armor_idx] -= 2;
-                if (ivenarg[worn_armor_idx] < -10)
-                    ivenarg[worn_armor_idx] = -10;
-                cursors();
-                lprcat("\nYour armor rusts from the water!");
-                rusted_something = 1;
+        /* 25% chance to rust */
+        if (rnd(4) == 1)
+        {
+            // Existing rusting logic for worn armor
+            if (worn_armor_idx != -1 && is_metal_armor(iven[worn_armor_idx])) {
+                if (ivenarg[worn_armor_idx] > -10) {
+                    ivenarg[worn_armor_idx] -= 2;
+                    if (ivenarg[worn_armor_idx] < -10)
+                        ivenarg[worn_armor_idx] = -10;
+                    cursors();
+                    lprcat("\nYour armor rusts from the water!");
+                    rusted_something = 1;
+                }
             }
         }
 
-        // Existing rusting logic for shield
-        int shield_idx = c[SHIELD];
-        if (shield_idx != -1 && is_metal_armor(iven[shield_idx])) {
-            if (ivenarg[shield_idx] > -10) {
-                ivenarg[shield_idx] -= 2;
-                if (ivenarg[shield_idx] < -10)
-                    ivenarg[shield_idx] = -10;
-                cursors();
-                lprcat("\nYour shield rusts from the water!");
-                rusted_something = 1;
+        /* 25% chance to rust */
+        if (rnd(4) == 1)
+        {
+            // Existing rusting logic for shield
+            if (shield_idx != -1 && is_metal_armor(iven[shield_idx])) {
+                if (ivenarg[shield_idx] > -10) {
+                    ivenarg[shield_idx] -= 2;
+                    if (ivenarg[shield_idx] < -10)
+                        ivenarg[shield_idx] = -10;
+                    cursors();
+                    lprcat("\nYour shield rusts from the water!");
+                    rusted_something = 1;
+                }
             }
         }
 

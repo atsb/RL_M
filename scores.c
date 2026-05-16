@@ -771,7 +771,6 @@ died (int x)
   lflush();
   refresh();
   cursors ();
-  nap(1000);
   lprcat("\nPress 'ESC' to continue.\n");
   while ((i = getch()) != 27)
       i = ttgetch();

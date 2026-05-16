@@ -174,17 +174,19 @@ term_delch(void)
     delch();
 }
 
-static void cleanup_term(void)
+static void
+cleanup_term(void)
 {
-    /* Restore terminal modes */
+    /* end curses mode */
+    endwin();
+
+    /* restore terminal modes */
     nocbreak();
     echo();
     nl();
 
-    /* End curses mode */
-    endwin();
-
-    /* Ensure cursor is visible again */
+    /* ensure cursor is visible again */
+    printf("\033[0m");
     printf("\033[?25h");
     fflush(stdout);
 }

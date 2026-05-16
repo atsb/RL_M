@@ -768,13 +768,12 @@ died (int x)
     }
 
   cursors();
-  lprcat("\nYou have been slain.");
   lflush();
   refresh();
-
   cursors ();
-  lprcat("\nPress 'x' to continue.\n");
-  while ((i = getch()) != 'x')
+  nap(1000);
+  lprcat("\nPress 'ESC' to continue.\n");
+  while ((i = getch()) != 27)
       i = ttgetch();
 
 invalid:

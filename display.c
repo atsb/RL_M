@@ -878,7 +878,9 @@ if direction=0, don't move--just show where he is */
         if (worn_armor_idx != -1 && is_metal_armor(iven[worn_armor_idx])) {
             if (ivenarg[worn_armor_idx] > -10) {
                 ivenarg[worn_armor_idx] -= 2;
-                if (ivenarg[worn_armor_idx] < -10) ivenarg[worn_armor_idx] = -10;
+                if (ivenarg[worn_armor_idx] < -10)
+                    ivenarg[worn_armor_idx] = -10;
+                cursors();
                 lprcat("\nYour armor rusts from the water!");
                 rusted_something = 1;
             }
@@ -889,7 +891,9 @@ if direction=0, don't move--just show where he is */
         if (shield_idx != -1 && is_metal_armor(iven[shield_idx])) {
             if (ivenarg[shield_idx] > -10) {
                 ivenarg[shield_idx] -= 2;
-                if (ivenarg[shield_idx] < -10) ivenarg[shield_idx] = -10;
+                if (ivenarg[shield_idx] < -10)
+                    ivenarg[shield_idx] = -10;
+                cursors();
                 lprcat("\nYour shield rusts from the water!");
                 rusted_something = 1;
             }
@@ -909,9 +913,6 @@ if direction=0, don't move--just show where he is */
     else
         return (1);
 }
-
-
-
 
 /*
 *  function to show what magic items have been discovered thus far

@@ -163,7 +163,11 @@ void
 losehp(int x)
 {
     if ((c[HP] -= x) <= 0)
+    {
+        lprcat("\nYou have been slain.");
+        nap(1000);
         died(lastnum);
+    }
 }
 
 void

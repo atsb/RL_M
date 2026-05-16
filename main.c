@@ -32,7 +32,6 @@ static void run (int);
 static void wield (void);
 
 static void ydhi (int);
-static void ycwi (int);
 
 static void wear (void);
 
@@ -890,103 +889,84 @@ run(int dir)
 * function to wield a weapon
 */
 static void
-wield (void)
+wield(void)
 {
-  int i;
+	int i, obj;
 
-  for (;;)
-    {
+	for (;;) {
 
-      i = whatitem ("wield (- for nothing)");
-      if (i == '\33')
-	return;
+		i = whatitem("wield (- for nothing)");
+		if (i == '\33')
+			return;
 
+		if (i == '.')
+			continue;
 
-      if (i != '.')
-	{
-
-	  if (i == '*')
-	    {
-
-	      i = showwield ();
-	      cursors ();
-	    }
-
-	  if (i == '-')
-	    {
-
-	      c[WIELD] = -1;
-	      bottomline ();
-
-	      return;
-	    }
-
-	  if (!i || i == '.')
-	    {
-
-	      continue;
-	    }
-
-	  if (iven[i - 'a'] == 0)
-	    {
-
-	      ydhi (i);
-	      return;
-
-	    }
-	  else if (iven[i - 'a'] == OPOTION)
-	    {
-
-	      ycwi (i);
-	      return;
-
-	    }
-	  else if (iven[i - 'a'] == OSCROLL)
-	    {
-
-	      ycwi (i);
-	      return;
-
-	    }
-	  else if (c[SHIELD] != -1 && iven[i - 'a'] == O2SWORD)
-	    {
-
-	      lprcat ("\nBut one arm is busy with your shield!");
-	      return;
-
-	    }
-	  else if (c[SHIELD] != -1 && iven[i - 'a'] == OHSWORD)
-	    {
-
-	      lprcat ("\nA longsword of slashing cannot be used while a shield is equipped!");
-	      return;
-
-	    }
-	  else
-	    {
-
-	      c[WIELD] = i - 'a';
-
-	      if (iven[i - 'a'] == OLANCE)
-		{
-
-		  c[LANCEDEATH] = 1;
-
-		}
-	      else
-		{
-
-		  c[LANCEDEATH] = 0;
+		if (i == '*') {
+			i = showwield();
+			cursors();
 		}
 
-	      bottomline ();
-	      return;
-	    }
+		if (i == '-')
+		{
+			c[WIELD] = -1;
+			cursors();
+			lprcat("\nYou stop wielding anything.");
+			bottomline();
+			return;
+		}
+
+		if (!i)
+			continue;
+
+		obj = iven[i - 'a'];
+
+		if (obj == 0) {
+			ydhi(i);
+			return;
+		}
+
+		/* forbid wielding scrolls/potions/armor/etc */
+		switch (obj) {
+		case OSWORDofSLASHING:
+		case OHAMMER:
+		case OSWORD:
+		case O2SWORD:
+		case OHSWORD:
+		case OSPEAR:
+		case ODAGGER:
+		case OBATTLEAXE:
+		case OLONGSWORD:
+		case OLANCE:
+		case OVORPAL:
+		case OSLAYER:
+			break; /* valid weapon */
+		default:
+			cursors();
+			lprcat("\nYou cannot wield that!");
+			return;
+		}
+
+		/* shield conflicts */
+		if (c[SHIELD] != -1 && obj == O2SWORD) {
+			lprcat("\nBut one arm is busy with your shield!");
+			return;
+		}
+		if (c[SHIELD] != -1 && obj == OHSWORD) {
+			lprcat("\nA longsword of slashing cannot be used while a shield is equipped!");
+			return;
+		}
+
+		/* success */
+		c[WIELD] = i - 'a';
+		c[LANCEDEATH] = (obj == OLANCE);
+
+		cursors();
+		lprintf("\nYou wield %s.", objectname[obj]);
+		bottomline();
+		return;
 	}
-    }
 }
-
-
 
 /*
 * common routine to say you don't have an item
@@ -1000,91 +980,87 @@ ydhi (int x)
   lprintf ("\nYou don't have item %c!", x);
 }
 
-
-
-/*
-* common routine to say you can't wield an item
-*/
-static void
-ycwi (int x)
-{
-  cursors ();
-
-  lprintf ("\nYou can't wield item %c!", x);
-}
-
-
-
 /*
 function to wear armor
 */
 static void
-wear (void)
+wear(void)
 {
-  int i;
+	int i, obj;
 
-  for (;;)
-    {
-      if ((i = whatitem ("wear")) == '\33')
-	return;
-      if (i != '.' && i != '-')
-	{
-	  if (i == '*')
-	    {
-	      i = showwear ();
-	      cursors ();
-	    }
-	  if (i && i != '.')
-	    switch (iven[i - 'a'])
-	      {
-	      case 0:
-		ydhi (i);
-		return;
-	      case OLEATHER:
-	      case OCHAIN:
-	      case OPLATE:
-	      case ORING:
-	      case OSPLINT:
-	      case OPLATEARMOR:
-	      case OSTUDLEATHER:
-	      case OSSPLATE:
-		if (c[WEAR] != -1)
-		  {
-		    lprcat ("\nYou're already wearing some armor");
-		    return;
-		  }
-		c[WEAR] = i - 'a';
-		bottomline ();
-		return;
-	      case OSHIELD:
-		if (c[SHIELD] != -1)
-		  {
-		    lprcat ("\nYou are already wearing a shield");
-		    return;
-		  }
-		if (iven[c[WIELD]] == O2SWORD)
-		  {
-		    lprcat
-		      ("\nYour hands are busy with the two handed sword!");
-		    return;
-		  }
-		  if (iven[c[WIELD]] == OHSWORD)
-		  {
-		    lprcat("\nYou are holding a longsword of slashing!");
+	for (;;) {
+
+		i = whatitem("wear");
+		if (i == '\33')
 			return;
-		  }
-		c[SHIELD] = i - 'a';
-		bottomline ();
-		return;
-	      default:
-		lprcat ("\nYou can't wear that!");
-	      };
+
+		if (i == '.' || i == '-')
+			continue;
+
+		if (i == '*') {
+			i = showwear();
+			cursors();
+		}
+
+		if (!i || i == '.')
+			continue;
+
+		obj = iven[i - 'a'];
+
+		if (obj == 0) {
+			ydhi(i);
+			return;
+		}
+		switch (obj) {
+		case OLEATHER:
+		case OCHAIN:
+		case OPLATE:
+		case ORING:
+		case OSPLINT:
+		case OPLATEARMOR:
+		case OSTUDLEATHER:
+		case OSSPLATE:
+			/* wearing armor */
+			if (c[WEAR] != -1) {
+				lprcat("\nYou're already wearing some armor");
+				return;
+			}
+			c[WEAR] = i - 'a';
+			cursors();
+			lprintf("\nYou equip %s.", objectname[obj]);
+			bottomline();
+			return;
+
+		case OSHIELD:
+			/* wearing a shield */
+			if (c[SHIELD] != -1) {
+				lprcat("\nYou are already wearing a shield");
+				return;
+			}
+
+			/* forbid shield + two‑handed weapon */
+			if (iven[c[WIELD]] == O2SWORD) {
+				lprcat("\nYour hands are busy with the two‑handed sword!");
+				return;
+			}
+			if (iven[c[WIELD]] == OHSWORD) {
+				lprcat("\nYou are holding a longsword of slashing!");
+				return;
+			}
+
+			c[SHIELD] = i - 'a';
+			cursors();
+			lprintf("\nYou equip %s.", objectname[obj]);
+			bottomline();
+			return;
+
+		default:
+			/* everything else is invalid */
+			lprcat("\nYou can't wear that!");
+			return;
+		}
 	}
-    }
 }
-
-
-
 
 /*
 function to drop an object

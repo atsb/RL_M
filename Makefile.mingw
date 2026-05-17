@@ -17,8 +17,10 @@ LDFLAGS = -lpdcurses
 TARGET := $(BINDIR)\larn.exe
 
 all:
-	$(MKDIR) $(BINDIR)
 	gcc $(CFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS)
+
+prep:
+	$(MKDIR) $(BINDIR)
 
 clean:
 	$(RM) $(TARGET)

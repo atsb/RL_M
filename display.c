@@ -14,6 +14,18 @@ static void seepage(void);
 static int minx, maxx, miny, maxy;
 static int is_metal_armor(int);
 
+int compare_color_better = COLOR_GREEN;
+int compare_attr_better  = 0;
+
+int compare_color_worse  = COLOR_RED;
+int compare_attr_worse   = 0;
+
+int compare_color_equal  = COLOR_CYAN;
+int compare_attr_equal   = 0;
+
+int compare_color_none = COLOR_YELLOW;
+int compare_attr_none  = 0;
+
 /* The entire bot_xx rendering has been rewritten
 * it was a legacy of the 80's and assumptions about terminal
 * windows and saving CPU cycles (updating incrementally).
@@ -266,48 +278,72 @@ static void
 isbetter(void)
 {
     if (has_colors())
-        attron(COLOR_PAIR(COLOR_GREEN));
+    {
+        attron(COLOR_PAIR(compare_color_better));
+        attron(compare_attr_better);
+    }
 
     lprcat("(better) ");
 
     if (has_colors())
-        attroff(COLOR_PAIR(COLOR_GREEN));
+    {
+        attroff(compare_attr_better);
+        attroff(COLOR_PAIR(compare_color_better));
+    }
 }
 
 static void
 isworse(void)
 {
     if (has_colors())
-        attron(COLOR_PAIR(COLOR_RED));
+    {
+        attron(COLOR_PAIR(compare_color_worse));
+        attron(compare_attr_worse);
+    }
 
     lprcat("(worse) ");
 
     if (has_colors())
-        attroff(COLOR_PAIR(COLOR_RED));
+    {
+        attroff(compare_attr_worse);
+        attroff(COLOR_PAIR(compare_color_worse));
+    }
 }
 
 static void
 isequal(void)
 {
     if (has_colors())
-        attron(COLOR_PAIR(COLOR_CYAN));
+    {
+        attron(COLOR_PAIR(compare_color_equal));
+        attron(compare_attr_equal);
+    }
 
     lprcat("(equal) ");
 
     if (has_colors())
-        attroff(COLOR_PAIR(COLOR_CYAN));
+    {
+        attroff(compare_attr_equal);
+        attroff(COLOR_PAIR(compare_color_equal));
+    }
 }
 
 static void
 isnone(void)
 {
     if (has_colors())
-        attron(COLOR_PAIR(COLOR_YELLOW));
+    {
+        attron(COLOR_PAIR(compare_color_none));
+        attron(compare_attr_none);
+    }
 
     lprcat("(none equipped) ");
 
     if (has_colors())
-        attroff(COLOR_PAIR(COLOR_YELLOW));
+    {
+        attroff(compare_attr_none);
+        attroff(COLOR_PAIR(compare_color_none));
+    }
 }
 
 void
@@ -628,7 +664,7 @@ showcell(int x, int y)
                         int id = k;
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(moncolor[id]));
+                            attrset(COLOR_PAIR(moncolor[id]) | monattr[id]);
 
                         lprc(monstnamelist[id]);
 
@@ -640,7 +676,7 @@ showcell(int x, int y)
                         int id = item[i][j];
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(objcolor[id]));
+                            attrset(COLOR_PAIR(objcolor[id]) | objattr[id]);
 
                         lprc(objnamelist[id]);
 
@@ -654,8 +690,6 @@ showcell(int x, int y)
 
             }
 }
-
-
 
 /*
 this routine shows only the spot that is given it.  the spaces around
@@ -687,13 +721,17 @@ show1cell(int x, int y)
     {
         int id = k;
 
-        if (has_colors())
-            attrset(COLOR_PAIR(moncolor[id]));
+        if (has_colors()) {
+            attron(COLOR_PAIR(moncolor[id]));
+            attron(monattr[id]);
+        }
 
         lprc(monstnamelist[id]);
 
-        if (has_colors())
-            attrset(COLOR_PAIR(0));
+        if (has_colors()) {
+            attroff(monattr[id]);
+            attroff(COLOR_PAIR(moncolor[id]));
+        }
 
         know[x][y] = KNOWALL;
         return;
@@ -705,13 +743,19 @@ show1cell(int x, int y)
         static const char water_chars[] = { '~', '=', '~', '=' };
         int idx = (x * 7 + y * 13 + water_anim_toggle) & 3;
 
-        if (has_colors())
-            attrset(COLOR_PAIR(objcolor[item[x][y]]));
+        int id = item[x][y];
+
+        if (has_colors()) {
+            attron(COLOR_PAIR(objcolor[id]));
+            attron(objattr[id]);
+        }
 
         lprc(water_chars[idx]);
 
-        if (has_colors())
-            attrset(COLOR_PAIR(0));
+        if (has_colors()) {
+            attroff(objattr[id]);
+            attroff(COLOR_PAIR(objcolor[id]));
+        }
 
         know[x][y] = KNOWALL;
         return;
@@ -723,16 +767,21 @@ show1cell(int x, int y)
         static const char lava_chars[] = { '~', '^', '"', '`' };
         int idx = (x * 13 + y * 7 + lava_anim_toggle) & 3;
 
-        if (has_colors())
-            attrset(COLOR_PAIR(objcolor[item[x][y]]));
+        int id = item[x][y];
+
+        if (has_colors()) {
+            attron(COLOR_PAIR(objcolor[id]));
+            attron(objattr[id]);
+        }
 
         lprc(lava_chars[idx]);
 
-        if (has_colors())
-            attrset(COLOR_PAIR(0));
+        if (has_colors()) {
+            attroff(objattr[id]);
+            attroff(COLOR_PAIR(objcolor[id]));
+        }
 
         know[x][y] = KNOWALL;
-
         return;
     }
 
@@ -741,13 +790,17 @@ show1cell(int x, int y)
     {
         int id = k;
 
-        if (has_colors())
-            attrset(COLOR_PAIR(objcolor[id]));
+        if (has_colors()) {
+            attron(COLOR_PAIR(objcolor[id]));
+            attron(objattr[id]);
+        }
 
         lprc(objnamelist[id]);
 
-        if (has_colors())
-            attrset(COLOR_PAIR(0));
+        if (has_colors()) {
+            attroff(objattr[id]);
+            attroff(COLOR_PAIR(objcolor[id]));
+        }
     }
 
     know[x][y] = KNOWALL;
@@ -1091,43 +1144,101 @@ is_metal_armor(int item_id) {
 void
 readcolors(void)
 {
-    FILE* fp = fopen(colourfile, "r");
+    FILE* fp = fopen("larn.clr", "r");
     if (!fp)
         return;
 
-    char line[256], key[64], val[64];
+    char line[256], key[64];
 
     while (fgets(line, sizeof(line), fp))
     {
+        /* skip comments and blank lines */
         if (line[0] == '#' || line[0] == '\n')
             continue;
 
-        if (sscanf(line, "%63s = %63s", key, val) != 2)
+        /* find '=' */
+        char *eq = strchr(line, '=');
+        if (!eq)
             continue;
 
-        int color = -1;
+        /* split key and rhs */
+        *eq = '\0';
+        char *rhs = eq + 1;
 
-        if (!strcmp(val, "COLOR_BLACK"))        color = COLOR_BLACK;
-        else if (!strcmp(val, "COLOR_RED"))     color = COLOR_RED;
-        else if (!strcmp(val, "COLOR_GREEN"))   color = COLOR_GREEN;
-        else if (!strcmp(val, "COLOR_YELLOW"))  color = COLOR_YELLOW;
-        else if (!strcmp(val, "COLOR_BLUE"))    color = COLOR_BLUE;
-        else if (!strcmp(val, "COLOR_MAGENTA")) color = COLOR_MAGENTA;
-        else if (!strcmp(val, "COLOR_CYAN"))    color = COLOR_CYAN;
-        else if (!strcmp(val, "COLOR_WHITE"))   color = COLOR_WHITE;
+        /* trim key */
+        sscanf(line, "%63s", key);
+
+        /* tokenize COLOR_* and A_* */
+        int color = -1;
+        int attr  = 0;
+
+        char *tok = strtok(rhs, " \t|()\r\n");
+        while (tok)
+        {
+            /* colours */
+            if (!strcmp(tok, "COLOR_BLACK"))        color = COLOR_BLACK;
+            else if (!strcmp(tok, "COLOR_RED"))     color = COLOR_RED;
+            else if (!strcmp(tok, "COLOR_GREEN"))   color = COLOR_GREEN;
+            else if (!strcmp(tok, "COLOR_YELLOW"))  color = COLOR_YELLOW;
+            else if (!strcmp(tok, "COLOR_BLUE"))    color = COLOR_BLUE;
+            else if (!strcmp(tok, "COLOR_MAGENTA")) color = COLOR_MAGENTA;
+            else if (!strcmp(tok, "COLOR_CYAN"))    color = COLOR_CYAN;
+            else if (!strcmp(tok, "COLOR_WHITE"))   color = COLOR_WHITE;
+
+            /* attributes */
+            else if (!strcmp(tok, "A_BOLD"))        attr |= A_BOLD;
+            else if (!strcmp(tok, "A_DIM"))         attr |= A_DIM;
+            else if (!strcmp(tok, "A_REVERSE"))     attr |= A_REVERSE;
+            else if (!strcmp(tok, "A_STANDOUT"))    attr |= A_STANDOUT;
+            else if (!strcmp(tok, "A_UNDERLINE"))   attr |= A_UNDERLINE;
+
+            tok = strtok(NULL, " \t|()\r\n");
+        }
 
         if (color < 0)
             continue;
 
         /* monsters */
         for (int i = 0; monster_map[i].name; i++)
-            if (!strcmp(key, monster_map[i].name))
+            if (!strcmp(key, monster_map[i].name)) {
                 moncolor[monster_map[i].id] = color;
+                monattr[monster_map[i].id]  = attr;
+            }
 
         /* objects */
         for (int i = 0; object_map[i].name; i++)
-            if (!strcmp(key, object_map[i].name))
+            if (!strcmp(key, object_map[i].name)) {
                 objcolor[object_map[i].id] = color;
+                objattr[object_map[i].id]  = attr;
+            }
+
+        /* comparisons */
+        if (!strcmp(key, "COMPARE_BETTER")) {
+            compare_color_better = color;
+            compare_attr_better  = attr;
+        }
+
+        if (!strcmp(key, "COMPARE_WORSE")) {
+            compare_color_worse = color;
+            compare_attr_worse  = attr;
+        }
+
+        if (!strcmp(key, "COMPARE_EQUAL")) {
+            compare_color_equal = color;
+            compare_attr_equal  = attr;
+        }
+
+        if (!strcmp(key, "COMPARE_NONE")) {
+            compare_color_none = color;
+            compare_attr_none  = attr;
+        }
+
+        /* fortune cookie messages */
+        if (!strcmp(key, "COOKIE_MESSAGE")) {
+            cookie_color = color;
+            cookie_attr  = attr;
+        }
+
     }
     fclose(fp);
 }

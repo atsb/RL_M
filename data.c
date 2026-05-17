@@ -1018,3 +1018,6 @@ const struct color_override_entry object_map[] = {
 	{ "OLAVA", OLAVA },
 	{ NULL, 0 }
 };
+
+int monattr[MAXMONST + 9] = {0};
+int objattr[MAXOBJECT + 1] = {0};

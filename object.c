@@ -40,8 +40,8 @@ static void prompt_volshaft (int);
 static void o_open_door (void);
 static void o_closed_door (void);
 
-
-
+int cookie_color = COLOR_YELLOW;
+int cookie_attr  = A_BOLD;
 
 /* LOOK_FOR_OBJECT
 subroutine to look for an object and give the player his options if an object
@@ -1283,16 +1283,16 @@ ocookie(void)
             lprcat(" A message inside the cookie reads:\n");
             if (has_colors())
             {
-                attron(A_BOLD);
-                attron(COLOR_PAIR(COLOR_YELLOW));
+                attron(COLOR_PAIR(cookie_color));
+                attron(cookie_attr);
             }
 
             lprcat(p);
 
             if (has_colors())
             {
-                attroff(A_BOLD);
-                attroff(COLOR_PAIR(COLOR_YELLOW));
+                attroff(COLOR_PAIR(cookie_color));
+                attroff(cookie_attr);
             }
             return;
 

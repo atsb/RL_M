@@ -128,12 +128,12 @@ main (int argc, char *argv[])
   }
 
   readopts(); /* read the options file if there is one */
-
-  readcolors(); /* reads the larn.clr file */
 	
   /*init curses ~Gibbon */
   init_term ();			/* setup the terminal */
   scbr ();
+
+  readcolors(); /* reads the larn.clr file */
 
   /* Set up the input and output buffers.
    */

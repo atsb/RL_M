@@ -16,12 +16,31 @@
 # COLOR_CYAN
 # COLOR_WHITE
 
+# ----------------------------------------------------------------------
+# AVAILABLE ATTRIBUTES (optional valid values for the | right-hand side)
+# ----------------------------------------------------------------------
+# A_BOLD
+# A_DIM
+# A_REVERSE
+# A_STANDOUT
+# A_UNDERLINE
+
+# --------------------------------------------------------------------------
+# AVAILABLE MESSAGE COLOURS (optional valid values for certain text strings)
+# --------------------------------------------------------------------------
+# COMPARE_BETTER
+# COMPARE_WORSE
+# COMPARE_EQUAL
+# COMPARE_NONE
+# COOKIE_MESSAGE
+
 # ------------------------------------------------------------
 # Example overrides (active)
 # ------------------------------------------------------------
-KOBOLD = COLOR_CYAN
-OWATER = COLOR_BLUE
-OSHOREWATER = COLOR_CYAN
+KOBOLD = COLOR_CYAN | A_STANDOUT
+OWATER = COLOR_BLUE | A_REVERSE | A_BOLD
+OSHOREWATER = COLOR_CYAN | A_STANDOUT
+COOKIE_MESSAGE = COLOR_RED | A_REVERSE | A_STANDOUT
 
 # ============================================================
 # MONSTER COLOURS (all commented out)

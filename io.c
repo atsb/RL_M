@@ -824,6 +824,8 @@ init_term(void)
         start_color();
         use_default_colors();
 
+        readcolors(); /* reads the larn.clr file */
+
         for (int i = 0; i < 256; i++) {
             int fg = i % 8;
             init_pair(i, fg, -1);

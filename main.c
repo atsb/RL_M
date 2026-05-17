@@ -632,6 +632,7 @@ parse (void)
 	  yrepcount = 0;
 	  quit();
 	  nomove = 1;
+	  clearvt100();
 	  return;
 
 	case 'R':		/* remove gems from a throne */
@@ -649,6 +650,7 @@ parse (void)
 	  savegame(savefilename);
 	  nap(1000);
 	  lflush();
+	  clearvt100();
 	  exit(EXIT_SUCCESS);
 	  break;
 

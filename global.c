@@ -34,16 +34,16 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/inventory.h"
-#include "includes/io.h"
-#include "includes/monster.h"
-#include "includes/scores.h"
-#include "includes/nap.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "display.h"
+#include "global.h"
+#include "inventory.h"
+#include "io.h"
+#include "monster.h"
+#include "scores.h"
+#include "nap.h"
 
 int water_anim_toggle = 0;
 long last_water_anim = 0;

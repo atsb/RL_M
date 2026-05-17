@@ -43,17 +43,17 @@
 */
 #include <stdlib.h>
 #include <ctype.h>
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
 #include <stdio.h>
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/inventory.h"
-#include "includes/io.h"
-#include "includes/monster.h"
-#include "includes/spells.h"
-#include "includes/nap.h"
+#include "display.h"
+#include "global.h"
+#include "inventory.h"
+#include "io.h"
+#include "monster.h"
+#include "spells.h"
+#include "nap.h"
 
 static int cgood (int, int, int, int);
 

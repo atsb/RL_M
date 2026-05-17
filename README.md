@@ -1,17 +1,39 @@
-# RL_M
-Larn - maintained and developed for modern systems
+# RL_M  
+Larn — maintained and developed for modern systems
 
 I am the official maintainer of Larn.
 
-# Supported Systems
+## Supported Systems
 
-* GNU/Linux
-* macOS
-* Windows
+- GNU/Linux
+- BSD
+- UNIX  
+- macOS  
+- Windows (only Nuwen MinGW support, msys and cygwin are not.)
 
-# Building
+Cygwin and MSYS2 are only supported if NOT linking to their GPL requirement (msys-2.0.dll or cygwin1.dll).
 
-* For GNU/Linux/macOS systems, go into the 'src' directory and type 'make prep' and the 'make'.
-Afterwards, ./larn will run the game and all files are saved into your user ~/.larn directory.
+Larn is NOT a GPL'd program.
 
-* For Windows, an MSVC solution and the makefiles can be used with MinGW.
+## Building
+
+Larn provides separate build paths for Unix‑like systems and MinGW on Windows.  
+All builds place the final binary in the `bin/` directory.
+
+---
+
+## GNU/Linux/BSD/UNIX and macOS
+
+```sh
+make
+make prep
+```
+or move the contents of larnfiles/ youself
+
+## MinGW (Nuwen MinGW)
+
+```sh
+make
+```
+
+then move the contents of larnfiles/ youself

@@ -1,10 +1,10 @@
 /* bill.c */
-#include "includes/bill.h"
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/help.h"
-#include "includes/io.h"
+#include "bill.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "help.h"
+#include "io.h"
 
 static int letter1 (int);
 static int letter2 (void);

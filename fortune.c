@@ -1,8 +1,8 @@
 /* fortune.c */
-#include "includes/larn.h"
-#include "includes/fortune.h"
-#include "includes/global.h"
-#include "includes/io.h"
+#include "larn.h"
+#include "fortune.h"
+#include "global.h"
+#include "io.h"
 
 /* 
 * ported the original larn12 code and made it work correctly

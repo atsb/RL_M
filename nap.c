@@ -1,8 +1,8 @@
 #define _POSIX_C_SOURCE 199309L
 
-#include "includes/larnfunc.h"
-#include "includes/io.h"
-#include "includes/nap.h"
+#include "larnfunc.h"
+#include "io.h"
+#include "nap.h"
 #include <time.h>
 
 void nap(int milliseconds)

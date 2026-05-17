@@ -6,17 +6,17 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/global.h"
-#include "includes/io.h"
-#include "includes/savelev.h"
-#include "includes/scores.h"
-#include "includes/store.h"
-#include "includes/nap.h"
-#include "includes/create.h"
-#include "includes/diag.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "global.h"
+#include "io.h"
+#include "savelev.h"
+#include "scores.h"
+#include "store.h"
+#include "nap.h"
+#include "create.h"
+#include "diag.h"
 
 #ifdef ANTICHEAT
 static void greedy (void);

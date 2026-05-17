@@ -6,17 +6,17 @@
 */
 #include <stdlib.h>
 
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/help.h"
-#include "includes/io.h"
-#include "includes/monster.h"
-#include "includes/scores.h"
-#include "includes/spheres.h"
-#include "includes/nap.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "display.h"
+#include "global.h"
+#include "help.h"
+#include "io.h"
+#include "monster.h"
+#include "scores.h"
+#include "spheres.h"
+#include "nap.h"
 
 static void sphboom (int x, int y);
 
@@ -238,6 +238,8 @@ movsphere (void)
 	case 1:
 	case 2:		/* change direction to a random one */
 	  sp->dir = rnd (8);
+    /* fallthrough */
+    
 	default:		/* move in normal direction */
 	  dir = sp->dir;
 	  len = sp->lifetime;

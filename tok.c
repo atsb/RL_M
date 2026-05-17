@@ -10,16 +10,16 @@ sethard()
 #include <ctype.h>
 #include <sys/types.h>
 
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/tok.h"
-#include "includes/display.h"
-#include "includes/io.h"
-#include "includes/scores.h"
-#include "includes/nap.h"
-#include "includes/diag.h"
-#include "includes/main.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "tok.h"
+#include "display.h"
+#include "io.h"
+#include "scores.h"
+#include "nap.h"
+#include "diag.h"
+#include "main.h"
 
 #define CHKPTINT   400
 

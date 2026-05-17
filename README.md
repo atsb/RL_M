@@ -33,7 +33,7 @@ or move the contents of larnfiles/ youself
 ## MinGW (Nuwen MinGW)
 
 ```sh
-make
+make -f Makefile.mingw
 ```
 
 then move the contents of larnfiles/ youself

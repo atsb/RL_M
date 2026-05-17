@@ -9,4 +9,4 @@ COPY . .
 RUN make
 
 FROM scratch AS export
-COPY --from=build /src/larn /larn
+COPY --from=build /src/bin/larn /larn

@@ -177,9 +177,6 @@ term_delch(void)
 static void
 cleanup_term(void)
 {
-    /* end curses mode */
-    endwin();
-
     /* restore terminal modes */
     nocbreak();
     echo();
@@ -189,6 +186,8 @@ cleanup_term(void)
     printf("\033[0m");
     printf("\033[?25h");
     fflush(stdout);
+
+    endwin();
 }
 
 /*
@@ -202,8 +201,6 @@ setupvt100 (void)
   screen_clear();
 
   setscroll ();
-
-  scbr ();			/* system("stty cbreak -echo"); */
 }
 
 /*
@@ -217,10 +214,6 @@ clearvt100 (void)
   cleanup_term();
 
   resetscroll ();
-
-  /* clear(); *//* why does this routine need to clear() ? */
-
-  sncbr ();			/* system("stty -cbreak echo"); */
 }
 
 /*

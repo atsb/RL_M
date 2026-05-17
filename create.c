@@ -2,13 +2,13 @@
 
 // #define PUDDLE_TEST // Uncomment or define via compiler flags to enable debug puddle
 
-#include "includes/create.h"
-#include "includes/larn.h"
-#include "includes/global.h"
-#include "includes/io.h"
-#include "includes/monster.h"
-#include "includes/savelev.h"
-#include "includes/scores.h"
+#include "create.h"
+#include "larn.h"
+#include "global.h"
+#include "io.h"
+#include "monster.h"
+#include "savelev.h"
+#include "scores.h"
 
 static void makemaze(int);
 static int cannedlevel(int);

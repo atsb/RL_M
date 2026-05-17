@@ -1,12 +1,12 @@
 ﻿#include <stdlib.h>
 #include <string.h>
-#include "includes/action.h"
-#include "includes/larn.h"
-#include "includes/create.h"
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/io.h"
-#include "includes/monster.h"
+#include "action.h"
+#include "larn.h"
+#include "create.h"
+#include "display.h"
+#include "global.h"
+#include "io.h"
+#include "monster.h"
 
 #define nlprc(_ch) lprc(_ch)
 
@@ -1138,7 +1138,7 @@ statusmessage_draw_lines(void)
 {
     /* spells, AC, WC, level, exp, class */
     cursor(1, 18);
-    lprintf("Spells:%3d(%2d)  AC:%-3d  WC:%-3d  Level:%-2d  Exp:%-9d (%s)",
+    lprintf("Spells:%3d(%2d)  AC:%-3d  WC:%-3d  Level:%-2d  Exp:%-9d %s",
         (int)c[SPELLS],
         (int)c[SPELLMAX],
         (int)c[AC],
@@ -1163,9 +1163,7 @@ statusmessage_draw_lines(void)
 
     /* player name */
     cursor(1, 20);
-    attron(A_BOLD);
     lprintf("%s", logname);
-    attroff(A_BOLD);
 }
 
 void

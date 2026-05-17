@@ -4,9 +4,9 @@
  *                  allow compile time string concatenation, we must
  *                  do runtime concatenation, in main.
  */
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
 
 #ifndef WIZID
 #define WIZID   0

@@ -1,13 +1,27 @@
+# MinGW Makefile for Larn
+
+SRCDIR  := .
+BINDIR  := bin
+MKDIR = mkdir
+CP    = xcopy /E /I /Y
+RM    = del /F /Q
+RMDIR = rmdir /S /Q
+
 SRC = action.c bill.c config.c create.c data.c diag.c display.c fortune.c global.c \
-	help.c inventory.c io.c main.c monster.c moreobj.c movem.c nap.c object.c regen.c \
-	savelev.c scores.c spells.c spheres.c store.c tok.c
-CFLAGS = -Wall -g -std=c17 -pedantic -DMULTIPLE_SCORE_ENTRY
-LDFLAGS = -lm -lpdcurses
+      help.c inventory.c io.c main.c monster.c moreobj.c movem.c nap.c object.c regen.c \
+      savelev.c scores.c spells.c spheres.c store.c tok.c
 
-larn: $(SRC)
-	gcc -o $@ $^ $(CFLAGS) $(LDFLAGS)
+CFLAGS  = -Wall -g -std=c17 -pedantic -DMULTIPLE_SCORE_ENTRY
+LDFLAGS = -lpdcurses
 
-.PHONY: clean
+TARGET := $(BINDIR)\larn.exe
+
+all:
+	$(MKDIR) $(BINDIR)
+	gcc $(CFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS)
+
 clean:
-	rm -f larn
+	$(RM) $(TARGET)
 
+distclean: clean
+	$(RMDIR) $(BINDIR)

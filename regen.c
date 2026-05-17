@@ -1,12 +1,12 @@
 #include <stdlib.h>
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/inventory.h"
-#include "includes/io.h"
-#include "includes/regen.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "display.h"
+#include "global.h"
+#include "inventory.h"
+#include "io.h"
+#include "regen.h"
 
 /*
 * regen()

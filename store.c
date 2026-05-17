@@ -23,18 +23,18 @@ cnsitm
 olrs          larn revenue service function
 */
 
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/inventory.h"
-#include "includes/io.h"
-#include "includes/main.h"
-#include "includes/object.h"
-#include "includes/scores.h"
-#include "includes/store.h"
-#include "includes/nap.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "display.h"
+#include "global.h"
+#include "inventory.h"
+#include "io.h"
+#include "main.h"
+#include "object.h"
+#include "scores.h"
+#include "store.h"
+#include "nap.h"
 
 static void dnd_2hed (void);
 static void dnd_hed (void);

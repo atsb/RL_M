@@ -42,8 +42,8 @@ struct monst
   int intelligence;		/* monsters intelligence -- used to choose movement */
   int gold;
   int hitpoints;
-  int resistance;		/* used for environment resistance */
   unsigned long experience;
+  int resistance;		/* used for environment resistance */
 };
 
 /*  this is the structure definition for the items in the dnd store */

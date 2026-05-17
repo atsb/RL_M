@@ -19,20 +19,20 @@ genmonst()         Function to ask for monster and genocide from game
 #include <ctype.h>
 #include <string.h>
 
-#include "includes/create.h"
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/io.h"
-#include "includes/main.h"
-#include "includes/monster.h"
-#include "includes/object.h"
-#include "includes/scores.h"
-#include "includes/spells.h"
-#include "includes/spheres.h"
-#include "includes/nap.h"
+#include "create.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "display.h"
+#include "global.h"
+#include "io.h"
+#include "main.h"
+#include "monster.h"
+#include "object.h"
+#include "scores.h"
+#include "spells.h"
+#include "spheres.h"
+#include "nap.h"
 
 /* used for altar reality */
 struct isave
@@ -1142,20 +1142,28 @@ dirsub (int *x, int *y)
 	{
 	case 'b':
 	  i++;
+    /* fallthrough */
 	case 'n':
 	  i++;
+    /* fallthrough */
 	case 'y':
 	  i++;
+    /* fallthrough */
 	case 'u':
 	  i++;
+    /* fallthrough */
 	case 'h':
 	  i++;
+    /* fallthrough */
 	case 'k':
 	  i++;
+    /* fallthrough */
 	case 'l':
 	  i++;
+    /* fallthrough */
 	case 'j':
 	  i++;
+    /* fallthrough */
 	  goto out;
 /* Added an ESC. -Gibbon */
 	case '\33':

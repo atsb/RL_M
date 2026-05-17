@@ -36,20 +36,20 @@ act_open_door           open a door
 */
 
 #include <stdlib.h>
-#include "includes/action.h"
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/create.h"
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/io.h"
-#include "includes/main.h"
-#include "includes/monster.h"
-#include "includes/moreobj.h"
-#include "includes/object.h"
-#include "includes/scores.h"
-#include "includes/nap.h"
+#include "action.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "create.h"
+#include "display.h"
+#include "global.h"
+#include "io.h"
+#include "main.h"
+#include "monster.h"
+#include "moreobj.h"
+#include "object.h"
+#include "scores.h"
+#include "nap.h"
 
 static void volshaft_climbed (int);
 static void act_prayer_heard (void);

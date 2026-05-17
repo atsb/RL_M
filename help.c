@@ -9,13 +9,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/display.h"
-#include "includes/help.h"
-#include "includes/io.h"
-#include "includes/nap.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "display.h"
+#include "help.h"
+#include "io.h"
+#include "nap.h"
 
 /* I coded a nice line-reader for this.  Unfortunately it's very hard to get a good
  *  cursor and text position when reading a file from inside a curses program.

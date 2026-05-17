@@ -1,23 +1,23 @@
 /* object.c */
 #include <stdlib.h>
-#include "includes/action.h"
-#include "includes/larncons.h"
-#include "includes/larndata.h"
-#include "includes/larnfunc.h"
-#include "includes/create.h"
-#include "includes/display.h"
-#include "includes/fortune.h"
-#include "includes/global.h"
-#include "includes/inventory.h"
-#include "includes/io.h"
-#include "includes/main.h"
-#include "includes/monster.h"
-#include "includes/moreobj.h"
-#include "includes/object.h"
-#include "includes/regen.h"
-#include "includes/scores.h"
-#include "includes/spells.h"
-#include "includes/nap.h"
+#include "action.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
+#include "create.h"
+#include "display.h"
+#include "fortune.h"
+#include "global.h"
+#include "inventory.h"
+#include "io.h"
+#include "main.h"
+#include "monster.h"
+#include "moreobj.h"
+#include "object.h"
+#include "regen.h"
+#include "scores.h"
+#include "spells.h"
+#include "nap.h"
 
 static void ostairs (int);
 
@@ -303,7 +303,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 	return;
       item[playerx][playery] = OTELEPORTER;
       know[playerx][playery] = KNOWALL;
-      /* fall through to OTELEPORTER case below!!! */
+      /* fallthrough */
 
     case OTELEPORTER:
       lprcat ("\nZaaaappp!  You've been teleported!\n");
@@ -317,7 +317,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 	return;
       item[playerx][playery] = OTRAPARROW;
       know[playerx][playery] = 0;
-      /* fall through to OTRAPARROW case below!!! */
+      /* fallthrough */
 
     case OTRAPARROW:
       lprcat ("\nYou are hit by an arrow");
@@ -331,7 +331,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 	return;
       item[playerx][playery] = ODARTRAP;
       know[playerx][playery] = 0;
-      /* fall through to ODARTTRAP case below!!! */
+      /* fallthrough */
 
     case ODARTRAP:
       lprcat ("\nYou are hit by a dart");
@@ -347,7 +347,7 @@ lookforobject (char do_ident, char do_pickup, char do_action)
 	return;
       item[playerx][playery] = OTRAPDOOR;
       know[playerx][playery] = KNOWALL;
-      /* fall through to OTRAPDOOR case below!!! */
+      /* fallthrough */
 
     case OTRAPDOOR:
       lastnum = 272;		/* a trap door */

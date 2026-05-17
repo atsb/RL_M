@@ -27,12 +27,12 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#include "includes/bill.h"
-#include "includes/larn.h"
-#include "includes/inventory.h"
-#include "includes/scores.h"
-#include "includes/nap.h"
-#include "includes/io.h"
+#include "bill.h"
+#include "larn.h"
+#include "inventory.h"
+#include "scores.h"
+#include "nap.h"
+#include "io.h"
 
 struct scofmt			/*  This is the structure for the scoreboard        */
 {

@@ -60,17 +60,17 @@
 #include <setjmp.h>
 #include <fcntl.h>		/* For O_BINARY */
 
-#include "includes/larn.h"
+#include "larn.h"
 
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
 #endif
 
-#include "includes/display.h"
-#include "includes/global.h"
-#include "includes/io.h"
-#include "includes/monster.h"
-#include "includes/scores.h"
+#include "display.h"
+#include "global.h"
+#include "io.h"
+#include "monster.h"
+#include "scores.h"
 
 #define LINBUFSIZE 128		/* size of the lgetw() and lgetl() buffer       */
 int lfd = 0;		/*  output file numbers     */

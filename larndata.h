@@ -102,7 +102,6 @@ extern char holifile[];
 extern char optsfile[];
 extern char helpfile[];
 extern char ckpfile[];
-extern char colourfile[];
 
 extern int ckpflag;
 extern int predostuff, restorflag;

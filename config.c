@@ -30,4 +30,3 @@ char holifile[PATHLEN];
 char optsfile[PATHLEN];
 char helpfile[PATHLEN];
 char ckpfile[PATHLEN];
-char colourfile[PATHLEN];

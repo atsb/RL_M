@@ -112,9 +112,6 @@ main (int argc, char *argv[])
   strcpy(ckpfile, LARNHOME);
   strcat(ckpfile, "/Larn.ckp");
 
-  strcpy(colourfile, LARNHOME);
-  strcat(colourfile, "/larn.clr");
-
   if (argv[i][0] == '+')
   {
 	  clear();

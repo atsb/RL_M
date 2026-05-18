@@ -455,7 +455,8 @@ move_scared (int i, int j)
   if (yl >= MAXY)
     yl = MAXY - 1;
 
-  if ((tmp = item[xl][yl]) != OWALL || OINNERWALL)
+  if ((tmp = item[xl][yl]) != OWALL &&
+    tmp != OINNERWALL)
     if (mitem[xl][yl] == 0)
       if ((mitem[i][j] != VAMPIRE) || (tmp != OMIRROR))
 	if (tmp != OCLOSEDDOOR)

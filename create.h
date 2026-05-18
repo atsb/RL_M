@@ -3,6 +3,7 @@ void newcavelevel (int);
 void eat (int, int);
 int fillmonst (int);
 void expand_puddle(void);
+void cool_lava(void);
 void make_cryinglava(int cx, int cy);
 void make_lavapool(int cx, int cy);
 int lava_blocked(int x, int y);

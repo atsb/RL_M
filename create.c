@@ -25,6 +25,8 @@ static void makepuddle(int);
 
 unsigned char erosion[MAXX][MAXY];
 long last_simulated_time[MAXLEVEL];
+unsigned char lavaheat[MAXX][MAXY];
+long last_lava_cool = 0;
 
 /*
 makeplayer()
@@ -138,6 +140,11 @@ newcavelevel(int x)
     for (i = 0; i < MAXY; i++)
         for (j = 0; j < MAXX; j++)
             erosion[j][i] = 0;
+
+    /* init lavaheat for a new level */
+    for (i = 0; i < MAXY; i++)
+        for (j = 0; j < MAXX; j++)
+            lavaheat[j][i] = 0;
 
     /* fill in new level */
     for (i = 0; i < MAXY; i++)
@@ -579,6 +586,24 @@ lava_blocked(int x, int y)
 }
 
 void
+cool_lava(void)
+{
+    for (int y = 0; y < MAXY; y++)
+        for (int x = 0; x < MAXX; x++)
+            if (item[x][y] == OLAVA && lavaheat[x][y] > 0)
+            {
+                lavaheat[x][y]--;
+
+                if (lavaheat[x][y] == 0)
+                {
+                    item[x][y] = OCOOLEDLAVA;
+                    show1cell(x, y);
+                }
+            }
+    refresh();
+}
+
+void
 make_lavapool(int cx, int cy)
 {
     int radius, x, y, dx, dy, jitter;
@@ -604,7 +629,10 @@ make_lavapool(int cx, int cy)
 
             if (dx * dx + dy * dy <= radius * radius + jitter)
                 if (!lava_blocked(x, y))
+                {
                     item[x][y] = OLAVA;
+                    lavaheat[x][y] = rnd(100) + 50;   /* stays hot */
+                }
         }
     }
 }
@@ -644,7 +672,10 @@ make_cryinglava(int cx, int cy)
                 break;
 
             if (mitem[x][y] == 0 && !lava_blocked(x, y))
+            {
                 item[x][y] = OLAVA;
+                lavaheat[x][y] = rnd(20) + 30;   /* arms cool quicker */
+            }
 
             /* wiggle */
             if (rnd(10) < 3)
@@ -892,7 +923,7 @@ expand_puddle(void)
                 if (mitem[nx][ny] != 0)
                     continue;
 
-                /* do NOT overwrite special structures */
+                /* do not overwrite special structures */
                 switch (item[nx][ny])
                 {
                 case OENTRANCE:
@@ -1013,8 +1044,8 @@ makepuddle(int level)
 
     for (attempts = 0; attempts < 10; attempts++)
     {
-        px = rnd(MAXX - puddle_width - 2) + 1; /* ensure px + puddle_width < MAXX - 1 */
-        py = rnd(MAXY - puddle_height - 2) + 1; /* ensure py + puddle_height < MAXY - 1 */
+        px = rnd(MAXX - puddle_width - 2) + 1;
+        py = rnd(MAXY - puddle_height - 2) + 1;
 
         suitable = 1; /* true */
         for (y = py; y < py + puddle_height; y++)

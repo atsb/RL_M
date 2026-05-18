@@ -54,6 +54,7 @@ int use_color = 1;   /* default: colour ON */
 int in_water = 0;
 int in_shorewater = 0;
 int in_lava = 0;
+int on_cooledlava = 0;
 
 /*
 * raiselevel()

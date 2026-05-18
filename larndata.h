@@ -17,6 +17,7 @@ struct cel
   int iarg;			/*  the object's argument   */
   int know;			/*  have we been here before */
   unsigned char erosion; /* erosion */
+  unsigned char lavaheat; /* heat of the lava */
 };
 
 /* this is the structure for maintaining & moving the spheres of annihilation */
@@ -85,6 +86,7 @@ extern int use_color;
 extern int in_water;
 extern int in_shorewater;
 extern int in_lava;
+extern int on_cooledlava;
 
 extern char monstnamelist[];
 extern char *levelname[];
@@ -170,6 +172,8 @@ extern int missile_attr;
 
 extern unsigned char erosion[MAXX][MAXY];
 extern long last_simulated_time[MAXLEVEL];
+extern unsigned char lavaheat[MAXX][MAXY];
+extern long last_lava_cool;
 
 /*
 * config.c

@@ -18,6 +18,7 @@ savelevel (void)
   int *phitp, *piarg;
   struct cel *pecel;
   unsigned char *perosion;
+  unsigned char *plavaheat;
 
   /* pointer to this level's cells */
   pcel = &cell[level * MAXX * MAXY];
@@ -31,16 +32,18 @@ savelevel (void)
   pmitem = mitem[0];
   phitp = hitp[0];
   perosion = erosion[0];
+  plavaheat = lavaheat[0];
 
   while (pcel < pecel)
     {
 
-      pcel->mitem   = *pmitem++;
-      pcel->hitp    = *phitp++;
-      pcel->item    = *pitem++;
-      pcel->know    = *pknow++;
-      pcel->iarg    = *piarg++;
-      pcel->erosion = *perosion++;
+      pcel->mitem    = *pmitem++;
+      pcel->hitp     = *phitp++;
+      pcel->item     = *pitem++;
+      pcel->know     = *pknow++;
+      pcel->iarg     = *piarg++;
+      pcel->erosion  = *perosion++;
+      pcel->lavaheat = *plavaheat++;
       pcel++;
     }
 }
@@ -60,6 +63,7 @@ getlevel (void)
   int *phitp, *piarg;
   struct cel *pecel;
   unsigned char *perosion;
+  unsigned char *plavaheat;
 
   /* pointer to this level's cells */
   pcel = &cell[level * MAXX * MAXY];
@@ -67,22 +71,24 @@ getlevel (void)
   /* pointer to past end of this level's cells */
   pecel = pcel + MAXX * MAXY;
 
-  pitem    = item[0];
-  piarg    = iarg[0];
-  pknow    = know[0];
-  pmitem   = mitem[0];
-  phitp    = hitp[0];
-  perosion = erosion[0];
+  pitem     = item[0];
+  piarg     = iarg[0];
+  pknow     = know[0];
+  pmitem    = mitem[0];
+  phitp     = hitp[0];
+  perosion  = erosion[0];
+  plavaheat = lavaheat[0];
 
   while (pcel < pecel)
     {
 
-      *pmitem++   = pcel->mitem;
-      *phitp++    = pcel->hitp;
-      *pitem++    = pcel->item;
-      *pknow++    = pcel->know;
-      *piarg++    = pcel->iarg;
-      *perosion++ = pcel->erosion;
+      *pmitem++    = pcel->mitem;
+      *phitp++     = pcel->hitp;
+      *pitem++     = pcel->item;
+      *pknow++     = pcel->know;
+      *piarg++     = pcel->iarg;
+      *perosion++  = pcel->erosion;
+      *plavaheat++ = pcel->lavaheat;
       pcel++;
     }
 }

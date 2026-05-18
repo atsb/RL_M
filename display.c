@@ -742,7 +742,6 @@ show1cell(int x, int y)
     {
         static const char water_chars[] = { '~', '=', '~', '=' };
         int idx = (x * 7 + y * 13 + water_anim_toggle) & 3;
-
         int id = item[x][y];
 
         if (has_colors()) {
@@ -761,12 +760,12 @@ show1cell(int x, int y)
         return;
     }
 
-    /* real time animated lava tiles */
+    /* real time animated + cooled lava tiles */
     if (item[x][y] == OLAVA)
     {
+        /* animated lava */
         static const char lava_chars[] = { '~', '^', '"', '`' };
         int idx = (x * 13 + y * 7 + lava_anim_toggle) & 3;
-
         int id = item[x][y];
 
         if (has_colors()) {
@@ -775,6 +774,30 @@ show1cell(int x, int y)
         }
 
         lprc(lava_chars[idx]);
+
+        if (has_colors()) {
+            attroff(objattr[id]);
+            attroff(COLOR_PAIR(objcolor[id]));
+        }
+
+        know[x][y] = KNOWALL;
+        return;
+    }
+
+    /* cooled lava tile */
+    if (item[x][y] == OCOOLEDLAVA)
+    {
+        /* cooled lava */
+        static const char cooled_lava_chars[] = { '`', '`', '`', '`' };
+        int idx = (x * 13 + y * 7 + lava_anim_toggle) & 3;
+        int id = item[x][y];
+
+        if (has_colors()) {
+            attron(COLOR_PAIR(objcolor[id]));
+            attron(objattr[id]);
+        }
+
+        lprc(cooled_lava_chars[idx]);
 
         if (has_colors()) {
             attroff(objattr[id]);
@@ -870,7 +893,7 @@ if direction=0, don't move--just show where he is */
     /* prevent the player from moving onto a wall, or a closed door,
        unless the character has Walk-Through-Walls.
      */
-    if ((i == OCLOSEDDOOR || i == OWALL) && c[WTW] == 0)
+    if ((i == OCLOSEDDOOR || i == OWALL || i == OINNERWALL) && c[WTW] == 0)
     {
         nomove = 1;
         return (yrepcount = 0);

@@ -406,6 +406,13 @@ lookforobject (char do_ident, char do_pickup, char do_action)
         }
         return;
 
+    case OCOOLEDLAVA:
+        if (do_ident && !on_cooledlava) {
+            lprcat("\nYou walk onto cooled lava.");
+            on_cooledlava = 1;
+        }
+        return;
+
     case OWALL:
       break;
 

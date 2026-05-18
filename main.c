@@ -214,7 +214,6 @@ main (int argc, char *argv[])
 	  }
   }
 
-
   /*
    *  He really wants to play, so malloc the memory for the dungeon.
    */
@@ -297,6 +296,14 @@ main (int argc, char *argv[])
 
 		  refresh();
 	  }
+
+	  /* lava cooling */
+	  if (now - last_lava_cool >= 3)
+	  {
+		cool_lava();
+		last_lava_cool = now;
+	  }
+
 	  /* lava animation is now in a real time state machine - animates every 3 seconds */
 	  if (now - last_lava_anim >= 3)
 	  {
@@ -306,7 +313,7 @@ main (int argc, char *argv[])
 		  /* redraw only lava for performance reasons (low cpu usage) */
 		  for (int yy = 0; yy < MAXY; yy++)
 			  for (int xx = 0; xx < MAXX; xx++)
-				  if (item[xx][yy] == OLAVA)
+				  if (item[xx][yy] == OLAVA || item[xx][yy] == OCOOLEDLAVA)
 					  show1cell(xx, yy);
 
 		  refresh();
@@ -363,6 +370,9 @@ main (int argc, char *argv[])
 
 		  if (tile != OLAVA)
 			  in_lava = 0;
+
+		  if (tile != OCOOLEDLAVA)
+			  on_cooledlava = 0;
 	  }
 
 	  if (hit3flag)

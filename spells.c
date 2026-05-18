@@ -459,7 +459,7 @@ speldamage (int x)
 	  for (i = 0; i < MAXX; i++)	/* save all items and monsters */
 	    {
 	      xl = item[i][j];
-	      if (xl && xl != OWALL || OINNERWALL && xl != OANNIHILATION)
+	      if ( (xl && xl != OWALL) || (OINNERWALL && xl != OANNIHILATION) )
 		{
 		  save[sc].type = 0;
 		  save[sc].id = item[i][j];
@@ -731,17 +731,17 @@ direct (int spnum, int dam, char *str, int arg)
 /*
 *  godirect(spnum,dam,str,delay)     Function to perform missile attacks
 *      int spnum,dam,delay;
-*      char *str;
+*      char *str, char cshow;
 *
 *  Function to hit in a direction from a missile weapon and have it keep
 *  on going in that direction until its power is exhausted
 *  Enter with the spell number in spnum, the power of the weapon in hp,
 *    lprintf format string in str, the # of milliseconds to delay between
-*    locations in delay.
+*    locations in delay.  Cshow is the char of the attack.
 *  Returns no value.
 */
 void
-godirect (int spnum, int dam, char *str, int delay)
+godirect (int spnum, int dam, char *str, int delay, char cshow)
 {
     int *p;
     int x, y, m;
@@ -798,7 +798,7 @@ godirect (int spnum, int dam, char *str, int delay)
                 attron(missile_attr);
             }
 
-            lprc('*');
+            lprc(cshow);
 
             if (has_colors())
             {

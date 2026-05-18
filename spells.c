@@ -44,7 +44,8 @@ struct isave
   int arg;			/* the type of item or hitpoints of monster */
 };
 
-
+int missile_color = COLOR_YELLOW;
+int missile_attr  = A_BOLD;
 
 static void speldamage (int);
 
@@ -741,233 +742,228 @@ direct (int spnum, int dam, char *str, int arg)
 void
 godirect (int spnum, int dam, char *str, int delay, char cshow)
 {
-  int *p;
-  int x, y, m;
-  int dx, dy;
+    int *p;
+    int x, y, m;
+    int dx, dy;
 
-  /* bad args */
-  if (spnum < 0 || spnum >= SPNUM || str == 0 || delay < 0)
+    /* bad args */
+    if (spnum < 0 || spnum >= SPNUM || str == 0 || delay < 0)
+        return;
+
+    if (isconfuse())
+        return;
+
+    dirsub(&dx, &dy);
+
+    x = dx;
+    y = dy;
+
+    dx = x - playerx;
+    dy = y - playery;
+
+    x = playerx;
+    y = playery;
+
+    while (dam > 0)
     {
+        x += dx;
+        y += dy;
 
-      return;
-    }
+        if (x > MAXX - 1 || y > MAXY - 1 || x < 0 || y < 0)
+        {
+            dam = 0;    /* out of bounds */
+            break;
+        }
 
-  if (isconfuse ())
-    {
+        /* if energy hits player */
+        if (x == playerx && y == playery)
+        {
+            cursors();
+            lprcat("\nYou are hit by your own magic!");
+            lastnum = 278;
+            losehp(dam);
+            return;
+        }
 
-      return;
-    }
+        /* if not blind show effect */
+        if (c[BLINDCOUNT] == 0)
+        {
+            /* draw missile */
+            cursor(x + 1, y + 1);
 
-  dirsub (&dx, &dy);
+            if (has_colors())
+            {
+                attron(COLOR_PAIR(missile_color));
+                attron(missile_attr);
+            }
 
-  x = dx;
-  y = dy;
+            lprc('*');
 
-  dx = x - playerx;
-  dy = y - playery;
+            if (has_colors())
+            {
+                attroff(COLOR_PAIR(missile_color));
+                attroff(missile_attr);
+            }
 
-  x = playerx;
-  y = playery;
+            refresh();
+            nap(delay);
 
-  while (dam > 0)
-    {
+            /* restore tile underneath */
+            show1cell(x, y);
+        }
 
-      x += dx;
-      y += dy;
+        m = mitem[x][y];
 
-      if ((x > MAXX - 1) || (y > MAXY - 1) || (x < 0) || (y < 0))
-	{
+        /* is there a monster there? */
+        if (m != 0)
+        {
+            ifblind(x, y);
 
-	  dam = 0;
+            if (nospell(spnum, m))
+            {
+                lasthx = x;
+                lasthy = y;
+                return;
+            }
+            
+            /* monster hit */
+            cursors();
+            lprc('\n');
+            lprintf(str, lastmonst);
 
-	  /* out of bounds */
-	  break;
-	}
+            dam -= hitm(x, y, dam);
+            
+            /* redraw tile after monster is hit or is dead */
+            show1cell(x, y);
+            refresh();
+            nap(NAPTIME);
+            
+            x -= dx;
+            y -= dy;
+        }
+        else
+        {
+            switch (*(p = &item[x][y]))
+            {
+            case OWALL:
+                cursors();
+                lprc('\n');
+                lprintf(str, "wall");
+                if (dam >= 50 + c[HARDGAME] &&
+                    level < MAXLEVEL + MAXVLEVEL - 1 &&
+                    x < MAXX - 1 && y < MAXY - 1 && x != 0 && y != 0)
+                {
+                    lprcat("  The wall crumbles");
+                    *p = 0;
+                    know[x][y] = 0;
+                    show1cell(x, y);
+                    refresh();
+                }
+                dam = 0;
+                break;
 
-      /* if energy hits player */
-      if ((x == playerx) && (y == playery))
-	{
+            case OCLOSEDDOOR:
+                cursors();
+                lprc('\n');
+                lprintf(str, "door");
+                if (dam >= 40)
+                {
+                    lprcat("  The door is blasted apart");
+                    *p = 0;
+                    know[x][y] = 0;
+                    show1cell(x, y);
+                    refresh();
+                }
+                dam = 0;
+                break;
 
-	  cursors ();
-	  lprcat ("\nYou are hit by your own magic!");
-	  lastnum = 278;
-	  losehp (dam);
+            case OSTATUE:
+                cursors();
+                lprc('\n');
+                lprintf(str, "statue");
+                if (c[HARDGAME] < 3 && dam > 44)
+                {
+                    lprcat("  The statue crumbles");
+                    *p = OBOOK;
+                    iarg[x][y] = level;
+                    know[x][y] = 0;
+                    show1cell(x, y);
+                    refresh();
+                }
+                dam = 0;
+                break;
 
-	  return;
-	}
+            case OTHRONE:
+                cursors();
+                lprc('\n');
+                lprintf(str, "throne");
+                if (dam > 39)
+                {
+                    *p = OTHRONE2;
+                    create_guardian(GNOMEKING, x, y);
+                    show1cell(x, y);
+                    refresh();
+                }
+                dam = 0;
+                break;
 
-      /* if not blind show effect */
-      if (c[BLINDCOUNT] == 0)
-	{
+            case OALTAR:
+                cursors();
+                lprc('\n');
+                lprintf(str, "altar");
+                if (dam > 75 - (c[HARDGAME] >> 2))
+                {
+                    create_guardian(DEMONPRINCE, x, y);
+                    show1cell(x, y);
+                    refresh();
+                }
+                dam = 0;
+                break;
 
-	  cursor (x + 1, y + 1);
-	  lprc (cshow);
-	  nap (delay);
-	  show1cell (x, y);
-	}
+            case OFOUNTAIN:
+                cursors();
+                lprc('\n');
+                lprintf(str, "fountain");
+                if (dam > 55)
+                {
+                    create_guardian(WATERLORD, x, y);
+                    show1cell(x, y);
+                    refresh();
+                }
+                dam = 0;
+                break;
 
-      m = mitem[x][y];
+            case OMIRROR:
+            {
+                int bounce = FALSE, odx = dx, ody = dy;
 
-      /* is there a monster there? */
-      if (m != 0)
-	{
+                /* spells may bounce directly back or off at an angle */
+                if (rnd(100) < 50)
+                {
+                    bounce = TRUE;
+                    dx *= -1;
+                }
 
-	  ifblind (x, y);
+                if (rnd(100) < 50)
+                {
+                    bounce = TRUE;
+                    dy *= -1;
+                }
 
-	  if (nospell (spnum, m))
-	    {
+                /* guarantee a bounce */
+                if (!bounce || (odx == dx && ody == dy))
+                {
+                    dx = -odx;
+                    dy = -ody;
+                }
+            }
+            break;
+            }
+        }
 
-	      lasthx = x;
-	      lasthy = y;
-
-	      return;
-	    }
-
-	  cursors ();
-	  lprc ('\n');
-	  lprintf (str, lastmonst);
-	  dam -= hitm (x, y, dam);
-	  show1cell (x, y);
-	  nap (NAPTIME);
-
-	  x -= dx;
-	  y -= dy;
-	}
-      else
-
-	switch (*(p = &item[x][y]))
-	  {
-
-	  case OWALL:
-	    cursors ();
-	    lprc ('\n');
-	    lprintf (str, "wall");
-	    if (
-		 /* enough damage? */
-		 dam >= 50 + c[HARDGAME] &&
-		 /* not on V3 */
-		 level < MAXLEVEL + MAXVLEVEL - 1 &&
-		 x < MAXX - 1 && y < MAXY - 1 && x != 0 && y != 0)
-	      {
-
-		lprcat ("  The wall crumbles");
-		*p = 0;
-		know[x][y] = 0;
-		show1cell (x, y);
-	      }
-
-	    dam = 0;
-	    break;
-
-
-	  case OCLOSEDDOOR:
-
-	    cursors ();
-	    lprc ('\n');
-	    lprintf (str, "door");
-
-	    if (dam >= 40)
-	      {
-		lprcat ("  The door is blasted apart");
-		*p = 0;
-		know[x][y] = 0;
-		show1cell (x, y);
-	      }
-
-	    dam = 0;
-	    break;
-
-	  case OSTATUE:
-
-	    cursors ();
-	    lprc ('\n');
-	    lprintf (str, "statue");
-
-	    if (c[HARDGAME] < 3)
-	      if (dam > 44)
-		{
-		  lprcat ("  The statue crumbles");
-		  *p = OBOOK;
-		  iarg[x][y] = level;
-		  know[x][y] = 0;
-		  show1cell (x, y);
-		}
-	    dam = 0;
-	    break;
-
-	  case OTHRONE:
-	    cursors ();
-	    lprc ('\n');
-	    lprintf (str, "throne");
-	    if (dam > 39)
-	      {
-		*p = OTHRONE2;
-		create_guardian (GNOMEKING, x, y);
-		show1cell (x, y);
-	      }
-	    dam = 0;
-	    break;
-
-	  case OALTAR:
-	    cursors ();
-	    lprc ('\n');
-	    lprintf (str, "altar");
-	    if (dam > 75 - (c[HARDGAME] >> 2))
-	      {
-		create_guardian (DEMONPRINCE, x, y);
-		show1cell (x, y);
-	      }
-	    dam = 0;
-	    break;
-
-	  case OFOUNTAIN:
-	    cursors ();
-	    lprc ('\n');
-	    lprintf (str, "fountain");
-	    if (dam > 55)
-	      {
-		create_guardian (WATERLORD, x, y);
-		show1cell (x, y);
-	      }
-	    dam = 0;
-	    break;
-
-	  case OMIRROR:
-	    {
-	      int bounce = FALSE, odx = dx, ody = dy;
-
-	      /* spells may bounce directly back or off at an angle */
-	      if (rnd (100) < 50)
-		{
-
-		  bounce = TRUE;
-		  dx *= -1;
-		}
-
-	      if (rnd (100) < 50)
-		{
-
-		  bounce = TRUE;
-		  dy *= -1;
-		}
-
-	      /* guarentee a bounce */
-	      if (!bounce || (odx == dx && ody == dy))
-		{
-
-		  dx = -odx;
-		  dy = -ody;
-		}
-	    }
-	    break;
-
-	  };
-
-      dam -= 3 + (c[HARDGAME] >> 1);
+        dam -= 3 + (c[HARDGAME] >> 1);
     }
 }
-
-
 
 /*
 *  ifblind(x,y)    Routine to put "monster" or the monster name into lastmosnt

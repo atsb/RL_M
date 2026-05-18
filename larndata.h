@@ -167,6 +167,9 @@ extern int compare_attr_none;
 extern int cookie_color;
 extern int cookie_attr;
 
+extern int missile_color;
+extern int missile_attr;
+
 /*
 * config.c
 */

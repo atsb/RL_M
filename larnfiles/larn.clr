@@ -25,14 +25,15 @@
 # A_STANDOUT
 # A_UNDERLINE
 
-# --------------------------------------------------------------------------
-# AVAILABLE MESSAGE COLOURS (optional valid values for certain text strings)
-# --------------------------------------------------------------------------
+# ------------------------------------------------------------------------
+# AVAILABLE OTHER COLOURS (optional valid values for certain text strings)
+# ------------------------------------------------------------------------
 # COMPARE_BETTER
 # COMPARE_WORSE
 # COMPARE_EQUAL
 # COMPARE_NONE
 # COOKIE_MESSAGE
+# MAGIC_MISSILE
 
 # ------------------------------------------------------------
 # Example overrides (active)
@@ -41,6 +42,7 @@ KOBOLD = COLOR_CYAN | A_STANDOUT
 OWATER = COLOR_BLUE | A_REVERSE | A_BOLD
 OSHOREWATER = COLOR_CYAN | A_STANDOUT
 COOKIE_MESSAGE = COLOR_RED | A_REVERSE | A_STANDOUT
+MAGIC_MISSILE = COLOR_YELLOW | A_BOLD | A_STANDOUT
 
 # ============================================================
 # MONSTER COLOURS (all commented out)

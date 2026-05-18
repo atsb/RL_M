@@ -1239,6 +1239,12 @@ readcolors(void)
             cookie_attr  = attr;
         }
 
+        /* magic missile */
+        if (!strcmp(key, "MAGIC_MISSILE")) {
+            missile_color = color;
+            missile_attr  = attr;
+        }
+
     }
     fclose(fp);
 }

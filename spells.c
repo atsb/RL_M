@@ -471,7 +471,9 @@ speldamage (int x)
 		  save[sc].id = mitem[i][j];
 		  save[sc++].arg = hitp[i][j];
 		}
-	      item[i][j] = OWALL || OINNERWALL;
+	      if (item[i][j] == OWALL || item[i][j] == OINNERWALL)
+            item[i][j] = item[i][j];
+            
 	      mitem[i][j] = 0;
 	      if (wizard)
 		know[i][j] = KNOWALL;
@@ -500,8 +502,10 @@ speldamage (int x)
 	    else
 	      {			/* put monsters back in */
 		int trys;
-		for (trys = 100, i = j = 1;
-		     --trys > 0 && (item[i][j] == OWALL || OINNERWALL || mitem[i][j]);
+		for (trys = 100, i = j = 1; (--trys > 0) &&
+      (item[i][j] == OWALL ||
+      item[i][j] == OINNERWALL ||
+      mitem[i][j] != 0);
 		     i = rnd (MAXX - 1), j = rnd (MAXY - 1));
 		if (trys)
 		  {

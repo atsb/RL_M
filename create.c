@@ -392,13 +392,16 @@ int level;
 
 subroutine to make the caverns for a given level.  only walls are made.
 */
-static int mx, mxl, mxh, my, myl, myh, tmp2;
-
 static void
 makemaze(int k)
 {
     int i, j, tmp;
     int z;
+    int my  = rnd(11) + 2;
+    int myl = my - rnd(2);
+    int myh = my + rnd(2);
+    int mx, mxl, mxh;
+    int tmp2 = rnd(3) + 3;
 
     /* ~30% chance to generate a caverns style maze */
     if (k > 0 && k != MAXLEVEL - 1 && rnd(100) < 30)
@@ -407,70 +410,69 @@ makemaze(int k)
         return;
     }
 
-    if (k > 1
-        && (rnd(17) <= 4 || k == MAXLEVEL - 1
-            || k == MAXLEVEL + MAXVLEVEL - 1))
+    /* canned levels */
+    if (k > 1 &&
+        (rnd(17) <= 4 || k == MAXLEVEL - 1 ||
+         k == MAXLEVEL + MAXVLEVEL - 1))
     {
-        /* read maze from data file */
         if (cannedlevel(k))
-        {
             return;
-        }
     }
 
+    /* level 0 (town) uses no walls */
     if (k == 0)
     {
-        tmp = 0;
-    }
-    else
-    {
-        tmp = OWALL;
-    }
-
-    for (i = 0; i < MAXY; i++)
-    {
-        for (j = 0; j < MAXX; j++)
-        {
-            item[j][i] = tmp;
-        }
-    }
-
-    if (k == 0)
-    {
+        for (i = 0; i < MAXY; i++)
+            for (j = 0; j < MAXX; j++)
+                item[j][i] = 0;
         return;
     }
 
+    for (i = 0; i < MAXY; i++)
+        for (j = 0; j < MAXX; j++)
+            item[j][i] = OINNERWALL;
+
+    for (i = 0; i < MAXX; i++)
+    {
+        item[i][0] = OWALL;
+        item[i][MAXY - 1] = OWALL;
+    }
+    for (j = 0; j < MAXY; j++)
+    {
+        item[0][j] = OWALL;
+        item[MAXX - 1][j] = OWALL;
+    }
+
+    /* carve the maze */
     eat(1, 1);
 
+    /* entrance on level 1 */
     if (k == 1)
-    {
         item[33][MAXY - 1] = OENTRANCE;
-    }
 
     /*  now for open spaces -- not on level 10  */
     if (k != MAXLEVEL - 1)
     {
-        tmp2 = rnd(3) + 3;
         for (tmp = 0; tmp < tmp2; tmp++)
         {
-            my = rnd(11) + 2;
-            myl = my - rnd(2);
-            myh = my + rnd(2);
+
             if (k < MAXLEVEL)
             {
-                mx = rnd(44) + 5;
+                mx  = rnd(44) + 5;
                 mxl = mx - rnd(4);
                 mxh = mx + rnd(12) + 3;
-                z = 0;
+                z   = 0;
             }
             else
             {
-                mx = rnd(60) + 3;
+                mx  = rnd(60) + 3;
                 mxl = mx - rnd(2);
                 mxh = mx + rnd(2);
-                z = makemonst(k);
+                z   = makemonst(k);
             }
+
             for (i = mxl; i < mxh; i++)
+            {
                 for (j = myl; j < myh; j++)
                 {
                     item[i][j] = 0;
@@ -479,30 +481,30 @@ makemaze(int k)
                     if (item[i][j] == OLAVA)
                     {
                         mitem[i][j] = REDDRAGON;
-                        hitp[i][j] = monster[REDDRAGON].hitpoints;
+                        hitp[i][j]  = monster[REDDRAGON].hitpoints;
                         monster[REDDRAGON].resistance |= FIRERESISTANCE;
                         continue;
                     }
 
                     mitem[i][j] = z;
-                    if (mitem[i][j] != 0)
-                    {
+                    if (z != 0)
                         hitp[i][j] = monster[z].hitpoints;
-                    }
                 }
+            }
         }
     }
+
+    /* horizontal corridor -- not on level 10 */
     if (k != MAXLEVEL - 1)
     {
-        my = rnd(MAXY - 2);
+        int my = rnd(MAXY - 2);
         for (i = 1; i < MAXX - 1; i++)
             item[i][my] = 0;
     }
+
     if (k > 1)
         treasureroom(k);
 }
-
-
 
 /*
 * function to eat away a filled in maze
@@ -510,52 +512,66 @@ makemaze(int k)
 void
 eat(int xx, int yy)
 {
-    int dir, try;
-
-    dir = rnd(4);
-
-    try = 2;
+    int dir = rnd(4);
+    int try = 2;
 
     while (try)
     {
         switch (dir)
         {
-        case 1:
+        case 1: /* west */
             if (xx <= 2)
-                break;		/*  west    */
-            if ((item[xx - 1][yy] != OWALL) || (item[xx - 2][yy] != OWALL))
                 break;
-            item[xx - 1][yy] = item[xx - 2][yy] = 0;
+
+            if (!((item[xx - 1][yy] == OWALL || item[xx - 1][yy] == OINNERWALL) &&
+                  (item[xx - 2][yy] == OWALL || item[xx - 2][yy] == OINNERWALL)))
+                break;
+
+            item[xx - 1][yy] = 0;
+            item[xx - 2][yy] = 0;
             eat(xx - 2, yy);
             break;
 
-        case 2:
+        case 2: /* east */
             if (xx >= MAXX - 3)
-                break;		/*  east    */
-            if ((item[xx + 1][yy] != OWALL) || (item[xx + 2][yy] != OWALL))
                 break;
-            item[xx + 1][yy] = item[xx + 2][yy] = 0;
+
+            if (!((item[xx + 1][yy] == OWALL || item[xx + 1][yy] == OINNERWALL) &&
+                  (item[xx + 2][yy] == OWALL || item[xx + 2][yy] == OINNERWALL)))
+                break;
+
+            item[xx + 1][yy] = 0;
+            item[xx + 2][yy] = 0;
             eat(xx + 2, yy);
             break;
 
-        case 3:
+        case 3: /* south */
             if (yy <= 2)
-                break;		/*  south   */
-            if ((item[xx][yy - 1] != OWALL) || (item[xx][yy - 2] != OWALL))
                 break;
-            item[xx][yy - 1] = item[xx][yy - 2] = 0;
+
+            if (!((item[xx][yy - 1] == OWALL || item[xx][yy - 1] == OINNERWALL) &&
+                  (item[xx][yy - 2] == OWALL || item[xx][yy - 2] == OINNERWALL)))
+                break;
+
+            item[xx][yy - 1] = 0;
+            item[xx][yy - 2] = 0;
             eat(xx, yy - 2);
             break;
 
-        case 4:
+        case 4: /* north */
             if (yy >= MAXY - 3)
-                break;		/*  north   */
-            if ((item[xx][yy + 1] != OWALL) || (item[xx][yy + 2] != OWALL))
                 break;
-            item[xx][yy + 1] = item[xx][yy + 2] = 0;
+
+            if (!((item[xx][yy + 1] == OWALL || item[xx][yy + 1] == OINNERWALL) &&
+                  (item[xx][yy + 2] == OWALL || item[xx][yy + 2] == OINNERWALL)))
+                break;
+
+            item[xx][yy + 1] = 0;
+            item[xx][yy + 2] = 0;
             eat(xx, yy + 2);
             break;
-        };
+        }
+
         if (++dir > 4)
         {
             dir = 1;

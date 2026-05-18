@@ -127,13 +127,14 @@ cgood (int x, int y, int itm, int monst)
   /*
    * cannot create either monster or item if:
    * - out of bounds
-   * - wall
+   * - wall or inner wall
    * - closed door
    * - dungeon entrance
    */
   if (((y < 0) || (y > MAXY - 1) || (x < 0) || (x > MAXX - 1)) ||
       (item[x][y] == OWALL) ||
       (item[x][y] == OCLOSEDDOOR) ||
+      (item[x][y] == OINNERWALL) ||
       ((level == 1) && (x == 33) && (y == MAXY - 1)))
     {
       return FALSE;

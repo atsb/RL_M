@@ -297,6 +297,7 @@ speldamage (int x)
 	    switch (*(p = &item[i][j]))
 	      {
 	      case OWALL:
+        case OINNERWALL:
 		if (level < MAXLEVEL + MAXVLEVEL - 1)
 		  *p = *kn = 0;
 		break;
@@ -458,7 +459,7 @@ speldamage (int x)
 	  for (i = 0; i < MAXX; i++)	/* save all items and monsters */
 	    {
 	      xl = item[i][j];
-	      if (xl && xl != OWALL && xl != OANNIHILATION)
+	      if (xl && xl != OWALL || OINNERWALL && xl != OANNIHILATION)
 		{
 		  save[sc].type = 0;
 		  save[sc].id = item[i][j];
@@ -470,7 +471,7 @@ speldamage (int x)
 		  save[sc].id = mitem[i][j];
 		  save[sc++].arg = hitp[i][j];
 		}
-	      item[i][j] = OWALL;
+	      item[i][j] = OWALL || OINNERWALL;
 	      mitem[i][j] = 0;
 	      if (wizard)
 		know[i][j] = KNOWALL;
@@ -500,7 +501,7 @@ speldamage (int x)
 	      {			/* put monsters back in */
 		int trys;
 		for (trys = 100, i = j = 1;
-		     --trys > 0 && (item[i][j] == OWALL || mitem[i][j]);
+		     --trys > 0 && (item[i][j] == OWALL || OINNERWALL || mitem[i][j]);
 		     i = rnd (MAXX - 1), j = rnd (MAXY - 1));
 		if (trys)
 		  {
@@ -846,6 +847,7 @@ godirect (int spnum, int dam, char *str, int delay, char cshow)
             switch (*(p = &item[x][y]))
             {
             case OWALL:
+            case OINNERWALL:
                 cursors();
                 lprc('\n');
                 lprintf(str, "wall");

@@ -16,6 +16,7 @@ struct cel
   int item;			/*  the object's ID         */
   int iarg;			/*  the object's argument   */
   int know;			/*  have we been here before */
+  unsigned char erosion; /* erosion */
 };
 
 /* this is the structure for maintaining & moving the spheres of annihilation */
@@ -61,10 +62,7 @@ struct _itm
 * data declarations
 *
 */
-extern char floorc, wallc;
-
-/* extern char for the water. -Gibbon */
-extern char waterc;
+extern char floorc;
 
 extern int VERSION, SUBVERSION;
 extern int beenhere[], cheat;
@@ -169,6 +167,9 @@ extern int cookie_attr;
 
 extern int missile_color;
 extern int missile_attr;
+
+extern unsigned char erosion[MAXX][MAXY];
+extern long last_simulated_time[MAXLEVEL];
 
 /*
 * config.c

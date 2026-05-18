@@ -127,11 +127,11 @@ char* levelname[] =
 "V2", "V3", "V4"
 };
 
-char objnamelist[MAXOBJECT + 37] = ".ATOP<^F&^+M=>^$$f*OD#~][[)))(((||||||||{?!BC}o:@.%%%%EVV))([[]]](^ [H*** ^^ S tsTLc`ulhatwpV~=~";
+char objnamelist[MAXOBJECT + 37] = ".ATOP<^F&^+M=>^$$f*OD#~][[)))(((||||||||{?!BC}o:@.%%%%EVV))([[]]](^ [H*** ^^ S tsTLc`ulhatwpV~=~#";
 char monstnamelist[] = ".BGHJKOScjtAELNQRZabhiCTYdegmvzFWflorXV.pqsyUkMwDDPxnDDuD........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
 char floorc = '.';
-char wallc = '#';
+
 char* objectname[] =
 { 0, "a holy altar", "a handsome jewel encrusted throne", "the orb",
 "a pit",
@@ -1016,6 +1016,7 @@ const struct color_override_entry object_map[] = {
 	{ "OWATER", OWATER },
 	{ "OSHOREWATER", OSHOREWATER },
 	{ "OLAVA", OLAVA },
+	{ "OINNERWALL", OINNERWALL },
 	{ NULL, 0 }
 };
 

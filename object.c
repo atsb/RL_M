@@ -409,6 +409,9 @@ lookforobject (char do_ident, char do_pickup, char do_action)
     case OWALL:
       break;
 
+    case OINNERWALL:
+      break;
+
     case OANNIHILATION:
       died (283);		/* annihilated by sphere of annihilation */
       return;

@@ -3,6 +3,7 @@
 // #define PUDDLE_TEST // Uncomment or define via compiler flags to enable debug puddle
 
 #include "create.h"
+#include "display.h"
 #include "larn.h"
 #include "global.h"
 #include "io.h"
@@ -22,7 +23,8 @@ static void sethp(int);
 static void checkgen(void);
 static void makepuddle(int);
 
-
+unsigned char erosion[MAXX][MAXY];
+long last_simulated_time[MAXLEVEL];
 
 /*
 makeplayer()
@@ -103,22 +105,39 @@ Note that it is here we remove genocided monsters from the present level.
 void
 newcavelevel(int x)
 {
-    int i, j;
-    int ponds;
-    int n;
-    int cx, cy;
+    int i, j, t, n, cx, cy, ponds;
+    long now = time(NULL);
+    long elapsed = now - last_simulated_time[x];
+    int water_ticks = elapsed / 3;
 
     if (beenhere[level])
+    {
         savelevel();        /* put the level back into storage  */
-    level = x;              /* get the new level and put in working storage */
+        last_simulated_time[level] = time(NULL); /* store the last tic and simulate it when we return */
+    }
+
+    level = x; /* get the new level and put in working storage */
+
+    /* store the last simulated time for water expansion while player is not on the level */
     if (beenhere[x])
     {
         getlevel();
+
+        for (t = 0; t < water_ticks; t++)
+            expand_puddle();
+
+        last_simulated_time[x] = now;
+
         sethp(0);
         positionplayer();
         checkgen();
         return;
     }
+
+    /* init erosion for a new level */
+    for (i = 0; i < MAXY; i++)
+        for (j = 0; j < MAXX; j++)
+            erosion[j][i] = 0;
 
     /* fill in new level */
     for (i = 0; i < MAXY; i++)
@@ -238,7 +257,7 @@ makemaze_caverns(int k)
     /* SEA OF WALL!!! */
     for (i = 0; i < MAXY; i++)
         for (j = 0; j < MAXX; j++)
-            item[j][i] = OWALL;
+            item[j][i] = OINNERWALL;
 
     /* solid outer boundary */
     for (i = 0; i < MAXY; i++)
@@ -832,39 +851,41 @@ makestream(int level)
 void
 expand_puddle(void)
 {
+    int y, x, d;
+    int nx, ny;
+    int gx[4], gy[4], gcount;
+    int dx[4] = { 0, 0, -1, 1 };
+    int dy[4] = { -1, 1, 0, 0 };
+    int pick;
+    int puddle_count;
+    int xx, yy;
+
+    const int MAX_RADIUS = 10;
+
     /* do not expand water in the volcano */
     if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
         return;
 
-    const int MAX_RADIUS = 4;
-
     /* Chance per move that a puddle will grow */
-    if (rnd(6) != 1) return;
+    if (rnd(6) != 1)
+        return;
 
-    for (int y = 1; y < MAXY - 1; y++)
+    for (y = 1; y < MAXY - 1; y++)
     {
-        for (int x = 1; x < MAXX - 1; x++)
+        for (x = 1; x < MAXX - 1; x++)
         {
             if (item[x][y] != OWATER)
                 continue;
 
-            /* valid growth directions */
-            int gx[4], gy[4], gcount = 0;
+            gcount = 0;
 
-            static const int dx[4] = { 0, 0, -1, 1 };
-            static const int dy[4] = { -1, 1, 0, 0 };
-
-            for (int d = 0; d < 4; d++)
+            for (d = 0; d < 4; d++)
             {
-                int nx = x + dx[d];
-                int ny = y + dy[d];
+                nx = x + dx[d];
+                ny = y + dy[d];
 
                 /* bounds check */
                 if (nx < 1 || nx >= MAXX - 1 || ny < 1 || ny >= MAXY - 1)
-                    continue;
-
-                /* do NOT overwrite walls */
-                if (item[nx][ny] == OWALL)
                     continue;
 
                 /* do NOT overwrite monsters */
@@ -888,18 +909,53 @@ expand_puddle(void)
                     continue;
                 }
 
-                /* maximum radius */
-                int puddle_count = 0;
-                for (int yy = y - MAX_RADIUS; yy <= y + MAX_RADIUS; yy++)
-                    for (int xx = x - MAX_RADIUS; xx <= x + MAX_RADIUS; xx++)
+                /* 
+                 * allow water to destroy interior walls
+                 * realistic erosion of inner walls
+                 */
+                if (item[nx][ny] == OINNERWALL)
+                {
+                    erosion[nx][ny]++;
+
+                    /* require sustained contact */
+                    if (erosion[nx][ny] < 5)
+                        continue;
+
+                    /* chance increases with pressure */
+                    if (rnd(20) > erosion[nx][ny])
+                        continue;
+
+                    /* erode the wall */
+                    item[nx][ny] = 0;
+                    know[nx][ny] = 0;
+                    show1cell(nx, ny);
+
+                    erosion[nx][ny] = 0;
+
+                    gx[gcount] = nx;
+                    gy[gcount] = ny;
+                    gcount++;
+                    continue;
+                }
+
+                /* maximum radius check */
+                puddle_count = 0;
+                for (yy = y - MAX_RADIUS; yy <= y + MAX_RADIUS; yy++)
+                {
+                    for (xx = x - MAX_RADIUS; xx <= x + MAX_RADIUS; xx++)
+                    {
                         if (xx > 0 && xx < MAXX && yy > 0 && yy < MAXY)
-                            if (item[xx][yy] == OWATER)
+                        {
+                            if (item[xx][yy] == OWATER || item[xx][yy] == OSHOREWATER)
                                 puddle_count++;
+                        }
+                    }
+                }
 
                 if (puddle_count > (MAX_RADIUS * MAX_RADIUS))
                     continue;
 
-                /* growth direction */
+                /* mark tile as valid expansion target */
                 gx[gcount] = nx;
                 gy[gcount] = ny;
                 gcount++;
@@ -910,17 +966,21 @@ expand_puddle(void)
                 continue;
 
             /* valid direction at random */
-            int pick = rnd(gcount) - 1;
-            int nx = gx[pick];
-            int ny = gy[pick];
+            pick = rnd(gcount) - 1;
+            nx = gx[pick];
+            ny = gy[pick];
 
             /* grow puddle */
-            /* if touching non-water, it's a shore tile */
-            if (item[x][y] == OWATER &&
-                (item[nx - 1][ny] != OWATER ||
-                    item[nx + 1][ny] != OWATER ||
-                    item[nx][ny - 1] != OWATER ||
-                    item[nx][ny + 1] != OWATER))
+            if (item[nx][ny] == OSHOREWATER)
+            {
+                /* shore becomes water when flooded */
+                item[nx][ny] = OWATER;
+            }
+            else if (item[x][y] == OWATER &&
+                     (item[nx - 1][ny] != OWATER ||
+                      item[nx + 1][ny] != OWATER ||
+                      item[nx][ny - 1] != OWATER ||
+                      item[nx][ny + 1] != OWATER))
             {
                 item[nx][ny] = OSHOREWATER;
             }
@@ -928,6 +988,7 @@ expand_puddle(void)
             {
                 item[nx][ny] = OWATER;
             }
+
             iarg[nx][ny] = 0;
         }
     }
@@ -1139,7 +1200,7 @@ troom(int lv, int xsize, int ysize, int tx, int ty, int glyph)
     for (j = ty; j < ty + ysize; j++)
         for (i = tx; i < tx + xsize; i++)	/* now put in the walls */
         {
-            item[i][j] = OWALL;
+            item[i][j] = OINNERWALL;
             mitem[i][j] = 0;
         }
     for (j = ty + 1; j < ty + ysize - 1; j++)

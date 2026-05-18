@@ -366,6 +366,7 @@ build_proximity_ripple (void)
 	switch (item[m][k])
 	  {
 	  case OWALL:
+    case OINNERWALL:
 	  case OPIT:
 	  case OTRAPARROW:
 	  case ODARTRAP:
@@ -454,7 +455,7 @@ move_scared (int i, int j)
   if (yl >= MAXY)
     yl = MAXY - 1;
 
-  if ((tmp = item[xl][yl]) != OWALL)
+  if ((tmp = item[xl][yl]) != OWALL || OINNERWALL)
     if (mitem[xl][yl] == 0)
       if ((mitem[i][j] != VAMPIRE) || (tmp != OMIRROR))
 	if (tmp != OCLOSEDDOOR)
@@ -629,6 +630,7 @@ move_dumb(int i, int j)
             /* tile must be walkable */
             if (item[k][m] == OWALL ||
                 item[k][m] == OCLOSEDDOOR ||
+                item[k][m] == OINNERWALL ||
                 ((mitem[k][m] != 0) && !(k == i && m == j)))
                 continue;
 

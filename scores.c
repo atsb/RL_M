@@ -640,7 +640,7 @@ new1sub (int score, int i, char *whoo, int taxes)
   p->taxes += taxes;
   if ((score >= p->score) || (c[HARDGAME] > p->hardlev))
     {
-      strcpy (p->who, whoo);
+      snprintf (p->who, sizeof (p->who), "%s", whoo);
       p->score = score;
       p->hardlev = c[HARDGAME];
       p->timeused = gtime / 100;
@@ -669,7 +669,7 @@ new2sub (int score, int i, char *whoo, int whyded)
   p = &sco[i];
   if ((score >= p->score) || (c[HARDGAME] > p->hardlev))
     {
-      strcpy (p->who, whoo);
+      snprintf (p->who, sizeof (p->who), "%s", whoo);
       p->score = score;
       p->what = whyded;
       p->hardlev = c[HARDGAME];
@@ -973,7 +973,7 @@ getplid (char *nam)
   if (havepid != -1)
     return (havepid);		/* already did it */
   lflush ();			/* flush any pending I/O */
-  sprintf (name, "%s\n", nam);	/* append a \n to name */
+  snprintf (name, sizeof (name), "%s\n", nam);	/* append a \n to name */
   if (lopen (playerids) < 0)	/* no file, make it */
     {
       fd7 = open(playerids, S_IWUSR);

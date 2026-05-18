@@ -2,7 +2,7 @@ void cast (void);
 
 int fullhit (int);
 
-void godirect (int, int, char *, int, char);
+void godirect (int, int, char *, int);
 
 void ifblind (int, int);
 

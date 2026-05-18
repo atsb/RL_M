@@ -6,7 +6,7 @@ isconfuse()        Routine to check to see if player is confused
 nospell(x,monst)   Routine to return 1 if a spell doesn't affect a monster
 fullhit(xx)        Function to return full damage against a monst (aka web)
 direct(spnum,dam,str,arg)   Routine to direct spell damage 1 square in 1 dir
-godirect(spnum,dam,str,delay,cshow)     Function to perform missile attacks
+godirect(spnum,dam,str,delay)     Function to perform missile attacks
 ifblind(x,y)       Routine to put "monster" or the monster name into lastmosnt
 tdirect(spnum)     Routine to teleport away a monster
 omnidirect(sp,dam,str)  Routine to damage all monsters 1 square from player
@@ -729,19 +729,19 @@ direct (int spnum, int dam, char *str, int arg)
 
 
 /*
-*  godirect(spnum,dam,str,delay,cshow)     Function to perform missile attacks
+*  godirect(spnum,dam,str,delay)     Function to perform missile attacks
 *      int spnum,dam,delay;
-*      char *str,cshow;
+*      char *str;
 *
 *  Function to hit in a direction from a missile weapon and have it keep
 *  on going in that direction until its power is exhausted
 *  Enter with the spell number in spnum, the power of the weapon in hp,
 *    lprintf format string in str, the # of milliseconds to delay between
-*    locations in delay, and the character to represent the weapon in cshow.
+*    locations in delay.
 *  Returns no value.
 */
 void
-godirect (int spnum, int dam, char *str, int delay, char cshow)
+godirect (int spnum, int dam, char *str, int delay)
 {
     int *p;
     int x, y, m;

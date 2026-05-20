@@ -22,6 +22,8 @@ static void fillroom(int, int);
 static void sethp(int);
 static void checkgen(void);
 static void makepuddle(int);
+static void cavernsmoothing(void);
+static void worldboundary(void);
 
 unsigned char erosion[MAXX][MAXY];
 long last_simulated_time[MAXLEVEL];
@@ -194,6 +196,8 @@ newcavelevel(int x)
         for (j = 0; j < MAXY; j++)
             for (i = 0; i < MAXX; i++)
                 know[i][j] = KNOWALL;
+
+    worldboundary();
 }
 
 /*
@@ -214,8 +218,19 @@ makecorridor_caverns(int x1, int y1, int x2, int y2)
     while ((x != x2 || y != y2) && steps < 500)
     {
         if (x > 0 && x < MAXX - 1 && y > 0 && y < MAXY - 1)
+        {
             item[x][y] = 0;
 
+            /* widen corridor */
+            if (rnd(2))
+                item[x+1][y] = 0;
+            if (rnd(2))
+                item[x-1][y] = 0;
+            if (rnd(2))
+                item[x][y+1] = 0;
+            if (rnd(2))
+                item[x][y-1] = 0;
+        }
         if (rnd(100) < 60)
         {
             if (x < x2)
@@ -384,6 +399,15 @@ makemaze_caverns(int k)
     {
         item[33][MAXY - 1] = OENTRANCE;
     }
+
+    /* 
+    * calling this twice reiterates over, making the smoothness
+    * more realistic
+    */
+    cavernsmoothing();
+    cavernsmoothing();
+
+    worldboundary();
 }
 
 /*
@@ -504,6 +528,82 @@ makemaze(int k)
 
     if (k > 1)
         treasureroom(k);
+
+    worldboundary();
+}
+
+/* this enforces the OWALL boundary and generation edge cases */
+static void
+worldboundary(void)
+{
+    /* level 0 has no walls */
+    if (level == 0)
+        return;
+
+    /* boundary walls on top and bottom */
+    for (int x = 0; x < MAXX; x++) {
+
+        /* preserve the dungeon entrance on level 1 */
+        if (level == 1 && x == 33)
+            continue;
+
+        item[x][0]        = OWALL;
+        item[x][MAXY - 1] = OWALL;
+    }
+
+    /* boundary walls on left and right */
+    for (int y = 0; y < MAXY; y++) {
+        item[0][y]        = OWALL;
+        item[MAXX - 1][y] = OWALL;
+    }
+
+    /* keep the entrance clear */
+    if (level == 1) {
+        int ex = 33;
+        int ey = MAXY - 1;
+
+        item[ex][ey] = OENTRANCE;
+
+        /* clear a 5 tile radius around the entrance */
+        for (int y = ey - 5; y <= ey + 5; y++) {
+            for (int x = ex - 5; x <= ex + 5; x++) {
+                if (x < 1 || x >= MAXX - 1 || y < 1 || y >= MAXY - 1)
+                    continue;
+
+                if (item[x][y] == OINNERWALL)
+                    item[x][y] = 0;
+            }
+        }
+    }
+}
+
+static void
+cavernsmoothing(void)
+{
+    int x, y, count;
+    unsigned char tmp[MAXX][MAXY];
+
+    for (y = 1; y < MAXY - 1; y++)
+        for (x = 1; x < MAXX - 1; x++)
+        {
+            count = 0;
+
+            if (item[x][y] != 0) count++;
+
+            if (item[x-1][y] != 0) count++;
+            if (item[x+1][y] != 0) count++;
+            if (item[x][y-1] != 0) count++;
+            if (item[x][y+1] != 0) count++;
+
+            if (count >= 3)
+                tmp[x][y] = OINNERWALL;
+            else
+                tmp[x][y] = 0;
+        }
+
+    for (y = 1; y < MAXY - 1; y++)
+        for (x = 1; x < MAXX - 1; x++)
+            item[x][y] = tmp[x][y];
 }
 
 /*
@@ -527,8 +627,18 @@ eat(int xx, int yy)
                   (item[xx - 2][yy] == OWALL || item[xx - 2][yy] == OINNERWALL)))
                 break;
 
+            /* carve direction */
             item[xx - 1][yy] = 0;
             item[xx - 2][yy] = 0;
+
+            /* chance to carve sideways */
+            if (rnd(10) < 3) {
+                int wx = xx - 1;
+                int wy = yy + (rnd(2) ? 1 : -1);
+                if (wy > 1 && wy < MAXY - 2)
+                    item[wx][wy] = 0;
+            }
+
             eat(xx - 2, yy);
             break;
 
@@ -1214,6 +1324,9 @@ cannedlevel(int k)
         }
     }
     lrclose();
+
+    worldboundary();
+
     return (1);
 }
 

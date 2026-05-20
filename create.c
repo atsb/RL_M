@@ -586,6 +586,7 @@ lava_blocked(int x, int y)
     switch (item[x][y])
     {
     case OENTRANCE:
+    case OWALL:
     case ODNDSTORE:
     case OSCHOOL:
     case OBANK:
@@ -644,7 +645,7 @@ make_lavapool(int cx, int cy)
             jitter = rnd(3) - 1;
 
             if (dx * dx + dy * dy <= radius * radius + jitter)
-                if (!lava_blocked(x, y))
+                if (item[x][y] != OWALL && !lava_blocked(x, y))
                 {
                     item[x][y] = OLAVA;
                     lavaheat[x][y] = rnd(100) + 50;   /* stays hot */
@@ -687,7 +688,7 @@ make_cryinglava(int cx, int cy)
             if (x < 1 || x >= MAXX - 1 || y < 1 || y >= MAXY - 1)
                 break;
 
-            if (mitem[x][y] == 0 && !lava_blocked(x, y))
+            if (item[x][y] != OWALL && mitem[x][y] == 0 && !lava_blocked(x, y))
             {
                 item[x][y] = OLAVA;
                 lavaheat[x][y] = rnd(20) + 30;   /* arms cool quicker */
@@ -760,6 +761,7 @@ makestream(int level)
                 switch (item[sx][sy])
                 {
                 case OENTRANCE:
+                case OWALL:
                 case ODNDSTORE:
                 case OSCHOOL:
                 case OBANK:
@@ -864,6 +866,7 @@ makestream(int level)
             switch (item[sx][sy])
             {
             case OENTRANCE:
+            case OWALL:
             case ODNDSTORE:
             case OSCHOOL:
             case OBANK:
@@ -943,6 +946,7 @@ expand_puddle(void)
                 switch (item[nx][ny])
                 {
                 case OENTRANCE:
+                case OWALL:
                 case ODNDSTORE:
                 case OSCHOOL:
                 case OBANK:
@@ -955,6 +959,9 @@ expand_puddle(void)
                 case OVOLUP:
                     continue;
                 }
+
+                if (item[nx][ny] == OWALL)
+                    continue;
 
                 /* 
                  * allow water to destroy interior walls
@@ -1145,7 +1152,7 @@ cannedlevel(int k)
             switch (*row++)
             {
             case '#':
-                it = OWALL;
+                it = OINNERWALL;
                 break;
             case 'D':
                 it = OCLOSEDDOOR;
@@ -1176,6 +1183,16 @@ cannedlevel(int k)
                 it = newobject(k + 1, &arg);
                 break;
             };
+
+            /* enforce boundary walls */
+            for (int x = 0; x < MAXX; x++) {
+                item[x][0] = OWALL;
+                item[x][MAXY - 1] = OWALL;
+            }
+            for (int y = 0; y < MAXY; y++) {
+                item[0][y] = OWALL;
+                item[MAXX - 1][y] = OWALL;
+            }
 
             /* do not create water in volcano */
             if (k >= VOLCANOLEVEL_START && k <= VOLCANOLEVEL_END)

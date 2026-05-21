@@ -11,7 +11,6 @@ all: larn
 larn: $(OBJS)
     $(CC) $(CFLAGS) $(OBJS) -o larn $(LDFLAGS)
 
-# Explicit compile rules (portable)
 action.o: action.c
     $(CC) $(CFLAGS) -c action.c
 bill.o: bill.c

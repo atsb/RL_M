@@ -4,7 +4,7 @@ include mk/objects.mk
 
 CC      = alpha-linux-gnu-gcc
 CFLAGS  = -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY -ansi
-LDFLAGS = -lm -lncurses
+LDFLAGS = -lncursesw -ltinfow -lm
 
 all: larn
 

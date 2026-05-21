@@ -108,11 +108,14 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build for ${{ matrix.platform }}
+    - name: Compute SAFE name
       run: |
         SAFE="${{ matrix.platform }}"
         SAFE="${SAFE//\//_}"
+        echo "SAFE=$SAFE" >> "$GITHUB_ENV"
 
+    - name: Build for ${{ matrix.platform }}
+      run: |
         docker buildx build \
           --platform ${{ matrix.platform }} \
           --output type=local,dest=./out-${SAFE} \
@@ -120,8 +123,6 @@ jobs:
 
     - name: Package
       run: |
-        SAFE="${{ matrix.platform }}"
-        SAFE="${SAFE//\//_}"
         mkdir package
         cp out-${SAFE}/larn package/
         cp -r docs package/
@@ -134,7 +135,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: larn-${{ matrix.platform }}
-        path: larn-${VERSION}-${{ matrix.platform.replace('/', '_') }}.tar.gz
+        path: larn-${VERSION}-${{ env.SAFE }}.tar.gz
 
   build-alpha:
     name: Cross-compile Alpha (alpha-linux-gnu)

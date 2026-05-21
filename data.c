@@ -75,7 +75,11 @@ long skill[] = {
 
 #undef MEG
 
-char* lpbuf, * lpnt, * inbuffer, * lpend;	/* input/output pointers to the buffers */
+/* input/output pointers to the buffers */
+char *lpbuf    = 0;
+char *lpnt     = 0;
+char *inbuffer = 0;
+char *lpend    = 0;
 
 struct cel* cell;		/*  pointer to the dungeon storage  */
 

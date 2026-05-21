@@ -1,0 +1,18 @@
+# Makefile for PowerPC 64bit (powerpc64-linux-gnu)
+
+include mk/objects.mk
+
+CC      = powerpc64-linux-gnu-gcc
+CFLAGS  = -O3 -fstrict-aliasing -fno-strict-overflow -fno-delete-null-pointer-checks -fno-common -Wall -Wextra -Wshadow -Wstrict-prototypes -Wmissing-prototypes -DMULTIPLE_SCORE_ENTRY -ansi
+LDFLAGS = -lncursesw -ltinfow -lm
+
+all: larn
+
+larn: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o larn $(LDFLAGS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f *.o larn

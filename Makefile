@@ -1,70 +1,18 @@
-# Linux/BSD/UNIX Makefile for Larn
+# Makefile for Larn
 
-MKDIR = mkdir -p
-CP    = cp -r
-MV    = mv
-RM    = rm -f
-RMDIR = rm -rf
+CC      = cc
+CFLAGS  = -O3 -fstrict-aliasing -fno-strict-overflow -fno-delete-null-pointer-checks -fno-common -Wall -Wextra -Wshadow -Wstrict-prototypes -Wmissing-prototypes -DMULTIPLE_SCORE_ENTRY
+LDFLAGS = -lm -lncurses
 
-# compiler & flags
-CC      ?= cc
-CFLAGS  += -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY
+include mk/objects.mk
 
-# platform libs
-ifeq ($(UNAME_S),Darwin)
-    LDFLAGS += -lncurses
-else ifneq ($(UNAME_S),Windows)
-    LDFLAGS += -lm -lncurses
-endif
+all: larn
 
-# directories
-SRCDIR   := .
-BUILDDIR := build
-OBJDIR   := $(BUILDDIR)/obj
-DEPDIR   := $(BUILDDIR)/dep
-BINDIR   := bin
-RUNTIME  := larnfiles/*
+larn: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o larn $(LDFLAGS)
 
-# sources, objects, deps
-SRC := $(wildcard $(SRCDIR)/*.c)
-OBJ := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
-DEP := $(patsubst $(OBJDIR)/%.o,$(DEPDIR)/%.d,$(OBJ))
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-TARGET := $(BINDIR)/larn
-
-# build rules
-all: $(TARGET)
-
-$(TARGET): $(OBJ) | $(BINDIR)
-	$(CC) -o $@ $(OBJ) $(LDFLAGS)
-
-# create directories automatically
-$(OBJDIR) $(DEPDIR) $(BINDIR):
-	$(MKDIR) $(BUILDDIR)
-	$(MKDIR) $(OBJDIR)
-	$(MKDIR) $(DEPDIR)
-	$(MKDIR) $(BINDIR)
-
-# pattern rule for object files
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR) $(DEPDIR)
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
-	$(MV) $(OBJDIR)/$*.d $(DEPDIR)/$*.d
-
-# include dependency files
--include $(DEP)
-
-# copy runtime files into bin/
-.PHONY: prep
-prep: $(TARGET)
-	$(MKDIR) $(BINDIR)
-	$(CP) $(RUNTIME) $(BINDIR)
-
-# cleaning
-.PHONY: clean
 clean:
-	$(RMDIR) $(BUILDDIR)
-	$(RM) $(TARGET)
-
-.PHONY: distclean
-distclean: clean
-	$(RMDIR) $(BINDIR)
+	rm -f *.o larn

@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  VERSION: "26.40"
+
 jobs:
   build-native:
     name: Native build on ${{ matrix.os }}
@@ -31,6 +34,23 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: make
 
+    - name: Package (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        ldd larn | awk '{print $3}' | xargs -I{} cp -v {} package/ || true
+        tar -czf larn-26.04-linux-amd64.tar.gz -C package .
+
+    - name: Upload (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-amd64
+        path: larn-26.04-linux-amd64.tar.gz
+
     # macOS
     - name: Install dependencies (macOS)
       if: matrix.os == 'macos-latest'
@@ -39,6 +59,23 @@ jobs:
     - name: Build (macOS)
       if: matrix.os == 'macos-latest'
       run: make
+
+    - name: Package (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        otool -L larn | awk '{print $1}' | grep '/' | xargs -I{} cp -v {} package/ || true
+        tar -czf larn-26.04-macos-universal.tar.gz -C package .
+
+    - name: Upload (macOS)
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-macos-universal
+        path: larn-26.04-macos-universal.tar.gz
 
   build-cross:
     name: Cross-compile for ${{ matrix.platform }}
@@ -71,18 +108,355 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build for ${{ matrix.platform }}
+    - name: Compute SAFE name
       run: |
         SAFE="${{ matrix.platform }}"
-        SAFE="${SAFE//\//_}"
+        SAFE="${SAFE//\//-}"
+        echo "SAFE=$SAFE" >> "$GITHUB_ENV"
 
+    - name: Build for ${{ matrix.platform }}
+      run: |
         docker buildx build \
           --platform ${{ matrix.platform }} \
           --output type=local,dest=./out-${SAFE} \
           -f Dockerfile.cross .
 
-    - name: Tar output
+    - name: Package
       run: |
-        SAFE="${{ matrix.platform }}"
-        SAFE="${SAFE//\//_}"
-        tar -czf larn-${SAFE}.tar.gz -C out-${SAFE} .
+        mkdir package
+        cp out-${SAFE}/larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp out-${SAFE}/*.so* package/ 2>/dev/null || true
+        cp out-${SAFE}/*.a package/ 2>/dev/null || true
+        tar -czf larn-26.04-${SAFE}.tar.gz -C package .
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-${{ env.SAFE }}
+        path: larn-26.04-${{ env.SAFE }}.tar.gz
+
+  build-alpha:
+    name: Cross-compile Alpha (alpha-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Alpha cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-alpha-linux-gnu \
+          libc6-dev-alpha-cross \
+          binutils-alpha-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for Alpha
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=alpha-linux-gnu \
+          --prefix=/usr/alpha-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build Alpha binary
+      run: |
+        make -f Makefile.alpha
+
+    - name: Package Alpha
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/alpha-linux-gnu/lib/libncursesw.a package/
+        cp /usr/alpha-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-dec-alpha.tar.gz -C package .
+
+    - name: Upload Alpha
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-dec-alpha
+        path: larn-26.04-linux-dec-alpha.tar.gz
+
+  build-sparc64:
+    name: Cross-compile UltraSPARC (sparc64-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install SPARC64 cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-sparc64-linux-gnu \
+          libc6-dev-sparc64-cross \
+          binutils-sparc64-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for SPARC64
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=sparc64-linux-gnu \
+          --prefix=/usr/sparc64-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build SPARC64 binary
+      run: |
+        make -f Makefile.ultrasparc
+
+    - name: Package SPARC64
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/sparc64-linux-gnu/lib/libncursesw.a package/
+        cp /usr/sparc64-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-sparc64.tar.gz -C package .
+
+    - name: Upload SPARC64
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-sparc64
+        path: larn-26.04-linux-sparc64.tar.gz
+
+  build-hppa:
+    name: Cross-compile HPPA (hppa-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install HPPA cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-hppa-linux-gnu \
+          libc6-dev-hppa-cross \
+          binutils-hppa-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for HPPA
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=hppa-linux-gnu \
+          --prefix=/usr/hppa-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build HPPA binary
+      run: |
+        make -f Makefile.hppa
+
+    - name: Package HPPA
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/hppa-linux-gnu/lib/libncursesw.a package/
+        cp /usr/hppa-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-hppa.tar.gz -C package .
+
+    - name: Upload HPPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-hppa
+        path: larn-26.04-linux-hppa.tar.gz
+
+  build-m68k:
+    name: Cross-compile m68k (m68k-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install m68k cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-m68k-linux-gnu \
+          libc6-dev-m68k-cross \
+          binutils-m68k-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for m68k
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=m68k-linux-gnu \
+          --prefix=/usr/m68k-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build m68k binary
+      run: |
+        make -f Makefile.m68k
+
+    - name: Package m68k
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/m68k-linux-gnu/lib/libncursesw.a package/
+        cp /usr/m68k-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-m68k.tar.gz -C package .
+
+    - name: Upload m68k
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-m68k
+        path: larn-26.04-linux-m68k.tar.gz
+
+  build-powerpc:
+    name: Cross-compile PowerPC (powerpc-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install PowerPC cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-powerpc-linux-gnu \
+          libc6-dev-powerpc-cross \
+          binutils-powerpc-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for PowerPC
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=powerpc-linux-gnu \
+          --prefix=/usr/powerpc-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build PowerPC binary
+      run: |
+        make -f Makefile.powerpc
+
+    - name: Package PowerPC
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/powerpc-linux-gnu/lib/libncursesw.a package/
+        cp /usr/powerpc-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-powerpc.tar.gz -C package .
+
+    - name: Upload PowerPC
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-powerpc
+        path: larn-26.04-linux-powerpc.tar.gz
+
+  build-powerpc64:
+    name: Cross-compile PowerPC64 (powerpc64-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install PowerPC64 cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-powerpc64-linux-gnu \
+          libc6-dev-ppc64-cross \
+          binutils-powerpc64-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for PowerPC64
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=powerpc64-linux-gnu \
+          --prefix=/usr/powerpc64-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build PowerPC64 binary
+      run: |
+        make -f Makefile.powerpc64
+
+    - name: Package PowerPC64
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/powerpc64-linux-gnu/lib/libncursesw.a package/
+        cp /usr/powerpc64-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-powerpc64.tar.gz -C package .
+
+    - name: Upload PowerPC64
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-powerpc64
+        path: larn-26.04-linux-powerpc64.tar.gz

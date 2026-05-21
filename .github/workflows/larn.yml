@@ -41,7 +41,6 @@ jobs:
         cp larn package/
         cp -r docs package/
         cp -r larnfiles package/
-        # include shared libs
         ldd larn | awk '{print $3}' | xargs -I{} cp -v {} package/ || true
         tar -czf larn-${VERSION}-linux-amd64.tar.gz -C package .
 
@@ -68,7 +67,6 @@ jobs:
         cp larn package/
         cp -r docs package/
         cp -r larnfiles package/
-        # include macOS shared libs
         otool -L larn | awk '{print $1}' | grep '/' | xargs -I{} cp -v {} package/ || true
         tar -czf larn-${VERSION}-macos-universal.tar.gz -C package .
 
@@ -128,7 +126,6 @@ jobs:
         cp out-${SAFE}/larn package/
         cp -r docs package/
         cp -r larnfiles package/
-        # include libs if present
         cp out-${SAFE}/*.so* package/ 2>/dev/null || true
         cp out-${SAFE}/*.a package/ 2>/dev/null || true
         tar -czf larn-${VERSION}-${SAFE}.tar.gz -C package .
@@ -137,7 +134,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: larn-${{ matrix.platform }}
-        path: larn-${VERSION}-${{ matrix.platform }}.tar.gz
+        path: larn-${VERSION}-${{ matrix.platform.replace('/', '_') }}.tar.gz
 
   build-alpha:
     name: Cross-compile Alpha (alpha-linux-gnu)
@@ -200,6 +197,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Add Debian Ports IA64 repo
+      run: |
+        echo "deb [trusted=yes] http://ftp.ports.debian.org/debian-ports unstable main" | sudo tee /etc/apt/sources.list.d/debian-ports.list
 
     - name: Install IA64 cross toolchain
       run: |

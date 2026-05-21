@@ -244,3 +244,57 @@ jobs:
       with:
         name: larn-linux-sparc64
         path: larn-26.04-linux-sparc64.tar.gz
+
+  build-hppa:
+    name: Cross-compile HPPA (hppa-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install HPPA cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-hppa-linux-gnu \
+          libc6-dev-hppa-cross \
+          binutils-hppa-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for HPPA
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=hppa-linux-gnu \
+          --prefix=/usr/hppa-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build HPPA binary
+      run: |
+        make -f Makefile.hppa
+
+    - name: Package HPPA
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/hppa-linux-gnu/lib/libncursesw.a package/
+        cp /usr/hppa-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-hppa.tar.gz -C package .
+
+    - name: Upload HPPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-hppa
+        path: larn-26.04-linux-hppa.tar.gz

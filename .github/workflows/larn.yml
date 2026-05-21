@@ -111,7 +111,7 @@ jobs:
     - name: Compute SAFE name
       run: |
         SAFE="${{ matrix.platform }}"
-        SAFE="${SAFE//\//_}"
+        SAFE="${SAFE//\//-}"
         echo "SAFE=$SAFE" >> "$GITHUB_ENV"
 
     - name: Build for ${{ matrix.platform }}
@@ -134,7 +134,7 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: larn-${{ matrix.platform }}
+        name: larn-${{ env.SAFE }}
         path: larn-26.04-${{ env.SAFE }}.tar.gz
 
   build-alpha:

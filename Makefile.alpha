@@ -9,10 +9,10 @@ LDFLAGS = -lncursesw -ltinfow -lm
 all: larn
 
 larn: $(OBJS)
-    $(CC) $(CFLAGS) $(OBJS) -o larn $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJS) -o larn $(LDFLAGS)
 
 %.o: %.c
-    $(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-    rm -f *.o larn
+	rm -f *.o larn

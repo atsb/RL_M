@@ -13,6 +13,12 @@
 static void seepage(void);
 static int minx, maxx, miny, maxy;
 static int is_metal_armor(int);
+static int d_xmin = 0, d_xmax = MAXX, d_ymin = 0, d_ymax = MAXY;	/* for limited screen drawing */
+static int d_flag;
+static int lincount, count;
+
+int diroffx[] = { 0, 0, 1, 0, -1, 1, -1, 1, -1 };
+int diroffy[] = { 0, 1, 0, -1, 0, -1, -1, 1, 1 };
 
 int compare_color_better = COLOR_GREEN;
 int compare_attr_better  = 0;
@@ -53,7 +59,6 @@ bottomhp(void)
 {
     bottomline();
 }
-
 
 void
 bottomspell(void)
@@ -107,8 +112,6 @@ static struct bot_side_def bot_data[] = {
 *  only the top section of the screen is updated.  If entire lines are being
 *  drawn, then they will be cleared first.
 */
-static int d_xmin = 0, d_xmax = MAXX, d_ymin = 0, d_ymax = MAXY;	/* for limited screen drawing */
-
 void
 draws(int xmin, int xmax, int ymin, int ymax)
 {
@@ -148,12 +151,10 @@ drawscreen()
 
 subroutine to redraw the whole screen as the player knows it
 */
-static int d_flag;
-
 void
 drawscreen(void)
 {
-    int i, j, k, ileft, iright;
+    int i, j, ileft, iright;
 
     if (d_xmin == 0 && d_xmax == MAXX && d_ymin == 0 && d_ymax == MAXY)
     {
@@ -235,18 +236,7 @@ drawscreen(void)
                     continue;
                 }
 
-                k = mitem[i][j];
-
-                if (k && know[i][j] & KNOWHERE)
-                {
-                    /* nlprc(monstnamelist[k]); */
-                    show1cell(i, j);   /* ⭐ REQUIRED FIX */
-                }
-                else
-                {
-                    /* nlprc(objnamelist[item[i][j]]); */
-                    show1cell(i, j);   /* ⭐ REQUIRED FIX */
-                }
+                show1cell(i, j);
             }
             else
             {
@@ -848,11 +838,6 @@ showplayer(void)
     refresh();
 }
 
-
-
-
-
-
 /*
 moveplayer(dir)
 
@@ -862,9 +847,6 @@ else returns 1
 nomove is set to 1 to stop the next move (inadvertent monsters hitting
 players when walking into walls) if player walks off screen or into wall
 */
-int diroffx[] = { 0, 0, 1, 0, -1, 1, -1, 1, -1 };
-int diroffy[] = { 0, 1, 0, -1, 0, -1, -1, 1, 1 };
-
 int
 moveplayer(int dir)
 /*  from = present room #  direction = [1-north]
@@ -1003,8 +985,6 @@ if direction=0, don't move--just show where he is */
 *  function to show what magic items have been discovered thus far
 *  enter with -1 for just spells, anything else will give scrolls & potions
 */
-static int lincount, count;
-
 void
 seemagic(int arg)
 {
@@ -1125,8 +1105,6 @@ seemagic(int arg)
     setscroll();
     drawscreen();
 }
-
-
 
 /*
 *  subroutine to paginate the seemagic function

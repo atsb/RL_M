@@ -73,19 +73,20 @@
 #include "scores.h"
 
 #define LINBUFSIZE 128		/* size of the lgetw() and lgetl() buffer       */
+
 int lfd = 0;		/*  output file numbers     */
 int fd;				/*  input file numbers      */
+
+static void flush_buf (void);
+static char lgetwbuf[LINBUFSIZE];	/* get line (word) buffer               */
+static char *outbuf = NULL;
 static int curx = 0;
 static int cury = 0;
 static int available, tocopy;
 static int ipoint = MAXIBUF, iepoint = MAXIBUF;	/*  input buffering pointers    */
-static char lgetwbuf[LINBUFSIZE];	/* get line (word) buffer               */
 static int (*getchfn) (void);
-static void flush_buf (void);
-
-/********************************************
-*              CURSES BACK-END             *
-********************************************/
+static int scrline = 21;	/* line # for wraparound instead of scrolling if no DL */
+static int io_index = 0;
 
 /* wgetch() is the modern way. -Gibbon */
 static int
@@ -283,8 +284,6 @@ scbr (void)
   curs_set(0);
 }
 
-
-
 /*
 * sncbr()     Function to set -cbreak echo for the terminal
 *
@@ -300,7 +299,6 @@ sncbr (void)
   getchfn = term_getche;
   curs_set(1);
 }
-
 
 /*
 * newgame()       Subroutine to save the initial time and seed rnd()
@@ -319,8 +317,6 @@ newgame (void)
 
   lcreat ((char *) 0);		/* open buffering for output to terminal */
 }
-
-
 
 /*
 *  lprintf(format,args . . .)      printf to the output buffer
@@ -387,9 +383,6 @@ lprint (int x)
   *lpnt++ = 255 & (x >> 24);
 
 }
-
-
-static int scrline = 21;	/* line # for wraparound instead of scrolling if no DL */
 
 /* 
 * output one byte to the output buffer 
@@ -467,7 +460,6 @@ lwrite (char *buf, int len)
       }
 }
 
-
 /*
 *  int lgetc()        Read one character from input buffer
 *
@@ -513,8 +505,6 @@ larint (void)
   i |= (255 & lgetc ()) << 24;
   return (i);
 }
-
-
 
 /*
 *  lrfill(address,number)          put input bytes into a buffer
@@ -583,8 +573,6 @@ lgetw (void)
 	quote ^= 1;
     }
 }
-
-
 
 /*
 *  char *lgetl()       Function to read in a line ended by newline or EOF
@@ -719,8 +707,6 @@ lrclose (void)
     }
 }
 
-
-
 /*
 *  lwclose()                       close output file flushing if needed
 *
@@ -793,16 +779,11 @@ cursors (void)
 * Also used in helpfiles. Codes used in helpfiles should be \E[1 to \E[7 with
 * obvious meanings.
 */
-
-/* translated output buffer */
-static char *outbuf = NULL;
-
 static void
 init_colors(void)
 {
     int i;
 
-    /* Default everything to COLOR_WHITE */
     for (i = 0; i < MAXMONST + 9; i++)
         moncolor[i] = COLOR_WHITE;
 
@@ -970,14 +951,11 @@ init_term(void)
 {
     int i, fg;
 
-    /* allocate decoded output buffer (Larn legacy requirement) */
     outbuf = malloc(BUFBIG + 16);
     if (!outbuf) {
         fprintf(stderr, "Error malloc'ing memory for decoded output buffer\n");
         died(-285);
     }
-
-    /* --- CURSES INITIALIZATION --- */
 
     initscr();
     cbreak();
@@ -986,7 +964,6 @@ init_term(void)
     intrflush(stdscr, FALSE);
     keypad(stdscr, TRUE);
 
-    /* --- COLORS --- */
     if (use_color && has_colors()) {
         start_color();
         use_default_colors();
@@ -1008,11 +985,7 @@ init_term(void)
             objcolor[i] = COLOR_WHITE;
     }
 
-    /* --- CURSOR --- */
-
     curs_set(0);
-
-    /* --- FINAL REFRESH --- */
 
     refresh();
 
@@ -1085,8 +1058,6 @@ set_score_output (void)
 *  for termcap version: Flush output in output buffer according to output
 *                       status as indicated by `enable_scroll'
 */
-
-
 void
 lflush (void)
 {
@@ -1113,9 +1084,6 @@ lflush (void)
         refresh();
     }
 }
-
-static int io_index = 0;
-
 
 /*
 * flush_buf()          Flush buffer with decoded output.

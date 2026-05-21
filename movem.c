@@ -477,6 +477,16 @@ move_smart(int i, int j)
 {
     int x, y, z;
     int mid = mitem[i][j];
+    int best = 0;
+    int score;
+    
+    /* list of candidate directions */
+    int candx[8];
+    int candy[8];
+    int candscore[8];
+    int candcount;
+
+    candcount = 0;
 
     /* half speed monsters */
     switch (mid)
@@ -490,9 +500,6 @@ move_smart(int i, int j)
         if ((gtime & 1) == 1)
             return;
     }
-
-    /* list of candidate directions */
-    int candx[8], candy[8], candscore[8], candcount = 0;
 
     for (z = 1; z < 9; z++)
     {
@@ -508,7 +515,7 @@ move_smart(int i, int j)
             if (mid == VAMPIRE && item[x][y] == OMIRROR)
                 continue;
 
-            int score = screen[x][y];
+            score = screen[x][y];
 
             /* tiny hesitation for land monsters */
             if (!aquatic_monster(mid))
@@ -528,7 +535,6 @@ move_smart(int i, int j)
     }
 
     /* choose lowest score */
-    int best = 0;
     for (z = 1; z < candcount; z++)
         if (candscore[z] < candscore[best])
             best = z;

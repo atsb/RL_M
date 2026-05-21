@@ -71,6 +71,7 @@ main (int argc, char *argv[])
 {
   int i = 0;
   int hard = -1;
+  int yy, xx;
 
   FILE *pFile;
 
@@ -289,8 +290,8 @@ main (int argc, char *argv[])
 		  expand_puddle();
 
 		  /* redraw only puddles for performance reasons (low cpu usage) */
-		  for (int yy = 0; yy < MAXY; yy++)
-			  for (int xx = 0; xx < MAXX; xx++)
+		  for (yy = 0; yy < MAXY; yy++)
+			  for (xx = 0; xx < MAXX; xx++)
 				  if (item[xx][yy] == OWATER || item[xx][yy] == OSHOREWATER)
 					  show1cell(xx, yy);
 
@@ -311,8 +312,8 @@ main (int argc, char *argv[])
 		  lava_anim_toggle = !lava_anim_toggle;
 
 		  /* redraw only lava for performance reasons (low cpu usage) */
-		  for (int yy = 0; yy < MAXY; yy++)
-			  for (int xx = 0; xx < MAXX; xx++)
+		  for (yy = 0; yy < MAXY; yy++)
+			  for (xx = 0; xx < MAXX; xx++)
 				  if (item[xx][yy] == OLAVA || item[xx][yy] == OCOOLEDLAVA)
 					  show1cell(xx, yy);
 

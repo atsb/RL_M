@@ -954,7 +954,7 @@ if direction=0, don't move--just show where he is */
         /* 25% chance to rust */
         if (rnd(4) == 1)
         {
-            // Existing rusting logic for worn armor
+            /* Existing rusting logic for worn armor */
             if (worn_armor_idx != -1 && is_metal_armor(iven[worn_armor_idx])) {
                 if (ivenarg[worn_armor_idx] > -10) {
                     ivenarg[worn_armor_idx] -= 2;
@@ -970,7 +970,7 @@ if direction=0, don't move--just show where he is */
         /* 25% chance to rust */
         if (rnd(4) == 1)
         {
-            // Existing rusting logic for shield
+            /* Existing rusting logic for shield */
             if (shield_idx != -1 && is_metal_armor(iven[shield_idx])) {
                 if (ivenarg[shield_idx] > -10) {
                     ivenarg[shield_idx] -= 2;
@@ -988,7 +988,8 @@ if direction=0, don't move--just show where he is */
             bottomline();
         }
 
-        return (yrepcount = 0); // Must be last in this block
+        return
+            (yrepcount = 0); /* Must be last in this block */
     }
 
     if (i && i != OTRAPARROWIV && i != OIVTELETRAP && i != OIVDARTRAP
@@ -1167,11 +1168,19 @@ is_metal_armor(int item_id) {
 void
 readcolors(void)
 {
-    FILE* fp = fopen("larn.clr", "r");
+    FILE *fp;
+    char line[256];
+    char key[64];
+    char *eq;
+    char *rhs;
+    char *tok;
+    int color;
+    int attr;
+    int i;
+
+    fp = fopen("larn.clr", "r");
     if (!fp)
         return;
-
-    char line[256], key[64];
 
     while (fgets(line, sizeof(line), fp))
     {
@@ -1180,22 +1189,22 @@ readcolors(void)
             continue;
 
         /* find '=' */
-        char *eq = strchr(line, '=');
+        eq = strchr(line, '=');
         if (!eq)
             continue;
 
         /* split key and rhs */
         *eq = '\0';
-        char *rhs = eq + 1;
+        rhs = eq + 1;
 
         /* trim key */
         sscanf(line, "%63s", key);
 
         /* tokenize COLOR_* and A_* */
-        int color = -1;
-        int attr  = 0;
+        color = -1;
+        attr  = 0;
 
-        char *tok = strtok(rhs, " \t|()\r\n");
+        tok = strtok(rhs, " \t|()\r\n");
         while (tok)
         {
             /* colours */
@@ -1222,53 +1231,52 @@ readcolors(void)
             continue;
 
         /* monsters */
-        for (int i = 0; monster_map[i].name; i++)
-            if (!strcmp(key, monster_map[i].name)) {
+        for (i = 0; monster_map[i].name; i++)
+        {
+            if (!strcmp(key, monster_map[i].name))
+            {
                 moncolor[monster_map[i].id] = color;
                 monattr[monster_map[i].id]  = attr;
             }
+        }
 
         /* objects */
-        for (int i = 0; object_map[i].name; i++)
-            if (!strcmp(key, object_map[i].name)) {
+        for (i = 0; object_map[i].name; i++)
+        {
+            if (!strcmp(key, object_map[i].name))
+            {
                 objcolor[object_map[i].id] = color;
                 objattr[object_map[i].id]  = attr;
             }
+        }
 
         /* comparisons */
         if (!strcmp(key, "COMPARE_BETTER")) {
             compare_color_better = color;
             compare_attr_better  = attr;
         }
-
-        if (!strcmp(key, "COMPARE_WORSE")) {
+        else if (!strcmp(key, "COMPARE_WORSE")) {
             compare_color_worse = color;
             compare_attr_worse  = attr;
         }
-
-        if (!strcmp(key, "COMPARE_EQUAL")) {
+        else if (!strcmp(key, "COMPARE_EQUAL")) {
             compare_color_equal = color;
             compare_attr_equal  = attr;
         }
-
-        if (!strcmp(key, "COMPARE_NONE")) {
+        else if (!strcmp(key, "COMPARE_NONE")) {
             compare_color_none = color;
             compare_attr_none  = attr;
         }
-
-        /* fortune cookie messages */
-        if (!strcmp(key, "COOKIE_MESSAGE")) {
+        else if (!strcmp(key, "COOKIE_MESSAGE")) {
             cookie_color = color;
             cookie_attr  = attr;
         }
-
-        /* magic missile */
-        if (!strcmp(key, "MAGIC_MISSILE")) {
+        else if (!strcmp(key, "MAGIC_MISSILE")) {
             missile_color = color;
             missile_attr  = attr;
         }
-
     }
+
     fclose(fp);
 }
 

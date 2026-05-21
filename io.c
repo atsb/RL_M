@@ -526,6 +526,8 @@ larint (void)
 void
 lrfill(char* adr, int num)
 {
+    int available, iepoint, ipoint, tocopy;
+    
     while (num > 0)
     {
         if (ipoint >= iepoint)
@@ -541,8 +543,8 @@ lrfill(char* adr, int num)
             iepoint = n;
         }
 
-        int available = iepoint - ipoint;
-        int tocopy = (available < num) ? available : num;
+        available = iepoint - ipoint;
+        tocopy = (available < num) ? available : num;
 
         memcpy(adr, inbuffer + ipoint, tocopy);
 
@@ -796,6 +798,170 @@ cursors (void)
 /* translated output buffer */
 static char *outbuf = NULL;
 
+static void
+init_colors(void)
+{
+    int i;
+
+    /* Default everything to COLOR_WHITE */
+    for (i = 0; i < MAXMONST + 9; i++)
+        moncolor[i] = COLOR_WHITE;
+
+    for (i = 0; i < MAXOBJECT + 1; i++)
+        objcolor[i] = COLOR_WHITE;
+
+    /* Monster colors */
+    moncolor[BAT] = COLOR_BLUE;
+    moncolor[GNOME] = COLOR_GREEN;
+    moncolor[HOBGOBLIN] = COLOR_RED;
+    moncolor[JACKAL] = COLOR_YELLOW;
+    moncolor[KOBOLD] = COLOR_CYAN;
+    moncolor[ORC] = COLOR_MAGENTA;
+    moncolor[SNAKE] = COLOR_GREEN;
+    moncolor[CENTIPEDE] = COLOR_RED;
+    moncolor[JACULI] = COLOR_BLUE;
+    moncolor[TROGLODYTE] = COLOR_WHITE;
+    moncolor[ANT] = COLOR_RED;
+    moncolor[EYE] = COLOR_CYAN;
+    moncolor[LEPRECHAUN] = COLOR_GREEN;
+    moncolor[NYMPH] = COLOR_MAGENTA;
+    moncolor[QUASIT] = COLOR_RED;
+    moncolor[RUSTMONSTER] = COLOR_YELLOW;
+    moncolor[ZOMBIE] = COLOR_GREEN;
+    moncolor[ASSASSINBUG] = COLOR_RED;
+    moncolor[BUGBEAR] = COLOR_YELLOW;
+    moncolor[HELLHOUND] = COLOR_RED;
+    moncolor[ICELIZARD] = COLOR_CYAN;
+    moncolor[CENTAUR] = COLOR_WHITE;
+    moncolor[TROLL] = COLOR_GREEN;
+    moncolor[YETI] = COLOR_WHITE;
+    moncolor[WHITEDRAGON] = COLOR_WHITE;
+    moncolor[ELF] = COLOR_GREEN;
+    moncolor[CUBE] = COLOR_CYAN;
+    moncolor[METAMORPH] = COLOR_MAGENTA;
+    moncolor[VORTEX] = COLOR_BLUE;
+    moncolor[ZILLER] = COLOR_RED;
+    moncolor[VIOLETFUNGI] = COLOR_MAGENTA;
+    moncolor[WRAITH] = COLOR_CYAN;
+    moncolor[FORVALAKA] = COLOR_RED;
+    moncolor[LAMANOBE] = COLOR_WHITE;
+    moncolor[OSEQUIP] = COLOR_YELLOW;
+    moncolor[ROTHE] = COLOR_RED;
+    moncolor[XORN] = COLOR_MAGENTA;
+    moncolor[VAMPIRE] = COLOR_RED;
+    moncolor[INVISIBLESTALKER] = COLOR_WHITE;
+    moncolor[POLTERGEIST] = COLOR_CYAN;
+    moncolor[DISENCHANTRESS] = COLOR_MAGENTA;
+    moncolor[SHAMBLINGMOUND] = COLOR_GREEN;
+    moncolor[YELLOWMOLD] = COLOR_YELLOW;
+    moncolor[UMBERHULK] = COLOR_RED;
+    moncolor[GNOMEKING] = COLOR_GREEN;
+    moncolor[MIMIC] = COLOR_WHITE;
+    moncolor[WATERLORD] = COLOR_BLUE;
+    moncolor[BRONZEDRAGON] = COLOR_YELLOW;
+    moncolor[GREENDRAGON] = COLOR_GREEN;
+    moncolor[PURPLEWORM] = COLOR_MAGENTA;
+    moncolor[XVART] = COLOR_CYAN;
+    moncolor[SPIRITNAGA] = COLOR_RED;
+    moncolor[SILVERDRAGON] = COLOR_WHITE;
+    moncolor[PLATINUMDRAGON] = COLOR_CYAN;
+    moncolor[GREENURCHIN] = COLOR_GREEN;
+    moncolor[REDDRAGON] = COLOR_RED;
+    moncolor[DEMONLORD] = COLOR_MAGENTA;
+    moncolor[DEMONPRINCE] = COLOR_RED;
+
+    /* Object colors */
+    objcolor[0] = COLOR_WHITE;
+    objcolor[OALTAR] = COLOR_YELLOW;
+    objcolor[OTHRONE] = COLOR_MAGENTA;
+    objcolor[OORB] = COLOR_CYAN;
+    objcolor[OPIT] = COLOR_BLUE;
+    objcolor[OSTAIRSUP] = COLOR_WHITE;
+    objcolor[OELEVATORUP] = COLOR_WHITE;
+    objcolor[OFOUNTAIN] = COLOR_CYAN;
+    objcolor[OSTATUE] = COLOR_WHITE;
+    objcolor[OTELEPORTER] = COLOR_MAGENTA;
+    objcolor[OSCHOOL] = COLOR_GREEN;
+    objcolor[OMIRROR] = COLOR_WHITE;
+    objcolor[ODNDSTORE] = COLOR_GREEN;
+    objcolor[OSTAIRSDOWN] = COLOR_WHITE;
+    objcolor[OELEVATORDOWN] = COLOR_WHITE;
+    objcolor[OBANK2] = COLOR_GREEN;
+    objcolor[OBANK] = COLOR_GREEN;
+    objcolor[ODEADFOUNTAIN] = COLOR_BLUE;
+    objcolor[OMAXGOLD] = COLOR_YELLOW;
+    objcolor[OGOLDPILE] = COLOR_YELLOW;
+    objcolor[OOPENDOOR] = COLOR_WHITE;
+    objcolor[OCLOSEDDOOR] = COLOR_YELLOW;
+    objcolor[OWALL] = COLOR_WHITE;
+    objcolor[OLARNEYE] = COLOR_CYAN;
+    objcolor[OPLATE] = COLOR_WHITE;
+    objcolor[OCHAIN] = COLOR_WHITE;
+    objcolor[OLEATHER] = COLOR_YELLOW;
+    objcolor[ORING] = COLOR_CYAN;
+    objcolor[OSTUDLEATHER] = COLOR_YELLOW;
+    objcolor[OSPLINT] = COLOR_WHITE;
+    objcolor[OPLATEARMOR] = COLOR_WHITE;
+    objcolor[OSSPLATE] = COLOR_WHITE;
+    objcolor[OSHIELD] = COLOR_WHITE;
+    objcolor[OELVENCHAIN] = COLOR_GREEN;
+    objcolor[OSWORDofSLASHING] = COLOR_CYAN;
+    objcolor[OHAMMER] = COLOR_YELLOW;
+    objcolor[OSWORD] = COLOR_WHITE;
+    objcolor[O2SWORD] = COLOR_WHITE;
+    objcolor[OHSWORD] = COLOR_CYAN;
+    objcolor[OSPEAR] = COLOR_WHITE;
+    objcolor[ODAGGER] = COLOR_WHITE;
+    objcolor[OBATTLEAXE] = COLOR_RED;
+    objcolor[OLONGSWORD] = COLOR_WHITE;
+    objcolor[OLANCE] = COLOR_CYAN;
+    objcolor[OVORPAL] = COLOR_MAGENTA;
+    objcolor[OSLAYER] = COLOR_RED;
+    objcolor[ORINGOFEXTRA] = COLOR_CYAN;
+    objcolor[OREGENRING] = COLOR_CYAN;
+    objcolor[OPROTRING] = COLOR_CYAN;
+    objcolor[OENERGYRING] = COLOR_CYAN;
+    objcolor[ODEXRING] = COLOR_CYAN;
+    objcolor[OSTRRING] = COLOR_CYAN;
+    objcolor[OCLEVERRING] = COLOR_CYAN;
+    objcolor[ODAMRING] = COLOR_CYAN;
+    objcolor[OBELT] = COLOR_YELLOW;
+    objcolor[OSCROLL] = COLOR_WHITE;
+    objcolor[OPOTION] = COLOR_WHITE;
+    objcolor[OBOOK] = COLOR_CYAN;
+    objcolor[OCHEST] = COLOR_RED;
+    objcolor[OAMULET] = COLOR_MAGENTA;
+    objcolor[OORBOFDRAGON] = COLOR_CYAN;
+    objcolor[OSPIRITSCARAB] = COLOR_MAGENTA;
+    objcolor[OCUBEofUNDEAD] = COLOR_MAGENTA;
+    objcolor[ONOTHEFT] = COLOR_RED;
+    objcolor[ODIAMOND] = COLOR_WHITE;
+    objcolor[ORUBY] = COLOR_RED;
+    objcolor[OEMERALD] = COLOR_GREEN;
+    objcolor[OSAPPHIRE] = COLOR_BLUE;
+    objcolor[OENTRANCE] = COLOR_BLUE;
+    objcolor[OVOLDOWN] = COLOR_RED;
+    objcolor[OVOLUP] = COLOR_WHITE;
+    objcolor[OHOME] = COLOR_CYAN;
+    objcolor[OKGOLD] = COLOR_YELLOW;
+    objcolor[ODGOLD] = COLOR_YELLOW;
+    objcolor[OIVDARTRAP] = COLOR_RED;
+    objcolor[ODARTRAP] = COLOR_RED;
+    objcolor[OTRAPDOOR] = COLOR_RED;
+    objcolor[OIVTRAPDOOR] = COLOR_RED;
+    objcolor[OTRADEPOST] = COLOR_GREEN;
+    objcolor[OIVTELETRAP] = COLOR_MAGENTA;
+    objcolor[ODEADTHRONE] = COLOR_MAGENTA;
+    objcolor[OANNIHILATION] = COLOR_MAGENTA;
+    objcolor[OTHRONE2] = COLOR_MAGENTA;
+    objcolor[OLRS] = COLOR_GREEN;
+    objcolor[OCOOKIE] = COLOR_YELLOW;
+    objcolor[OWATER] = COLOR_BLUE;
+    objcolor[OSHOREWATER] = COLOR_CYAN;
+    objcolor[OLAVA] = COLOR_RED;
+    objcolor[OINNERWALL] = COLOR_WHITE;
+    objcolor[OCOOLEDLAVA] = COLOR_WHITE;
+}
 
 /*
 * init_term()      Terminal initialization
@@ -803,6 +969,8 @@ static char *outbuf = NULL;
 void
 init_term(void)
 {
+    int i, fg;
+
     /* allocate decoded output buffer (Larn legacy requirement) */
     outbuf = malloc(BUFBIG + 16);
     if (!outbuf) {
@@ -823,20 +991,21 @@ init_term(void)
     if (use_color && has_colors()) {
         start_color();
         use_default_colors();
+        init_colors();
 
         readcolors(); /* reads the larn.clr file */
 
-        for (int i = 0; i < 256; i++) {
-            int fg = i % 8;
+        for (i = 0; i < 256; i++) {
+            fg = i % 8;
             init_pair(i, fg, -1);
         }
     }
     else {
         /* otherwise monochrome */
-        for (int i = 0; i < MAXMONST + 10; i++)
+        for (i = 0; i < MAXMONST + 10; i++)
             moncolor[i] = COLOR_WHITE;
 
-        for (int i = 0; i < MAXOBJECT + 1; i++)
+        for (i = 0; i < MAXOBJECT + 1; i++)
             objcolor[i] = COLOR_WHITE;
     }
 
@@ -978,13 +1147,14 @@ lflushall (void)
 void
 enter_name (void)
 {
+    int i;
+    char c;
+
   if (name_set)
   {
       /* Name already loaded from larnopts */
       return;
   }
-
-  int i;
 
   lprcat ("\n\nEnter character name:\n");
 
@@ -994,8 +1164,6 @@ enter_name (void)
 
   do
     {
-      char c;
-
       c = ttgetch ();
 
       if (c == '\n')

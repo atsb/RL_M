@@ -149,6 +149,8 @@ struct color_override_entry {
 extern const struct color_override_entry monster_map[];
 extern const struct color_override_entry object_map[];
 
+extern int moncolor[MAXMONST + 9];
+extern int objcolor[MAXOBJECT + 1];
 extern int monattr[MAXMONST + 9];
 extern int objattr[MAXOBJECT + 1];
 

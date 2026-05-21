@@ -8,8 +8,7 @@ RMDIR = rm -rf
 
 # compiler & flags
 CC      ?= cc
-CFLAGS  += -Wall -Wextra -Werror -std=c17 -pedantic \
-           -g -DNIX -DMULTIPLE_SCORE_ENTRY -DEXTRA
+CFLAGS  += -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY
 
 # platform libs
 ifeq ($(UNAME_S),Darwin)

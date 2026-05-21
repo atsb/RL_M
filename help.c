@@ -28,9 +28,16 @@
 
  /* Interpret ANSI escapes and print using curses */
 void
-ansihelp(const char* s)
+ansihelp(const char *s)
 {
-    const char* p = s;
+    const char *p;
+    char params[32];
+    char buf[32];
+    char *tok;
+    int pi;
+    char cmd;
+
+    p = s;
 
     while (*p) {
         if (*p == '\033') {      /* ESC */
@@ -39,42 +46,32 @@ ansihelp(const char* s)
             if (*p == '[') {     /* CSI */
                 p++;
 
-                /* parameters */
-                char params[32];
-                int pi = 0;
-
+                pi = 0;
                 while (*p && pi < 30 &&
-                    ((*p >= '0' && *p <= '9') || *p == ';'))
+                       ((*p >= '0' && *p <= '9') || *p == ';'))
                 {
                     params[pi++] = *p++;
                 }
                 params[pi] = '\0';
 
-                /* final */
-                char cmd = *p++;
+                cmd = *p++;
 
                 if (cmd == 'm') {
-
-                    /* SGR codes */
-                    char buf[32];
-                    char* tok;
-
                     strcpy(buf, params);
                     tok = strtok(buf, ";");
 
                     while (tok) {
-                        int code = atoi(tok);
-                        switch (code) {
-                        case 0:  /* reset */
+                        switch (atoi(tok)) {
+                        case 0:
                             standend();
                             break;
-                        case 1:  /* bold */
+                        case 1:
                             attron(A_BOLD);
                             break;
-                        case 4:  /* underline */
+                        case 4:
                             attron(A_UNDERLINE);
                             break;
-                        case 7:  /* reverse video */
+                        case 7:
                             standout();
                             break;
                         default:
@@ -85,10 +82,9 @@ ansihelp(const char* s)
                 }
                 continue;
             }
-            /* stray ESC char, ignore */
             continue;
         }
-        /* normal char */
+
         lprc(*p++);
     }
 }
@@ -105,15 +101,16 @@ ansihelp(const char* s)
 int
 help(void)
 {
-    FILE* fp;
-    int pages = openhelp(&fp);
+    FILE *fp;
+    char line[512];
+    int pages;
+    int i;
+    int c;
+
+    pages = openhelp(&fp);
     if (pages < 0)
         return 0;
 
-    char line[512];
-    int i;
-
-    /* skip intro page */
     for (i = 0; i < 23; i++)
         fgets(line, sizeof(line), fp);
 
@@ -134,8 +131,6 @@ help(void)
         }
 
         if (pages > 1) {
-            int c;
-
             lprcat(" ---- Press ");
             lstandout("return");
             lprcat(" to exit, ");
@@ -153,8 +148,10 @@ help(void)
                 return 0;
             }
         }
+
         pages--;
     }
+
     fclose(fp);
     retcont();
     drawscreen();
@@ -167,13 +164,14 @@ help(void)
 int
 welcome(void)
 {
-    FILE* fp;
-    int pages = openhelp(&fp);
+    FILE *fp;
+    char line[512];
+    int pages;
+    int i;
+
+    pages = openhelp(&fp);
     if (pages < 0)
         return 0;
-
-    char line[512];
-    int i;
 
     screen_clear();
     cursor(1, 1);

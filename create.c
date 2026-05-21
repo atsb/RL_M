@@ -1,7 +1,5 @@
 ﻿/* create.c */
 
-// #define PUDDLE_TEST // Uncomment or define via compiler flags to enable debug puddle
-
 #include "create.h"
 #include "display.h"
 #include "larn.h"
@@ -536,14 +534,17 @@ makemaze(int k)
 static void
 worldboundary(void)
 {
-    /* level 0 has no walls */
+    int x, y;
+    int ex, ey;
+
+    /* level 0 has no walls */
     if (level == 0)
         return;
 
     /* boundary walls on top and bottom */
-    for (int x = 0; x < MAXX; x++) {
+    for (x = 0; x < MAXX; x++) {
 
-        /* preserve the dungeon entrance on level 1 */
+        /* preserve the dungeon entrance on level 1 */
         if (level == 1 && x == 33)
             continue;
 
@@ -552,21 +553,23 @@ worldboundary(void)
     }
 
     /* boundary walls on left and right */
-    for (int y = 0; y < MAXY; y++) {
+    for (y = 0; y < MAXY; y++) {
         item[0][y]        = OWALL;
         item[MAXX - 1][y] = OWALL;
     }
 
     /* keep the entrance clear */
     if (level == 1) {
-        int ex = 33;
-        int ey = MAXY - 1;
+
+        ex = 33;
+        ey = MAXY - 1;
 
         item[ex][ey] = OENTRANCE;
 
-        /* clear a 5 tile radius around the entrance */
-        for (int y = ey - 5; y <= ey + 5; y++) {
-            for (int x = ex - 5; x <= ex + 5; x++) {
+        /* clear a 5‑tile radius around the entrance */
+        for (y = ey - 5; y <= ey + 5; y++) {
+            for (x = ex - 5; x <= ex + 5; x++) {
+
                 if (x < 1 || x >= MAXX - 1 || y < 1 || y >= MAXY - 1)
                     continue;
 
@@ -715,8 +718,12 @@ lava_blocked(int x, int y)
 void
 cool_lava(void)
 {
-    for (int y = 0; y < MAXY; y++)
-        for (int x = 0; x < MAXX; x++)
+    int x, y;
+
+    for (y = 0; y < MAXY; y++)
+    {
+        for (x = 0; x < MAXX; x++)
+        {
             if (item[x][y] == OLAVA && lavaheat[x][y] > 0)
             {
                 lavaheat[x][y]--;
@@ -727,6 +734,8 @@ cool_lava(void)
                     show1cell(x, y);
                 }
             }
+        }
+    }
     refresh();
 }
 
@@ -831,12 +840,19 @@ make_cryinglava(int cx, int cy)
 static void
 makestream(int level)
 {
+    int x, y, dx, dy, len, i;
+    int width;
+    int max_len;
+    int dominant;
+    int t;
+    int sx, sy;
+    int wiggle;
+
     /* do not create water in the volcano */
     if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
         return;
 
-    int x, y, dx, dy, len, i;
-    int width = 2;
+    width = 2;
 
     /* random full horizontal river */
     if (rnd(5) == 1)
@@ -850,7 +866,7 @@ makestream(int level)
             /* vertical wiggle */
             if (rnd(10) < 2)
             {
-                int wiggle = (rnd(2) ? 1 : -1);
+                wiggle = (rnd(2) ? 1 : -1);
                 if (y + wiggle > 1 && y + wiggle < MAXY - 2)
                     y += wiggle;
             }
@@ -858,8 +874,8 @@ makestream(int level)
             /* create river */
             for (i = 0; i < width; i++)
             {
-                int sx = x;
-                int sy = y + i;
+                sx = x;
+                sy = y + i;
 
                 if (sx < 1 || sx >= MAXX - 1 || sy < 1 || sy >= MAXY - 1)
                     continue;
@@ -902,14 +918,14 @@ makestream(int level)
     }
 
     /* snaky streams */
-    int max_len = 10 + rnd(25);
+    max_len = 10 + rnd(25);
 
     /* random starting point */
     x = rnd(MAXX - 4) + 2;
     y = rnd(MAXY - 4) + 2;
 
-    /* randomised dominancy*/
-    int dominant = rnd(2);
+    /* randomised dominancy */
+    dominant = rnd(2);
 
     /* dominant direction */
     if (dominant == 0) {
@@ -925,26 +941,22 @@ makestream(int level)
     {
         /* 70% chance to just go straight */
         if (rnd(10) < 7) {
-            /* this may look dead but has a
-            chance to prevent the wiggle,
-            so it goes straight */
+            /* intentionally empty */
         }
         /* 20% chance to wiggle */
         else if (rnd(10) < 9) {
             if (dominant == 0) {
-                /* horizontal stream up/down */
                 dy = (rnd(2) ? 1 : -1);
-                dx = (rnd(2) ? 1 : -1); /* diagonal */
+                dx = (rnd(2) ? 1 : -1);
             }
             else {
-                /* vertical stream left/right */
                 dx = (rnd(2) ? 1 : -1);
                 dy = (rnd(2) ? 1 : -1);
             }
         }
         /* 10% chance for 90 degrees turn */
         else {
-            int t = dx;
+            t = dx;
             dx = -dy;
             dy = t;
         }
@@ -952,19 +964,20 @@ makestream(int level)
         x += dx;
         y += dy;
 
-        /* boundary check analysis */
+        /* boundary check */
         if (x < 1 || x >= MAXX - 2 || y < 1 || y >= MAXY - 2)
             break;
 
         /* create stream */
         for (i = 0; i < width; i++)
         {
-            int sx = x;
-            int sy = y;
+            sx = x;
+            sy = y;
 
-            if (dx != 0) sy += i;  /* horizontal */
+            if (dx != 0)
+                sy += i;  /* horizontal */
             else
-                sx += i; /* vertical */
+                sx += i;  /* vertical */
 
             if (sx < 1 || sx >= MAXX - 1 || sy < 1 || sy >= MAXY - 1)
                 continue;
@@ -989,6 +1002,7 @@ makestream(int level)
             case OVOLUP:
                 continue;
             }
+
             item[sx][sy] = OWATER;
 
             if (item[sx - 1][sy] != OWATER ||
@@ -1019,14 +1033,13 @@ expand_puddle(void)
     int pick;
     int puddle_count;
     int xx, yy;
+    int MAX_RADIUS;
 
-    const int MAX_RADIUS = 10;
+    MAX_RADIUS = 10;
 
-    /* do not expand water in the volcano */
     if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
         return;
 
-    /* Chance per move that a puddle will grow */
     if (rnd(6) != 1)
         return;
 
@@ -1044,15 +1057,12 @@ expand_puddle(void)
                 nx = x + dx[d];
                 ny = y + dy[d];
 
-                /* bounds check */
                 if (nx < 1 || nx >= MAXX - 1 || ny < 1 || ny >= MAXY - 1)
                     continue;
 
-                /* do NOT overwrite monsters */
                 if (mitem[nx][ny] != 0)
                     continue;
 
-                /* do not overwrite special structures */
                 switch (item[nx][ny])
                 {
                 case OENTRANCE:
@@ -1073,27 +1083,19 @@ expand_puddle(void)
                 if (item[nx][ny] == OWALL)
                     continue;
 
-                /* 
-                 * allow water to destroy interior walls
-                 * realistic erosion of inner walls
-                 */
                 if (item[nx][ny] == OINNERWALL)
                 {
                     erosion[nx][ny]++;
 
-                    /* require sustained contact */
                     if (erosion[nx][ny] < 5)
                         continue;
 
-                    /* chance increases with pressure */
                     if (rnd(20) > erosion[nx][ny])
                         continue;
 
-                    /* erode the wall */
                     item[nx][ny] = 0;
                     know[nx][ny] = 0;
                     show1cell(nx, ny);
-
                     erosion[nx][ny] = 0;
 
                     gx[gcount] = nx;
@@ -1102,7 +1104,6 @@ expand_puddle(void)
                     continue;
                 }
 
-                /* maximum radius check */
                 puddle_count = 0;
                 for (yy = y - MAX_RADIUS; yy <= y + MAX_RADIUS; yy++)
                 {
@@ -1110,7 +1111,8 @@ expand_puddle(void)
                     {
                         if (xx > 0 && xx < MAXX && yy > 0 && yy < MAXY)
                         {
-                            if (item[xx][yy] == OWATER || item[xx][yy] == OSHOREWATER)
+                            if (item[xx][yy] == OWATER ||
+                                item[xx][yy] == OSHOREWATER)
                                 puddle_count++;
                         }
                     }
@@ -1119,25 +1121,20 @@ expand_puddle(void)
                 if (puddle_count > (MAX_RADIUS * MAX_RADIUS))
                     continue;
 
-                /* mark tile as valid expansion target */
                 gx[gcount] = nx;
                 gy[gcount] = ny;
                 gcount++;
             }
 
-            /* if no valid directions then puddle is blocked */
             if (gcount == 0)
                 continue;
 
-            /* valid direction at random */
             pick = rnd(gcount) - 1;
             nx = gx[pick];
             ny = gy[pick];
 
-            /* grow puddle */
             if (item[nx][ny] == OSHOREWATER)
             {
-                /* shore becomes water when flooded */
                 item[nx][ny] = OWATER;
             }
             else if (item[x][y] == OWATER &&
@@ -1166,35 +1163,37 @@ expand_puddle(void)
 static void
 makepuddle(int level)
 {
-    /* do not create water in the volcano */
+    int puddle_width, puddle_height;
+    int px, py;
+    int x, y;
+    int attempts;
+    int suitable;
+
     if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
         return;
 
-    int puddle_width, puddle_height, px, py, x, y, attempts, suitable;
-
-    puddle_width = 2 + rnd(7);  /* 2 to 8 */
-    puddle_height = 2 + rnd(5); /* 2 to 6 */
+    puddle_width = 2 + rnd(7);
+    puddle_height = 2 + rnd(5);
 
     for (attempts = 0; attempts < 10; attempts++)
     {
         px = rnd(MAXX - puddle_width - 2) + 1;
         py = rnd(MAXY - puddle_height - 2) + 1;
 
-        suitable = 1; /* true */
+        suitable = 1;
+
         for (y = py; y < py + puddle_height; y++)
         {
             for (x = px; x < px + puddle_width; x++)
             {
                 if (item[x][y] != 0 || mitem[x][y] != 0)
                 {
-                    suitable = 0; /* false */
+                    suitable = 0;
                     break;
                 }
             }
             if (!suitable)
-            {
                 break;
-            }
         }
 
         if (suitable)
@@ -1205,17 +1204,14 @@ makepuddle(int level)
                 {
                     if (x == px || x == px + puddle_width - 1 ||
                         y == py || y == py + puddle_height - 1)
-                    {
                         item[x][y] = OSHOREWATER;
-                    }
                     else
-                    {
                         item[x][y] = OWATER;
-                    }
+
                     iarg[x][y] = 0;
                 }
             }
-            break; /* Puddle created, exit attempts loop */
+            break;
         }
     }
 }
@@ -1235,76 +1231,83 @@ makepuddle(int level)
 static int
 cannedlevel(int k)
 {
-    char* row;
+    char *row;
     int i, j;
     int it, arg, mit, marg;
+    int x, y;
 
     if (lopen(mazefile) < 0)
     {
         fprintf(stderr, "Can't open the maze data file\n");
         died(-282);
-        return (0);
+        return 0;
     }
+
     i = lgetc();
     if (i <= '0')
     {
         died(-282);
-        return (0);
+        return 0;
     }
+
     for (i = 18 * rund(i - '0'); i > 0; i--)
-        lgetl();			/* advance to desired maze */
+        lgetl();
+
     for (i = 0; i < MAXY; i++)
     {
         row = lgetl();
         for (j = 0; j < MAXX; j++)
         {
-            it = mit = arg = marg = 0;
+            it = 0;
+            mit = 0;
+            arg = 0;
+            marg = 0;
+
             switch (*row++)
             {
-            case '#':
-                it = OINNERWALL;
-                break;
-            case 'D':
-                it = OCLOSEDDOOR;
-                arg = rnd(30);
-                break;
+            case '#': it = OINNERWALL; break;
+            case 'D': it = OCLOSEDDOOR; arg = rnd(30); break;
             case '~':
-                if (k != MAXLEVEL - 1)
-                    break;
-                it = OLARNEYE;
-                mit = rund(8) + DEMONLORD;
-                marg = monster[mit].hitpoints;
+                if (k == MAXLEVEL - 1)
+                {
+                    it = OLARNEYE;
+                    mit = rund(8) + DEMONLORD;
+                    marg = monster[mit].hitpoints;
+                }
                 break;
             case '!':
-                if (k != MAXLEVEL + MAXVLEVEL - 1)
-                    break;
-                it = OPOTION;
-                arg = 21;
-                mit = DEMONLORD + 7;
-                marg = monster[mit].hitpoints;
+                if (k == MAXLEVEL + MAXVLEVEL - 1)
+                {
+                    it = OPOTION;
+                    arg = 21;
+                    mit = DEMONLORD + 7;
+                    marg = monster[mit].hitpoints;
+                }
                 break;
             case '.':
-                if (k < MAXLEVEL)
-                    break;
-                mit = makemonst(k + 1);
-                marg = monster[mit].hitpoints;
+                if (k >= MAXLEVEL)
+                {
+                    mit = makemonst(k + 1);
+                    marg = monster[mit].hitpoints;
+                }
                 break;
             case '-':
                 it = newobject(k + 1, &arg);
                 break;
-            };
+            }
 
             /* enforce boundary walls */
-            for (int x = 0; x < MAXX; x++) {
+            for (x = 0; x < MAXX; x++)
+            {
                 item[x][0] = OWALL;
                 item[x][MAXY - 1] = OWALL;
             }
-            for (int y = 0; y < MAXY; y++) {
+            for (y = 0; y < MAXY; y++)
+            {
                 item[0][y] = OWALL;
                 item[MAXX - 1][y] = OWALL;
             }
 
-            /* do not create water in volcano */
             if (k >= VOLCANOLEVEL_START && k <= VOLCANOLEVEL_END)
             {
                 if (it == OWATER || it == OSHOREWATER)
@@ -1317,20 +1320,17 @@ cannedlevel(int k)
             hitp[j][i] = marg;
 
 #if WIZID
-            know[j][i] = (wizard) ? KNOWALL : 0;
+            know[j][i] = (wizard ? KNOWALL : 0);
 #else
             know[j][i] = 0;
 #endif
         }
     }
+
     lrclose();
-
     worldboundary();
-
-    return (1);
+    return 1;
 }
-
-
 
 /*
 *  function to make a treasure room on a level

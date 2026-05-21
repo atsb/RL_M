@@ -44,13 +44,15 @@ int ivensort[MAXINVEN + 1];	/* extra is for sentinel */
 void
 inventoryline_print(int idx)
 {
+    int obj;
+
     /* idx means gold line */
     if (idx == -1) {
         lprintf(".) %d gold pieces", (int)c[GOLD]);
         return;
     }
 
-    int obj = iven[idx];
+    obj = iven[idx];
 
     /* base item name */
     lprintf("%c) %s", idx + 'a', objectname[obj]);
@@ -78,35 +80,44 @@ inventoryline_print(int idx)
 }
 
 static int
-inventoryline_page(const int* indices, int count, char select_allowed)
+inventoryline_page(const int *indices, int count, char select_allowed)
 {
-    const int page_height = 22;
-    int start = 0;
-    int itemselect = 0;
+    int page_height;
+    int start;
+    int itemselect;
+    int lines_this_page;
+    int y;
+    int i;
+    int idx;
+
+    page_height = 22;
+    start = 0;
+    itemselect = 0;
 
     while (start < count)
     {
-        int lines_this_page = (count - start > page_height)
-            ? page_height
-            : (count - start);
+        if (count - start > page_height)
+            lines_this_page = page_height;
+        else
+            lines_this_page = count - start;
 
         /* clear only the lines we will use */
-        for (int y = 1; y <= lines_this_page + 2; y++) {
+        for (y = 1; y <= lines_this_page + 2; y++) {
             move(y - 1, 0);
             clrtoeol();
         }
         cursor(1, 1);
 
         /* print this page */
-        for (int i = 0; i < lines_this_page; i++) {
-            int idx = indices[start + i];
+        for (i = 0; i < lines_this_page; i++) {
+            idx = indices[start + i];
             inventoryline_print(idx);
             lprc('\n');
         }
 
         /* elapsed time line */
         lprintf("Elapsed time is %d.  You have %d mobuls left",
-            gtime / 100, (TIMELIMIT - gtime) / 100);
+                gtime / 100, (TIMELIMIT - gtime) / 100);
 
         /* wait for space or selection */
         itemselect = more(select_allowed);
@@ -119,24 +130,28 @@ inventoryline_page(const int* indices, int count, char select_allowed)
 
     return 0;
 }
-
 static int
 inventory_show(int (*predicate)(int))
 {
     int indices[MAXINVEN + 1];
-    int n = 0;
+    int n;
+    int i;
+    int count;
+    int sel;
 
-    for (int i = 0; i < MAXINVEN; i++)
+    n = 0;
+
+    for (i = 0; i < MAXINVEN; i++)
         if (iven[i] && predicate(iven[i]))
             indices[n++] = i;
 
-    int count = n + 2;  /* header and footer */
+    count = n + 2;  /* header and footer */
 
     t_setup(count);
-    int sel = inventoryline_page(indices, n, TRUE);
+    sel = inventoryline_page(indices, n, TRUE);
     t_endup(count);
 
-    return sel > 1 ? sel : 0;
+    return (sel > 1) ? sel : 0;
 }
 
 static int
@@ -231,34 +246,41 @@ init_inventory (void)
 int
 showstr(void)
 {
-    int count = 3;
+    int count;
+    int i;
+    int sel;
+
+    count = 3;
 
     if (c[GOLD])
         count++;
 
-    for (int i = 0; i < MAXINVEN; i++)
+    for (i = 0; i < MAXINVEN; i++)
         if (iven[i])
             count++;
 
     t_setup(count);
-    int sel = qshowstr();
+    sel = qshowstr();
     t_endup(count);
 
     return sel;
 }
 
-static int 
+static int
 qshowstr(void)
 {
     int indices[MAXINVEN + 1];
-    int n = 0;
+    int n;
+    int i;
+
+    n = 0;
 
     /* gold first */
     if (c[GOLD])
         indices[n++] = -1;
 
     /* then items */
-    for (int i = 0; i < MAXINVEN; i++)
+    for (i = 0; i < MAXINVEN; i++)
         if (iven[i])
             indices[n++] = i;
 
@@ -271,8 +293,9 @@ qshowstr(void)
 static void
 t_setup(int count)
 {
-    /* clear only the top lines */
-    for (int y = 1; y <= count; y++) {
+    int y;
+
+    for (y = 1; y <= count; y++) {
         move(y - 1, 0);
         clrtoeol();
     }

@@ -102,7 +102,22 @@ jobs:
           gcc-alpha-linux-gnu \
           libc6-dev-alpha-cross \
           binutils-alpha-linux-gnu \
-          ncurses-dev
+          wget \
+          build-essential
+
+    - name: Build ncurses for Alpha
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=alpha-linux-gnu \
+          --prefix=/usr/alpha-linux-gnu \
+          --with-termlib
+
+        make -j$(nproc)
+        sudo make install
 
     - name: Build Alpha binary
       run: |

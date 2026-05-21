@@ -352,3 +352,111 @@ jobs:
       with:
         name: larn-linux-m68k
         path: larn-26.04-linux-m68k.tar.gz
+
+  build-powerpc:
+    name: Cross-compile PowerPC (powerpc-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install PowerPC cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-powerpc-linux-gnu \
+          libc6-dev-powerpc-cross \
+          binutils-powerpc-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for PowerPC
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=powerpc-linux-gnu \
+          --prefix=/usr/powerpc-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build PowerPC binary
+      run: |
+        make -f Makefile.powerpc
+
+    - name: Package PowerPC
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/powerpc-linux-gnu/lib/libncursesw.a package/
+        cp /usr/powerpc-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-powerpc.tar.gz -C package .
+
+    - name: Upload PowerPC
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-powerpc
+        path: larn-26.04-linux-powerpc.tar.gz
+
+  build-powerpc64:
+    name: Cross-compile PowerPC64 (powerpc64-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install PowerPC64 cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-powerpc64-linux-gnu \
+          libc6-dev-powerpc64-cross \
+          binutils-powerpc64-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for PowerPC64
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=powerpc64-linux-gnu \
+          --prefix=/usr/powerpc64-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build PowerPC64 binary
+      run: |
+        make -f Makefile.powerpc64
+
+    - name: Package PowerPC64
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/powerpc64-linux-gnu/lib/libncursesw.a package/
+        cp /usr/powerpc64-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-26.04-linux-powerpc64.tar.gz -C package .
+
+    - name: Upload PowerPC64
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-powerpc64
+        path: larn-26.04-linux-powerpc64.tar.gz

@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  VERSION: "26.40"
+
 jobs:
   build-native:
     name: Native build on ${{ matrix.os }}
@@ -31,6 +34,24 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: make
 
+    - name: Package (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        # include shared libs
+        ldd larn | awk '{print $3}' | xargs -I{} cp -v {} package/ || true
+        tar -czf larn-${VERSION}-linux-amd64.tar.gz -C package .
+
+    - name: Upload (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-amd64
+        path: larn-${VERSION}-linux-amd64.tar.gz
+
     # macOS
     - name: Install dependencies (macOS)
       if: matrix.os == 'macos-latest'
@@ -39,6 +60,24 @@ jobs:
     - name: Build (macOS)
       if: matrix.os == 'macos-latest'
       run: make
+
+    - name: Package (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        # include macOS shared libs
+        otool -L larn | awk '{print $1}' | grep '/' | xargs -I{} cp -v {} package/ || true
+        tar -czf larn-${VERSION}-macos-universal.tar.gz -C package .
+
+    - name: Upload (macOS)
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-macos-universal
+        path: larn-${VERSION}-macos-universal.tar.gz
 
   build-cross:
     name: Cross-compile for ${{ matrix.platform }}
@@ -81,11 +120,24 @@ jobs:
           --output type=local,dest=./out-${SAFE} \
           -f Dockerfile.cross .
 
-    - name: Tar output
+    - name: Package
       run: |
         SAFE="${{ matrix.platform }}"
         SAFE="${SAFE//\//_}"
-        tar -czf larn-${SAFE}.tar.gz -C out-${SAFE} .
+        mkdir package
+        cp out-${SAFE}/larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        # include libs if present
+        cp out-${SAFE}/*.so* package/ 2>/dev/null || true
+        cp out-${SAFE}/*.a package/ 2>/dev/null || true
+        tar -czf larn-${VERSION}-${SAFE}.tar.gz -C package .
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-${{ matrix.platform }}
+        path: larn-${VERSION}-${{ matrix.platform }}.tar.gz
 
   build-alpha:
     name: Cross-compile Alpha (alpha-linux-gnu)
@@ -125,8 +177,72 @@ jobs:
       run: |
         make -f Makefile.alpha
 
-    - name: Upload Alpha binary
+    - name: Package Alpha
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/alpha-linux-gnu/lib/libncursesw.a package/
+        cp /usr/alpha-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-${VERSION}-linux-dec-alpha.tar.gz -C package .
+
+    - name: Upload Alpha
       uses: actions/upload-artifact@v4
       with:
-        name: larn
-        path: larn
+        name: larn-linux-dec-alpha
+        path: larn-${VERSION}-linux-dec-alpha.tar.gz
+
+  build-ia64:
+    name: Cross-compile Itanium (ia64-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install IA64 cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-ia64-linux-gnu \
+          libc6-dev-ia64-cross \
+          binutils-ia64-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for IA64
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=ia64-linux-gnu \
+          --prefix=/usr/ia64-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build IA64 binary
+      run: |
+        make -f Makefile.ia64
+
+    - name: Package IA64
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/ia64-linux-gnu/lib/libncursesw.a package/
+        cp /usr/ia64-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-${VERSION}-linux-ia64.tar.gz -C package .
+
+    - name: Upload IA64
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-ia64
+        path: larn-${VERSION}-linux-ia64.tar.gz

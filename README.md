@@ -5,11 +5,9 @@ I am the official maintainer of Larn.
 
 ## Supported Systems
 
-- GNU/Linux
-- BSD
-- UNIX  
-- macOS  
-- Windows (only Nuwen MinGW support, msys and cygwin are not.)
+Larn runs on all CPU architectures and all Operating Systems with the strictest compilation flags.  Warnings are bugs.
+
+## Notice for Windows users
 
 Cygwin and MSYS2 are only supported if NOT linking to their GPL requirement (msys-2.0.dll or cygwin1.dll).
 
@@ -17,8 +15,7 @@ Larn is NOT a GPL'd program.
 
 ## Building
 
-Larn provides separate build paths for Unix‑like systems and MinGW on Windows.  
-All builds place the final binary in the `bin/` directory.
+Larn provides separate build paths for Unix and Unix‑like systems and MinGW on Windows.
 
 ---
 
@@ -26,9 +23,15 @@ All builds place the final binary in the `bin/` directory.
 
 ```sh
 make
-make prep
 ```
-or move the contents of larnfiles/ youself
+then move the contents of larnfiles/ yourself into the same directory as the binary.
+
+## Exotic Platforms have their own Makefiles
+
+```sh
+make -f Makefile.<platform>
+```
+then move the contents of larnfiles/ yourself into the same directory as the binary.
 
 ## MinGW (Nuwen MinGW)
 
@@ -37,4 +40,4 @@ make -f Makefile.mingw prep
 make -f Makefile.mingw
 ```
 
-then move the contents of larnfiles/ youself
+then move the contents of larnfiles/ yourself into the same directory as the binary.

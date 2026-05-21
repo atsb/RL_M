@@ -1125,7 +1125,11 @@ flush_buf (void)
 {
       if (lfd > 2)
 	{
-		(void)write(lfd, outbuf, io_index);
+        ssize_t w = write(lfd, outbuf, io_index);
+        if (w < 0)
+        {
+            /* flush failure is not a problem */
+        }
 	}
     io_index = 0;
 }

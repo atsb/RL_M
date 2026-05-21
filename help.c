@@ -112,7 +112,11 @@ help(void)
         return 0;
 
     for (i = 0; i < 23; i++)
-        (void)fgets(line, sizeof(line), fp);
+    {
+        char *tmp = fgets(line, sizeof(line), fp);
+        if (!tmp)
+            break;
+    }
 
     while (pages > 0)
     {

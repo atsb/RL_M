@@ -190,39 +190,33 @@ jobs:
         name: larn-linux-dec-alpha
         path: larn-${VERSION}-linux-dec-alpha.tar.gz
 
-  build-ia64:
-    name: Cross-compile Itanium (ia64-linux-gnu)
+  build-sparc:
+    name: Cross-compile SPARC (sparc-linux-gnu)
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Add Debian Ports IA64 repo
-      run: |
-        echo "deb [trusted=yes] http://ftp.ports.debian.org/debian-ports unstable main" \
-          | sudo tee /etc/apt/sources.list.d/debian-ports.list
-
-    - name: Install IA64 cross toolchain
+    - name: Install SPARC cross toolchain
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          gcc-ia64-linux-gnu \
-          libc6-dev-ia64-cross \
-          binutils-ia64-linux-gnu \
+          gcc-sparc-linux-gnu \
+          libc6-dev-sparc-cross \
+          binutils-sparc-linux-gnu \
           wget \
           build-essential
 
-    - name: Build ncurses for IA64
+    - name: Build ncurses for SPARC
       run: |
         wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
         tar xf ncurses-6.4.tar.gz
         cd ncurses-6.4
 
         ./configure \
-          --host=ia64-linux-gnu \
-          --prefix=/usr/ia64-linux-gnu \
+          --host=sparc-linux-gnu \
+          --prefix=/usr/sparc-linux-gnu \
           --with-termlib --without-progs \
           --enable-widec --without-cxx \
           --without-cxx-binding --without-curses-h
@@ -230,22 +224,76 @@ jobs:
         make -j$(nproc)
         sudo make install
 
-    - name: Build IA64 binary
+    - name: Build SPARC binary
       run: |
-        make -f Makefile.ia64
+        make -f Makefile.sparc
 
-    - name: Package IA64
+    - name: Package SPARC
       run: |
         mkdir package
         cp larn package/
         cp -r docs package/
         cp -r larnfiles package/
-        cp /usr/ia64-linux-gnu/lib/libncursesw.a package/
-        cp /usr/ia64-linux-gnu/lib/libtinfow.a package/
-        tar -czf larn-${VERSION}-linux-ia64.tar.gz -C package .
+        cp /usr/sparc-linux-gnu/lib/libncursesw.a package/
+        cp /usr/sparc-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-${VERSION}-linux-sparc.tar.gz -C package .
 
-    - name: Upload IA64
+    - name: Upload SPARC
       uses: actions/upload-artifact@v4
       with:
-        name: larn-linux-ia64
-        path: larn-${VERSION}-linux-ia64.tar.gz
+        name: larn-linux-sparc
+        path: larn-${VERSION}-linux-sparc.tar.gz
+
+  build-sparc64:
+    name: Cross-compile UltraSPARC (sparc64-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install SPARC64 cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-sparc64-linux-gnu \
+          libc6-dev-sparc64-cross \
+          binutils-sparc64-linux-gnu \
+          wget \
+          build-essential
+
+    - name: Build ncurses for SPARC64
+      run: |
+        wget https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.4.tar.gz
+        tar xf ncurses-6.4.tar.gz
+        cd ncurses-6.4
+
+        ./configure \
+          --host=sparc64-linux-gnu \
+          --prefix=/usr/sparc64-linux-gnu \
+          --with-termlib --without-progs \
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
+
+        make -j$(nproc)
+        sudo make install
+
+    - name: Build SPARC64 binary
+      run: |
+        make -f Makefile.sparc64
+
+    - name: Package SPARC64
+      run: |
+        mkdir package
+        cp larn package/
+        cp -r docs package/
+        cp -r larnfiles package/
+        cp /usr/sparc64-linux-gnu/lib/libncursesw.a package/
+        cp /usr/sparc64-linux-gnu/lib/libtinfow.a package/
+        tar -czf larn-${VERSION}-linux-sparc64.tar.gz -C package .
+
+    - name: Upload SPARC64
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn-linux-sparc64
+        path: larn-${VERSION}-linux-sparc64.tar.gz

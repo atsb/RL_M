@@ -1,0 +1,18 @@
+# Makefile for UltraSPARC (sparc64-linux-gnu)
+
+include mk/objects.mk
+
+CC      = sparc64-linux-gnu-gcc
+CFLAGS  = -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY -ansi
+LDFLAGS = -lncursesw -ltinfow -lm
+
+all: larn
+
+larn: $(OBJS)
+    $(CC) $(CFLAGS) $(OBJS) -o larn $(LDFLAGS)
+
+%.o: %.c
+    $(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+    rm -f *.o larn

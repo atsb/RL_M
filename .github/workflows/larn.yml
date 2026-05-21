@@ -115,7 +115,8 @@ jobs:
           --host=alpha-linux-gnu \
           --prefix=/usr/alpha-linux-gnu \
           --with-termlib --without-progs \
-          --enable-widec
+          --enable-widec --without-cxx \
+          --without-cxx-binding --without-curses-h
 
         make -j$(nproc)
         sudo make install

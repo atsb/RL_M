@@ -193,6 +193,7 @@ jobs:
   build-ia64:
     name: Cross-compile Itanium (ia64-linux-gnu)
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
 
     steps:
     - name: Checkout
@@ -200,7 +201,8 @@ jobs:
 
     - name: Add Debian Ports IA64 repo
       run: |
-        echo "deb [trusted=yes] http://ftp.ports.debian.org/debian-ports unstable main" | sudo tee /etc/apt/sources.list.d/debian-ports.list
+        echo "deb [trusted=yes] http://ftp.ports.debian.org/debian-ports unstable main" \
+          | sudo tee /etc/apt/sources.list.d/debian-ports.list
 
     - name: Install IA64 cross toolchain
       run: |

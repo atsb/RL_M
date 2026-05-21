@@ -526,8 +526,8 @@ larint (void)
 void
 lrfill(char* adr, int num)
 {
-    int available, iepoint, ipoint, tocopy;
-    
+    int available, iepoint = 0, ipoint = 0, tocopy;
+
     while (num > 0)
     {
         if (ipoint >= iepoint)
@@ -1002,7 +1002,7 @@ init_term(void)
     }
     else {
         /* otherwise monochrome */
-        for (i = 0; i < MAXMONST + 10; i++)
+        for (i = 0; i < MAXMONST + 9; i++)
             moncolor[i] = COLOR_WHITE;
 
         for (i = 0; i < MAXOBJECT + 1; i++)

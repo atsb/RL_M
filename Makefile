@@ -1,7 +1,7 @@
 # Makefile for Larn
 
 CC      = cc
-CFLAGS  = -O2 -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY
+CFLAGS  = -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY
 LDFLAGS = -lm -lncurses
 
 include mk/objects.mk

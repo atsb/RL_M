@@ -200,7 +200,7 @@ readopts(void)
 int
 yylex (void)
 {
-  char cc;
+  char cc = 0;
   char firsttime = TRUE;
 
   if (hit2flag)

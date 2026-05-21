@@ -60,7 +60,6 @@ jobs:
           - linux/ppc64le
           - linux/s390x
           - linux/riscv64
-          - linux/alpha
 
     steps:
     - name: Checkout
@@ -87,3 +86,30 @@ jobs:
         SAFE="${{ matrix.platform }}"
         SAFE="${SAFE//\//_}"
         tar -czf larn-${SAFE}.tar.gz -C out-${SAFE} .
+
+  build-alpha:
+    name: Cross-compile Alpha (alpha-linux-gnu)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Alpha cross toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-alpha-linux-gnu \
+          libc6-dev-alpha-cross \
+          binutils-alpha-linux-gnu \
+          ncurses-dev
+
+    - name: Build Alpha binary
+      run: |
+        make -f Makefile.alpha
+
+    - name: Upload Alpha binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: larn
+        path: larn

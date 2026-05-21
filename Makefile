@@ -1,70 +1,91 @@
-# Linux/BSD/UNIX Makefile for Larn
+# Makefile for Larn
 
-MKDIR = mkdir -p
-CP    = cp -r
-MV    = mv
-RM    = rm -f
-RMDIR = rm -rf
+CC      = cc
+CFLAGS  = -O2 -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY
+LDFLAGS = -lm -lncurses
 
-# compiler & flags
-CC      ?= cc
-CFLAGS  += -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY
+include mk/objects.mk
 
-# platform libs
-ifeq ($(UNAME_S),Darwin)
-    LDFLAGS += -lncurses
-else ifneq ($(UNAME_S),Windows)
-    LDFLAGS += -lm -lncurses
-endif
+all: larn
 
-# directories
-SRCDIR   := .
-BUILDDIR := build
-OBJDIR   := $(BUILDDIR)/obj
-DEPDIR   := $(BUILDDIR)/dep
-BINDIR   := bin
-RUNTIME  := larnfiles/*
+larn: $(OBJS)
+    $(CC) $(OBJS) -o larn $(LDFLAGS)
 
-# sources, objects, deps
-SRC := $(wildcard $(SRCDIR)/*.c)
-OBJ := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
-DEP := $(patsubst $(OBJDIR)/%.o,$(DEPDIR)/%.d,$(OBJ))
+# Compile each .c into .o
+action.o: action.c
+    $(CC) $(CFLAGS) -c action.c
 
-TARGET := $(BINDIR)/larn
+bill.o: bill.c
+    $(CC) $(CFLAGS) -c bill.c
 
-# build rules
-all: $(TARGET)
+config.o: config.c
+    $(CC) $(CFLAGS) -c config.c
 
-$(TARGET): $(OBJ) | $(BINDIR)
-	$(CC) -o $@ $(OBJ) $(LDFLAGS)
+create.o: create.c
+    $(CC) $(CFLAGS) -c create.c
 
-# create directories automatically
-$(OBJDIR) $(DEPDIR) $(BINDIR):
-	$(MKDIR) $(BUILDDIR)
-	$(MKDIR) $(OBJDIR)
-	$(MKDIR) $(DEPDIR)
-	$(MKDIR) $(BINDIR)
+data.o: data.c
+    $(CC) $(CFLAGS) -c data.c
 
-# pattern rule for object files
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR) $(DEPDIR)
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
-	$(MV) $(OBJDIR)/$*.d $(DEPDIR)/$*.d
+diag.o: diag.c
+    $(CC) $(CFLAGS) -c diag.c
 
-# include dependency files
--include $(DEP)
+display.o: display.c
+    $(CC) $(CFLAGS) -c display.c
 
-# copy runtime files into bin/
-.PHONY: prep
-prep: $(TARGET)
-	$(MKDIR) $(BINDIR)
-	$(CP) $(RUNTIME) $(BINDIR)
+fortune.o: fortune.c
+    $(CC) $(CFLAGS) -c fortune.c
 
-# cleaning
-.PHONY: clean
+global.o: global.c
+    $(CC) $(CFLAGS) -c global.c
+
+help.o: help.c
+    $(CC) $(CFLAGS) -c help.c
+
+inventory.o: inventory.c
+    $(CC) $(CFLAGS) -c inventory.c
+
+io.o: io.c
+    $(CC) $(CFLAGS) -c io.c
+
+main.o: main.c
+    $(CC) $(CFLAGS) -c main.c
+
+monster.o: monster.c
+    $(CC) $(CFLAGS) -c monster.c
+
+moreobj.o: moreobj.c
+    $(CC) $(CFLAGS) -c moreobj.c
+
+movem.o: movem.c
+    $(CC) $(CFLAGS) -c movem.c
+
+nap.o: nap.c
+    $(CC) $(CFLAGS) -c nap.c
+
+object.o: object.c
+    $(CC) $(CFLAGS) -c object.c
+
+regen.o: regen.c
+    $(CC) $(CFLAGS) -c regen.c
+
+savelev.o: savelev.c
+    $(CC) $(CFLAGS) -c savelev.c
+
+scores.o: scores.c
+    $(CC) $(CFLAGS) -c scores.c
+
+spells.o: spells.c
+    $(CC) $(CFLAGS) -c spells.c
+
+spheres.o: spheres.c
+    $(CC) $(CFLAGS) -c spheres.c
+
+store.o: store.c
+    $(CC) $(CFLAGS) -c store.c
+
+tok.o: tok.c
+    $(CC) $(CFLAGS) -c tok.c
+
 clean:
-	$(RMDIR) $(BUILDDIR)
-	$(RM) $(TARGET)
-
-.PHONY: distclean
-distclean: clean
-	$(RMDIR) $(BINDIR)
+    rm -f *.o larn

@@ -1,22 +1,12 @@
 FROM --platform=$BUILDPLATFORM debian:stable AS build
 
-ARG TARGETPLATFORM
-ENV TARGETPLATFORM=$TARGETPLATFORM
-
 RUN apt-get update && \
     apt-get install -y build-essential ncurses-dev
 
 WORKDIR /src
 COPY . .
 
-RUN \
-    if [ "$TARGETPLATFORM" = "linux/alpha" ]; then \
-        echo "Building for Alpha using Makefile.alpha"; \
-        make -f Makefile.alpha; \
-    else \
-        echo "Building using default Makefile"; \
-        make; \
-    fi
+RUN make
 
 FROM scratch AS export
 COPY --from=build /src/bin/larn /larn

@@ -6,7 +6,15 @@ RUN apt-get update && \
 WORKDIR /src
 COPY . .
 
-RUN make
+# Alpha, default to normal Makefile otherwise
+RUN \
+    if [ "$TARGETPLATFORM" = "linux/alpha" ]; then \
+        echo "Building for Alpha using Makefile.alpha"; \
+        make -f Makefile.alpha; \
+    else \
+        echo "Building using default Makefile"; \
+        make; \
+    fi
 
 FROM scratch AS export
 COPY --from=build /src/bin/larn /larn

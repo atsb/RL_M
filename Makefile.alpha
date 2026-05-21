@@ -1,0 +1,16 @@
+include mk/objects.mk
+
+CC      = alpha-linux-gnu-gcc
+CFLAGS  = -O2 -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY -ansi
+LDFLAGS = -lm -lncurses
+
+all: larn
+
+%.o: %.c
+    $(CC) $(CFLAGS) -c -o $@ $<
+
+larn: $(OBJS)
+    $(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+clean:
+    rm -f *.o larn

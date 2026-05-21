@@ -1125,7 +1125,7 @@ flush_buf (void)
 {
       if (lfd > 2)
 	{
-		write(lfd, outbuf, io_index);
+		(void)write(lfd, outbuf, io_index);
 	}
     io_index = 0;
 }

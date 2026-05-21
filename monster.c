@@ -549,7 +549,7 @@ dropgold (int amount)
 void
 something (int lv)
 {
-  int j, i;
+  int j, i = 0;
 
   if (lv < 0 || lv > MAXLEVEL + MAXVLEVEL)
     return;			/* correct level? */

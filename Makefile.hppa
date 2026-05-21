@@ -3,7 +3,7 @@
 include mk/objects.mk
 
 CC      = hppa-linux-gnu-gcc
-CFLAGS  = -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY -ansi
+CFLAGS  = -O3 -fstrict-aliasing -fno-strict-overflow -fno-delete-null-pointer-checks -fno-common -Wall -Wextra -Wshadow -Wstrict-prototypes -Wmissing-prototypes -DMULTIPLE_SCORE_ENTRY -ansi
 LDFLAGS = -lncursesw -ltinfow -lm
 
 all: larn

@@ -77,6 +77,7 @@ int lfd = 0;		/*  output file numbers     */
 int fd;				/*  input file numbers      */
 static int curx = 0;
 static int cury = 0;
+static int available, tocopy;
 static int ipoint = MAXIBUF, iepoint = MAXIBUF;	/*  input buffering pointers    */
 static char lgetwbuf[LINBUFSIZE];	/* get line (word) buffer               */
 static int (*getchfn) (void);
@@ -526,8 +527,6 @@ larint (void)
 void
 lrfill(char* adr, int num)
 {
-    int available, iepoint = 0, ipoint = 0, tocopy;
-
     while (num > 0)
     {
         if (ipoint >= iepoint)
@@ -744,8 +743,10 @@ lwclose (void)
 void
 lprcat (char *str)
 {
+    char* p = str, *str2;
+    char charstring;
+
     if (lfd > 2) {
-      char *str2;
       
       if (lpnt >= lpend)
         {
@@ -759,10 +760,8 @@ lprcat (char *str)
       lflush();
     }
     else {
-        char* p = str;
-        char c;
-        while ((c = *p++)) {
-            lprc(c);
+        while ((charstring = *p++)) {
+            lprc(charstring);
         }
     }
 }
@@ -1131,24 +1130,11 @@ flush_buf (void)
     io_index = 0;
 }
 
-/*
-*  flushall()  Function to flush all type-ahead in the input buffer
-*  
-*/
-
-void
-lflushall (void)
-{
-    flushinp();
-}
-
-
-
 void
 enter_name (void)
 {
     int i;
-    char c;
+    char characternamestring;
 
   if (name_set)
   {
@@ -1164,11 +1150,11 @@ enter_name (void)
 
   do
     {
-      c = ttgetch ();
+      characternamestring = ttgetch ();
 
-      if (c == '\n')
+      if (characternamestring == '\n')
 	break;
-      if (c == 8)
+      if (characternamestring == 8)
 	{
 	  if (i > 0)
 	    {
@@ -1176,9 +1162,9 @@ enter_name (void)
 	      term_delch ();
 	    }
 	}
-      else if (isprint (c))
+      else if (isprint (characternamestring))
 	{
-	  logname[i] = c;
+	  logname[i] = characternamestring;
 	  ++i;
 	}
 

@@ -409,9 +409,7 @@ makemaze_caverns(int k)
 }
 
 /*
-makemaze(level)
-int level;
-
+makemaze(int)
 subroutine to make the caverns for a given level.  only walls are made.
 */
 static void
@@ -519,7 +517,7 @@ makemaze(int k)
     /* horizontal corridor -- not on level 10 */
     if (k != MAXLEVEL - 1)
     {
-        int my = rnd(MAXY - 2);
+        my = rnd(MAXY - 2);
         for (i = 1; i < MAXX - 1; i++)
             item[i][my] = 0;
     }
@@ -832,13 +830,13 @@ make_cryinglava(int cx, int cy)
 }
 
 /*
-* makestream(level)
+* makestream(lvl)
 *
 * subroutine to make a long winding horizontal river
 * or a more subdued stream.
 */
 static void
-makestream(int level)
+makestream(int lvl)
 {
     int x, y, dx, dy, len, i;
     int width;
@@ -849,7 +847,7 @@ makestream(int level)
     int wiggle;
 
     /* do not create water in the volcano */
-    if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
+    if (lvl >= VOLCANOLEVEL_START && lvl <= VOLCANOLEVEL_END)
         return;
 
     width = 2;
@@ -1156,12 +1154,12 @@ expand_puddle(void)
 }
 
 /*
-* makepuddle(level)
+* makepuddle(lvl)
 *
 * subroutine to make a puddle of a given size
 */
 static void
-makepuddle(int level)
+makepuddle(int lvl)
 {
     int puddle_width, puddle_height;
     int px, py;
@@ -1169,7 +1167,7 @@ makepuddle(int level)
     int attempts;
     int suitable;
 
-    if (level >= VOLCANOLEVEL_START && level <= VOLCANOLEVEL_END)
+    if (lvl >= VOLCANOLEVEL_START && lvl <= VOLCANOLEVEL_END)
         return;
 
     puddle_width = 2 + rnd(7);

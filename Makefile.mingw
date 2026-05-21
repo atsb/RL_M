@@ -11,7 +11,7 @@ SRC = action.c bill.c config.c create.c data.c diag.c display.c fortune.c global
       help.c inventory.c io.c main.c monster.c moreobj.c movem.c nap.c object.c regen.c \
       savelev.c scores.c spells.c spheres.c store.c tok.c
 
-CFLAGS  = -Wall -Wextra -Werror -pedantic -DMULTIPLE_SCORE_ENTRY
+CFLAGS  = -O3 -fstrict-aliasing -fno-strict-overflow -fno-delete-null-pointer-checks -fno-common -Wall -Wextra -Wshadow -Wstrict-prototypes -Wmissing-prototypes -pedantic -DMULTIPLE_SCORE_ENTRY
 LDFLAGS = -lpdcurses
 
 TARGET := $(BINDIR)\larn.exe

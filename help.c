@@ -27,7 +27,7 @@
  */
 
  /* Interpret ANSI escapes and print using curses */
-void
+static void
 ansihelp(const char *s)
 {
     const char *p;
@@ -105,7 +105,7 @@ help(void)
     char line[512];
     int pages;
     int i;
-    int c;
+    int getchkey;
 
     pages = openhelp(&fp);
     if (pages < 0)
@@ -137,11 +137,11 @@ help(void)
             lstandout("space");
             lprcat(" for more help ---- ");
 
-            c = ttgetch();
-            while (c != ' ' && c != '\n' && c != '\033')
-                c = ttgetch();
+            getchkey = ttgetch();
+            while (getchkey != ' ' && getchkey != '\n' && getchkey != '\033')
+                getchkey = ttgetch();
 
-            if (c == '\n' || c == '\033') {
+            if (getchkey == '\n' || getchkey == '\033') {
                 fclose(fp);
                 setscroll();
                 drawscreen();
@@ -216,11 +216,12 @@ retcont(void)
 int
 openhelp(FILE** fp_out)
 {
-    FILE* fp = fopen(helpfile, "r");
+    FILE* fp = fopen("larn.help", "r");
     int pages;
 
     if (!fp) {
-        lprintf("Can't open help file \"%s\"\n", helpfile);
+        cursors();
+        lprintf("Can't open help file \"%s\"\n", "larn.help");
         lflush();
 #ifdef _WIN32
         Sleep(4000);

@@ -114,7 +114,7 @@ jobs:
         ./configure \
           --host=alpha-linux-gnu \
           --prefix=/usr/alpha-linux-gnu \
-          --with-termlib
+          --with-termlib --without-progs
 
         make -j$(nproc)
         sudo make install

@@ -395,33 +395,37 @@ void
 lprc(char ch)
 {
     if (lfd > 2) {
-        *lpnt++ = ch;
+        unsigned char* p = (unsigned char*)lpnt;
+        *p = (unsigned char)ch;
+        lpnt = (void*)(p + 1);
+
         if (lpnt >= lpend)
             lflush();
+        return;
     }
-    else {
-        if (ch == '\n' && enable_scroll) {
-            if (cury >= 20) {
-                scrline++;
-                if (scrline > 24)
-                    scrline = 21;
-                move(scrline - 1, 0);
-                clrtoeol();
-                return;
-            } else {
-                addch('\n');
-                return;
-            }
+
+    if (ch == '\n' && enable_scroll) {
+        if (cury >= 20) {
+            scrline++;
+            if (scrline > 24)
+                scrline = 21;
+            move(scrline - 1, 0);
+            clrtoeol();
+            return;
         }
-        else if (ch == '\t')
-            addstr("    ");
-        else
-            addch(ch);
+        else {
+            addch('\n');
+            return;
+        }
+    }
+    else if (ch == '\t')
+        addstr("    ");
+    else
+        addch(ch);
 
 #ifdef EXTRA
-        c[BYTESOUT]++;
+    c[BYTESOUT]++;
 #endif
-    }
 }
 
 /*
@@ -431,36 +435,36 @@ lprc(char ch)
 *  
 *  Enter with the address and number of bytes to write out
 *  Returns nothing of value
-*/
-void
-lwrite (char *buf, int len)
+*/void
+lwrite(char* buf, int len)
 {
-  char *str;
-  int num2;
+    unsigned char* src = (unsigned char*)buf;
 
-  if (len > 399)		/* don't copy data if can just write it */
-    {
+    if (len > 399) {
 #ifdef EXTRA
-      c[BYTESOUT] += len;
+        c[BYTESOUT] += len;
 #endif
-
-      for (str = buf; len > 0; --len)
-	lprc (*str++);
+        while (len--)
+            lprc(*src++);
+        return;
     }
-  else
-    while (len)
-      {
-	if (lpnt >= lpend)
-	  lflush ();		/* if buffer is full flush it   */
-	num2 = lpbuf + BUFBIG - lpnt;	/*  # bytes left in output buffer   */
-	if (num2 > len)
-	  num2 = len;
-	str = lpnt;
-	len -= num2;
-	while (num2--)
-	  *str++ = *buf++;	/* copy in the bytes */
-	lpnt = str;
-      }
+
+    while (len) {
+        if (lpnt >= lpend)
+            lflush();
+
+        int num2 = (int)(lpend - lpnt);
+        if (num2 > len)
+            num2 = len;
+
+        unsigned char* dst = (unsigned char*)lpnt;
+
+        for (int i = 0; i < num2; i++)
+            dst[i] = src[i];
+        lpnt = (char*)(dst + num2);
+        src += num2;
+        len -= num2;
+    }
 }
 
 /*
@@ -730,30 +734,32 @@ lwclose (void)
 *                                  avoids calls to lprintf (time consuming)
 */
 void
-lprcat (char *str)
+lprcat(char* str)
 {
-    char* p = str, *str2;
-    char charstring;
-
     if (lfd > 2) {
-      
-      if (lpnt >= lpend)
-        {
-          lflush();
-        }
-      str2 = lpnt;
+        unsigned char* dst = (unsigned char*)lpnt;
+        unsigned char* src = (unsigned char*)str;
 
-      while ((*str2++ = *str++) != '\0')
-        ;
-      lpnt = str2 - 1;
-      lflush();
-    }
-    else {
-        while ((charstring = *p++)) {
-            lprc(charstring);
+        while (*src) {
+            if (dst >= (unsigned char*)lpend)
+                lflush();
+
+            *dst++ = *src++;
         }
+
+        if (dst >= (unsigned char*)lpend)
+            lflush();
+
+        *dst++ = '\0';
+
+        lpnt = (char*)dst;
+        lflush();
+        return;
     }
+    while (*str)
+        lprc(*str++);
 }
+
 
 /*
 * cursor(x,y)    Put cursor at specified coordinates staring at [1,1] (termcap)

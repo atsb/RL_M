@@ -439,6 +439,7 @@ lprc(char ch)
 lwrite(char* buf, int len)
 {
     unsigned char* src = (unsigned char*)buf;
+    int i;
 
     if (len > 399) {
 #ifdef EXTRA
@@ -459,7 +460,7 @@ lwrite(char* buf, int len)
 
         unsigned char* dst = (unsigned char*)lpnt;
 
-        for (int i = 0; i < num2; i++)
+        for (i = 0; i < num2; i++)
             dst[i] = src[i];
         lpnt = (char*)(dst + num2);
         src += num2;

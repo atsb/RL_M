@@ -160,6 +160,7 @@ drawscreen(void)
     {
         /* clear the screen */
         d_flag = 1;
+        screen_clear();
     }
     else
     {

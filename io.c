@@ -366,22 +366,25 @@ lprintf (const char *fmt, ...)
 *      and is written to be system independent.
 *  No checking for output buffer overflow is done, but flushes if needed!
 *  Returns nothing of value.
+* 
+* Made Endian independent and more efficient. ~Gibbon
 */
-void
-lprint (int x)
+void lprint(int x)
 {
+    unsigned char b0 = (unsigned char)(x & 0xFF);
+    unsigned char b1 = (unsigned char)((x >> 8) & 0xFF);
+    unsigned char b2 = (unsigned char)((x >> 16) & 0xFF);
+    unsigned char b3 = (unsigned char)((x >> 24) & 0xFF);
 
-  if (lpnt >= lpend)
-    {
+    if (lpnt + 4 > lpend)
+        lflush();
 
-      lflush ();
-    }
+    lpnt[0] = b0;
+    lpnt[1] = b1;
+    lpnt[2] = b2;
+    lpnt[3] = b3;
 
-  *lpnt++ = 255 & x;
-  *lpnt++ = 255 & (x >> 8);
-  *lpnt++ = 255 & (x >> 16);
-  *lpnt++ = 255 & (x >> 24);
-
+    lpnt += 4;
 }
 
 /* 

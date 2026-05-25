@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Larn — Copyright © 1986 Noah Morgan
  *        Copyright © 2014-2026 Gibbon
  *
@@ -6,7 +6,7 @@
  * The Noah Licence, Version 1.0.
  *
  * You may use, modify, and redistribute this code for
- * non‑commercial purposes, provided that:
+ * non-commercial purposes, provided that:
  *   - this notice is preserved,
  *   - The Noah Licence accompanies all redistributions, and
  *   - no profit is made from Larn or derivative works
@@ -581,7 +581,7 @@ worldboundary(void)
 
         item[ex][ey] = OENTRANCE;
 
-        /* clear a 5‑tile radius around the entrance */
+        /* clear a 5-tile radius around the entrance */
         for (y = ey - 5; y <= ey + 5; y++) {
             for (x = ex - 5; x <= ex + 5; x++) {
 

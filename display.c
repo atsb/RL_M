@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Larn — Copyright © 1986 Noah Morgan
  *        Copyright © 2014-2026 Gibbon
  *

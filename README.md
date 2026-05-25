@@ -42,6 +42,7 @@ On any UNIX‑like system:
 ```sh
 make clean
 make
+```
 
 ## 4. Basic Native Windows Build
 
@@ -51,6 +52,7 @@ On any MinGW system (NOT cygwin or MSYS2):
 make -f Makefile.mingw clean
 make -f Makefile.mingw prep
 make -f Makefile.mingw
+```
 
 ## 5. Preparing to Run the Binary:
 

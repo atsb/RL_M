@@ -22,9 +22,6 @@
 #include "larnfunc.h"
 #include "savelev.h"
 
-
-
-
 /*
  *  routine to save the present level into storage
  */
@@ -65,8 +62,6 @@ savelevel (void)
       pcel++;
     }
 }
-
-
 
 /*
  * routine to restore a level from storage

@@ -656,7 +656,7 @@ lcreat(char* str)
     if (str == NULL)
         return -1;
 
-#ifdef _WIN32
+#ifdef O_BINARY
     lfd = open(str, O_RDWR | O_CREAT | O_TRUNC | O_BINARY, 0666);
 #else
     lfd = open(str, O_RDWR | O_CREAT | O_TRUNC, 0666);
@@ -686,7 +686,7 @@ lopen(char* str)
     if (str == NULL)
         return -1;
 
-#ifdef _WIN32
+#ifdef O_BINARY
     fd = open(str, O_RDONLY | O_BINARY);
 #else
     fd = open(str, O_RDONLY);

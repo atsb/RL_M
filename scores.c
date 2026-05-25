@@ -913,61 +913,96 @@ diedsub (int x)
     }
 }
 
-
-
 /*
 *  diedlog()   Subroutine to read a log file and print it out in ascii format
 */
 void
-diedlog (void)
+diedlog(void)
 {
-  int n;
-  char *p;
-  struct stat stbuf;
+    FILE *fp;
+    long pos, size;
+    int n;
+    char *p;
 
-  lcreat ((char *) 0);
-  if (lopen (logfile) < 0)
+    lcreat((char *)0);
+
+    fp = fopen(logfile, "rb");
+    if (!fp)
     {
-      lprintf ("Can't locate log file <%s>\n", logfile);
-      return;
+        lprintf("Can't locate log file <%s>\n", logfile);
+        return;
     }
-  if (fstat (fd, &stbuf) < 0)
+
+    pos = ftell(fp);
+    if (pos < 0)
     {
-      lprintf ("Can't  stat log file <%s>\n", logfile);
-      return;
+        lprintf("Can't stat log file <%s>\n", logfile);
+        fclose(fp);
+        return;
     }
-  for (n = stbuf.st_size / sizeof (struct log_fmt); n > 0; --n)
+
+    if (fseek(fp, 0L, SEEK_END) != 0)
     {
-      lrfill ((char *) &logg, sizeof (struct log_fmt));
-      p = ctime ((time_t *) & logg.diedtime);
-      p[16] = '\n';
-      p[17] = 0;
-      lprintf ("Score: %d, Diff: %d,  %s %s on %d at %s", (int) (logg.score),
-	       (int) (logg.diff), logg.who, logg.what, (int) (logg.cavelev),
-	       p + 4);
+        lprintf("Can't stat log file <%s>\n", logfile);
+        fclose(fp);
+        return;
+    }
+
+    size = ftell(fp);
+    if (size < 0)
+    {
+        lprintf("Can't stat log file <%s>\n", logfile);
+        fclose(fp);
+        return;
+    }
+
+    if (fseek(fp, pos, SEEK_SET) != 0)
+    {
+        lprintf("Can't stat log file <%s>\n", logfile);
+        fclose(fp);
+        return;
+    }
+
+    for (n = size / (long)sizeof(struct log_fmt); n > 0; --n)
+    {
+        if (fread(&logg, sizeof(struct log_fmt), 1, fp) != 1)
+            break;
+
+        p = ctime((time_t *)&logg.diedtime);
+        if (p)
+        {
+            p[16] = '\n';
+            p[17] = 0;
+        }
+        else
+        {
+            p = "unknown time\n";
+        }
+
+        lprintf("Score: %d, Diff: %d,  %s %s on %d at %s",
+                (int)logg.score, (int)logg.diff,
+                logg.who, logg.what, (int)logg.cavelev, p + 4);
+
 #ifdef EXTRA
-      if (logg.moves <= 0)
-	logg.moves = 1;
-      lprintf
-	("  Experience Level: %d,  AC: %d,  HP: %d/%d,  Elapsed Time: %d minutes\n",
-	 (int) (logg.lev), (int) (logg.ac), (int) (logg.hp),
-	 (int) (logg.hpmax), (int) (logg.elapsedtime));
+        if (logg.moves <= 0)
+            logg.moves = 1;
 
-      lprintf
-	("  BYTES in: %d, out: %d, moves: %d, deaths: %d, spells cast: %d\n",
-	 (int) (logg.bytin), (int) (logg.bytout), (int) (logg.moves),
-	 (int) (logg.killed), (int) (logg.spused));
-      lprintf ("  out bytes per move: %d", (int) (logg.bytout / logg.moves));
-      lprintf ("\n");
+        lprintf("  Experience Level: %d,  AC: %d,  HP: %d/%d,  Elapsed Time: %d minutes\n",
+                (int)logg.lev, (int)logg.ac, (int)logg.hp,
+                (int)logg.hpmax, (int)logg.elapsedtime);
+
+        lprintf("  BYTES in: %d, out: %d, moves: %d, deaths: %d, spells cast: %d\n",
+                (int)logg.bytin, (int)logg.bytout, (int)logg.moves,
+                (int)logg.killed, (int)logg.spused);
+
+        lprintf("  out bytes per move: %d\n",
+                (int)(logg.bytout / logg.moves));
 #endif
     }
-  lflush ();
-  lrclose ();
-  return;
+
+    lflush();
+    fclose(fp);
 }
-
-
-
 
 /*
 *  getplid(name)       Function to get players id # from id file

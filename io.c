@@ -81,7 +81,7 @@
 
 #include "larn.h"
 
-#if !defined(_WIN32)
+#if defined(__unix__) || defined(__linux__) || defined(__APPLE__)
 #include <sys/ioctl.h>
 #endif
 
@@ -454,10 +454,13 @@ lprc(char ch)
 *  
 *  Enter with the address and number of bytes to write out
 *  Returns nothing of value
-*/void
+*/
+void
 lwrite(char* buf, int len)
 {
     unsigned char* src = (unsigned char*)buf;
+	unsigned char* dst = (unsigned char*)lpnt;
+	int num2 = (int)(lpend - lpnt);
     int i;
 
     if (len > 399) {
@@ -471,13 +474,14 @@ lwrite(char* buf, int len)
 
     while (len) {
         if (lpnt >= lpend)
+		{
             lflush();
-
-        int num2 = (int)(lpend - lpnt);
+		}
+        
         if (num2 > len)
+		{
             num2 = len;
-
-        unsigned char* dst = (unsigned char*)lpnt;
+		}
 
         for (i = 0; i < num2; i++)
             dst[i] = src[i];
@@ -1017,10 +1021,6 @@ init_term(void)
     curs_set(0);
 
     refresh();
-
-#if defined PDC_KEY_MODIFIER_SHIFT
-    PDC_save_key_modifiers(1);
-#endif
 }
 
 /*

@@ -17,17 +17,19 @@
  * See the 'LICENSE.txt' file in the 'docs' folder.
  */
 
-#define _POSIX_C_SOURCE 199309L
-
 #include "larnfunc.h"
 #include "io.h"
 #include "nap.h"
 #include <time.h>
 
-void nap(int milliseconds)
+void
+nap(int milliseconds)
 {
-    struct timespec tc;
-    tc.tv_sec = milliseconds / 1000;
-    tc.tv_nsec = (milliseconds % 1000) * 1000000;
-    nanosleep(&tc, NULL);
+    clock_t start, now;
+    long ticks = (milliseconds * CLOCKS_PER_SEC) / 1000;
+
+    start = clock();
+    do {
+        now = clock();
+    } while ((now - start) < ticks);
 }

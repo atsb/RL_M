@@ -907,8 +907,8 @@ specify_obj_cursor (void)
 	default:
 	  break;
 	}
+		curs_set(0);
     }
-	curs_set(0);
 }
 
 

@@ -17,16 +17,9 @@
  * See the 'LICENSE.txt' file in the 'docs' folder.
  */
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-#ifndef _WIN32
-#include <unistd.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "larncons.h"
 #include "larndata.h"
 #include "larnfunc.h"
@@ -245,11 +238,7 @@ openhelp(FILE** fp_out)
         cursors();
         lprintf("Can't open help file \"%s\"\n", "larn.help");
         lflush();
-#ifdef _WIN32
-        Sleep(4000);
-#else
-        sleep(4);
-#endif
+        nap(4000);
         drawscreen();
         setscroll();
         return -1;

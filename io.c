@@ -77,14 +77,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <setjmp.h>
-#include <fcntl.h>		/* For O_BINARY */
-
+#include <fcntl.h>
 #include "larn.h"
-
-#if defined(__unix__) || defined(__linux__) || defined(__APPLE__)
-#include <sys/ioctl.h>
-#endif
-
 #include "display.h"
 #include "global.h"
 #include "io.h"

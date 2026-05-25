@@ -1,43 +1,62 @@
-# RL_M  
-Larn — maintained and developed for modern systems
+# BUILDING.md
+### Building Larn for Multiple Architectures
 
 I am the official maintainer of Larn.
 
-## Supported Systems
+This document describes how to build Larn 26.4.0 across a wide range of CPU architectures and operating systems.  
+The modern codebase is fully endian‑neutral, alignment‑safe, and curses‑portable, making it suitable for both native and cross‑compiled builds.
 
-Larn runs on all CPU architectures and all Operating Systems with the strictest compilation flags.  Warnings are bugs.
+## 1. Overview
 
-## Notice for Windows users
+Larn can be built in three ways:
 
-Cygwin and MSYS2 are only supported if NOT linking to their GPL requirement (msys-2.0.dll or cygwin1.dll).
+1. **Native build** on the target system  
+2. **Cross‑compilation** using GCC or Clang  
+3. **Emulated build** inside QEMU or SIMH  
 
-Larn is NOT a GPL'd program.
+All three methods produce identical binaries.
 
-## Building
+The build system is intentionally simple:
 
-Larn provides separate build paths for Unix and Unix‑like systems and MinGW on Windows.
+- Standard POSIX `make`
+- No autoconf, cmake, or external dependencies
+- Requires only a C compiler and curses library
 
----
+## 2. Prerequisites
 
-## GNU/Linux/BSD/UNIX and macOS
+### Required:
+- C compiler (GCC, Clang, or vendor compiler)
+- POSIX `make`
+- `curses` or `ncurses` development headers
+- Standard C library
+
+### Optional:
+- Cross‑compiler toolchains
+- QEMU for architecture testing
+- SIMH for VAX builds
+
+## 3. Basic Native UNIX Build
+
+On any UNIX‑like system:
 
 ```sh
+make clean
 make
-```
-then move the contents of larnfiles/ yourself into the same directory as the binary.
 
-## Exotic Platforms have their own Makefiles
+## 4. Basic Native Windows Build
 
-```sh
-make -f Makefile.<platform>
-```
-then move the contents of larnfiles/ yourself into the same directory as the binary.
-
-## MinGW (Nuwen MinGW)
+On any MinGW system (NOT cygwin or MSYS2):
 
 ```sh
+make -f Makefile.mingw clean
 make -f Makefile.mingw prep
 make -f Makefile.mingw
-```
 
-then move the contents of larnfiles/ yourself into the same directory as the binary.
+## 5. Preparing to Run the Binary:
+
+Larn requires the contents of the 'LARNFILES' directory to be within
+the same directory as the binary.  After that, run the Larn binary to play.
+
+Enjoy!
+
+~Gibbon

@@ -214,98 +214,85 @@ readopts(void)
 
 /*
 * lexical analyzer for larn
-*/
-int
-yylex (void)
+*/int
+yylex(void)
 {
-  char cc = 0;
-  char firsttime = TRUE;
+    char cc = 0;
+    char firsttime = TRUE;
 
-  if (hit2flag)
-    {
-      hit2flag = 0;
-      yrepcount = 0;
-      return (' ');
-    }
-  if (yrepcount > 0)
-    {
-      --yrepcount;
-      return (lastok);
-    }
-  else
-    yrepcount = 0;
-  if (yrepcount == 0)
-    {
-      bottomline();
-      showplayer ();		/* show where the player is */
+    if (hit2flag) {
+        hit2flag = 0;
+        yrepcount = 0;
+        return ' ';
     }
 
-  lflush ();
-  for (;;)
-    {
-      c[BYTESIN]++;
+    if (yrepcount > 0) {
+        --yrepcount;
+        return lastok;
+    } else {
+        yrepcount = 0;
+    }
 
-      /* periodic checkpointing */
-      if (ckpflag && cc != 0) {
-          if ((c[BYTESIN] % 400) == 0) {
-              savegame(ckpfile);
-          }
+    if (yrepcount == 0) {
+        bottomline();
+        showplayer();    /* show where the player is */
+    }
 
-          if (dayplay == 0) {
-              if (playable()) {
-                  cursor(1, 19);
-                  lprcat("\nSorry, but it is now time for work. Your game has been saved.\n");
-                  lflush();
-                  savegame(savefilename);
-                  wizard = 1;
-                  nomove = 1;
-                  nap(4000);
-                  died(-257);
-              }
-          }
-      }
+    lflush();
 
-      {
-          int ch = ttgetch_noblock();
+    for (;;) {
+        c[BYTESIN]++;
 
-          if (ch == -1) {
+        /* periodic checkpointing */
+        if (ckpflag && cc != 0) {
+            if ((c[BYTESIN] % 400) == 0)
+                savegame(ckpfile);
 
-              /* no input available */
-              return 0;
-          }
-          cc = (char)ch;
-      }
+            if (dayplay == 0) {
+                if (playable()) {
+                    cursor(1, 19);
+                    lprcat("\nSorry, but it is now time for work. Your game has been saved.\n");
+                    lflush();
+                    savegame(savefilename);
+                    wizard = 1;
+                    nomove = 1;
+                    nap(4000);
+                    died(-257);
+                }
+            }
+        }
 
-      /* get repeat count, showing to player
-       */
-      if ((cc <= '9') && (cc >= '0'))
-	{
-	  yrepcount = yrepcount * 10 + cc - '0';
+        {
+            int ch = ttgetch_noblock();
 
-	  /* show count to player for feedback
-	   */
-	  if (yrepcount >= 10)
-	    {
-	      cursors ();
-	      if (firsttime)
-		lprcat ("\n");
-	      lprintf ("count: %d", (int) yrepcount);
-	      firsttime = FALSE;
-	      lflush ();	/* show count */
-	    }
-	}
-      else
-	{
-	  if (yrepcount > 0)
-	    --yrepcount;
-	  return (lastok = cc);
-	}
+            if (ch == -1) {
+                return 0;
+            }
+
+            while (ttgetch_noblock() != -1) { }
+
+            cc = (char)ch;
+        }
+
+        /* get repeat count, showing to player */
+        if (cc >= '0' && cc <= '9') {
+            yrepcount = yrepcount * 10 + (cc - '0');
+
+            if (yrepcount >= 10) {
+                cursors();
+                if (firsttime)
+                    lprcat("\n");
+                lprintf("count: %d", (int)yrepcount);
+                firsttime = FALSE;
+                lflush();
+            }
+        } else {
+            if (yrepcount > 0)
+                --yrepcount;
+            return (lastok = cc);
+        }
     }
 }
-
-
-
-
 
 /*
 function to set the desired hardness

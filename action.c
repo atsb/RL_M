@@ -1,15 +1,21 @@
 /*
-Larn was distributed to the net for the enjoyment of all.  One of my goals
-is to have larn available to whom ever wants to play it.  I therefore give
-permission to use the sources, to modify the sources, or to port the sources to
-another machine, provided that a profit is not made from larn or its sources,
-or the aforementioned activities.  Should a profit be made without permissions,
-I will exercise my copyright.
-
-Other than this case, enjoy it!
-
-For more information, see LICENSE.txt in the 'doc' folder.
-*/
+ * Larn — Copyright © 1986 Noah Morgan
+ *        Copyright © 2014-2026 Gibbon
+ *
+ * This file is part of Larn and is distributed under
+ * The Noah Licence, Version 1.0.
+ *
+ * You may use, modify, and redistribute this code for
+ * non‑commercial purposes, provided that:
+ *   - this notice is preserved,
+ *   - The Noah Licence accompanies all redistributions, and
+ *   - no profit is made from Larn or derivative works
+ *     without explicit permission from the copyright holder.
+ *
+ * Larn is provided “AS IS”, without warranty of any kind.
+ * 
+ * See the 'LICENSE.txt' file in the 'docs' folder.
+ */
 
 /*
 action.c

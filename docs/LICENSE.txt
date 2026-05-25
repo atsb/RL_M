@@ -1,3 +1,65 @@
+The Noah Licence — Version 1.0
+(A modernised legal restatement of Noah Morgan’s original Larn permissions)
+
+Copyright © 1986 Noah Morgan  
+All rights reserved.
+
+1. Purpose
+The Noah Licence (“the Licence”) restates the permissions granted by Noah Morgan for the distribution, modification, and use of the game Larn and its source code.
+Its purpose is to preserve Noah’s original intent: Larn is free for everyone to play, study, modify, and port, provided no profit is made from it without permission.
+
+2. Grant of Permission
+Subject to the conditions below, permission is granted to:
+
+Use the source code for any non‑commercial purpose.
+
+Modify the source code and create derivative works.
+
+Port the source code to any machine, operating system, or environment.
+
+Redistribute the source code or modified versions, provided this Licence accompanies all copies.
+
+These permissions apply to both source and binary forms.
+
+3. Conditions
+The permissions above are granted only if all of the following conditions are met:
+
+Non‑Commercial Use Only  
+Larn, its source code, and derivative works may not be sold, nor may any profit be made from them, without explicit permission from the copyright holder.
+
+Preservation of Notices  
+All redistributions must retain:
+
+the original copyright notice,
+
+this Licence text, and
+
+attribution to the original author.
+
+Clear Identification of Modifications  
+Modified versions must clearly state that they are modified and must not misrepresent themselves as the original Larn.
+
+No Warranty  
+Larn is provided “as‑is”, without warranty of any kind.
+
+4. Commercial Use
+Any commercial use — including selling binaries, selling source, bundling Larn with paid products, or monetising derivative works — requires prior written permission from the copyright holder or their successor.
+
+5. Disclaimer of Warranty
+Larn is provided free of charge for the enjoyment of all.
+The software is provided “AS IS”, without warranty of any kind, express or implied.
+
+6. Limitation of Liability
+In no event shall the copyright holder be liable for any claim, damages, or other liability arising from the use, distribution, or modification of Larn.
+
+7. Historical Intent
+This Licence is intended solely to clarify and formalise the permissions originally granted by Noah Morgan in his public Usenet posting accompanying Larn 12.0.
+It does not expand or reduce the rights originally granted; it expresses them in modern legal form.
+
+
+-------------------------------------------------------------------------------------------
+
+
 For a long time, the 'real' license of the game 'Larn' was lost.  Noah Morgan 
 did indeed give a terms of use which has been lost in usenet archives for 30 years.
 I have found the original terms given by Noah Morgan himself on the use of the game 'Larn'.

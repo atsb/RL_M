@@ -1,5 +1,61 @@
 =============================================================================
 
+Thu  25 May 07:00:00 CET 2026
+
+1. Rewrote water generation system:
+   - Implemented new water‑placement rules to prevent water from spawning
+     on Volcano levels.
+   - Added controlled puddle formation logic to ensure water appears only
+     in valid biome contexts.
+   - Improved water spread behaviour to avoid accidental flooding of
+     restricted regions.
+
+2. Introduced new lava system for Volcano levels:
+   - Added stable lava pools restricted to Volcano floors only.
+   - Implemented “crying lava” behaviour: pools now generate short,
+     radial streaks (“tears”) instead of long streams.
+   - Added configurable streak length limits to maintain tight control
+     over lava footprint.
+   - Ensured lava is rendered in red and animates every 3 seconds to
+     reflect its heavier, more viscous nature.
+
+3. Added dynamic lava expansion mechanics:
+   - Crying‑lava arms can now expand outward over time.
+   - Expansion is directional and limited to streak arms only; the core
+     pool remains stable.
+   - Expansion respects strict boundaries: exits, entrances, and the
+     outermost maze walls are protected and cannot be overwritten.
+
+4. Implemented destructive terrain interaction for lava:
+   - Expanding lava now destroys OWALL tiles in its path.
+   - Items on affected tiles are incinerated.
+   - Non‑fire‑resistant monsters are killed instantly upon contact.
+   - Player takes heavy damage but is not killed instantly when stepping
+     into lava.
+   - Fire‑resistant monsters behave intelligently and avoid lava unless
+     immune.
+
+5. Updated maze generation to support hybrid water/lava logic:
+   - Added biome‑aware generation rules to ensure puddles and lava never
+     conflict.
+   - Improved randomisation to produce more natural‑looking volcanic
+     terrain.
+
+6. Improved Monster AI for water and lava.
+
+7. Fixed all remaining endian issues for big and little endian systems and tested on SPARC V9.
+
+8. Cleaned up the code and made as a C89 reference.  Clean, correct and compiles without warning
+	with the strictest compilation flags.
+
+9. Integrated The Noah Licence as the official project licence.
+
+10. Added colour, larnopts back, returned most 12.0 features and look / feel.
+
+~Gibbon
+
+=============================================================================
+
 Thu  15 Jan 22:31:00 CET 2026
 
 1. Cleaned up project for modern Visual Studio.

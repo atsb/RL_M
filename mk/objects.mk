@@ -1,7 +1,6 @@
 OBJS = \
     action.o \
     bill.o \
-    config.o \
     create.o \
     data.o \
     diag.o \

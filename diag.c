@@ -349,6 +349,7 @@ restoregame(char* fname)
     int sphcount;
     struct sphere* sp, * sp2;
     time_t temptime;
+    long tmp;
 
     cursors();
     lprcat("\nRestoring . . .");
@@ -469,6 +470,8 @@ restoregame(char* fname)
         nap(NAPTIME);
         c[GOLD] = c[BANKACCOUNT] = 0;
         died(-266);
+        clearvt100();
+	      exit (EXIT_SUCCESS);
         return;
     }
 
@@ -484,10 +487,9 @@ restoregame(char* fname)
 
     if (c[LEVEL] == 25 && c[EXPERIENCE] > skill[24])
     {
-        long tmp;
         tmp = c[EXPERIENCE] - skill[24];
         c[EXPERIENCE] = skill[24];
-        raiseexperience(tmp);
+        raiseexperience((unsigned long)tmp);
     }
 
     getlevel();

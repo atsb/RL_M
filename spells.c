@@ -64,7 +64,7 @@ struct isave
 };
 
 int missile_color = COLOR_YELLOW;
-int missile_attr  = A_BOLD;
+chtype missile_attr  = A_BOLD;
 
 static void speldamage (int);
 
@@ -76,11 +76,11 @@ static int isconfuse (void);
 
 static int nospell (int, int);
 
-static void direct (int, int, char *, int);
+static void direct (int, int, const char *, int);
 
 static void tdirect (int);
 
-static void omnidirect (int, int, char *);
+static void omnidirect (int, int, const char *);
 
 static void dirpoly (int);
 
@@ -684,7 +684,7 @@ fullhit (int xx)
 *  Returns no value.
 */
 static void
-direct (int spnum, int dam, char *str, int arg)
+direct (int spnum, int dam, const char *str, int arg)
 {
   int x, y;
   int m;
@@ -764,7 +764,7 @@ direct (int spnum, int dam, char *str, int arg)
 *  Returns no value.
 */
 void
-godirect (int spnum, int dam, char *str, int delay, char cshow)
+godirect (int spnum, int dam, const char *str, int delay, const char cshow)
 {
     int *p;
     int x, y, m;
@@ -1001,7 +1001,7 @@ godirect (int spnum, int dam, char *str, int delay, char cshow)
 void
 ifblind (int x, int y)
 {
-  char *p;
+  const char *p;
 
   /* verify correct x, y coordinates */
   vxy (&x, &y);
@@ -1093,7 +1093,7 @@ tdirect (int spnum)
 *  Returns no value.
 */
 static void
-omnidirect (int spnum, int dam, char *str)
+omnidirect (int spnum, int dam, const char *str)
 {
   int x, y, m;
 
@@ -1279,7 +1279,7 @@ void
 annihilate (void)
 {
   int i, j;
-  int k;
+  unsigned long k;
   int *p;
 
   for (k = 0, i = playerx - 1; i <= playerx + 1; i++)
@@ -1342,12 +1342,13 @@ annihilate (void)
 static void
 genmonst (void)
 {
-  int i, j;
+  int j;
+  char i;
 
   cursors ();
   lprcat ("\nGenocide what monster? ");
 
-  for (i = 0; !isalpha (i) && i != ' '; i = ttgetch ())
+  for (i = 0; !isalpha ((unsigned char)i) && i != ' '; i = ttgetch ())
     {
       ;
     }

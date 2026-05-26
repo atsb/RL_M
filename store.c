@@ -61,7 +61,7 @@ static void outofstock (void);
 static void nogold (void);
 static void dnditem (int i);
 static void sch_hed (void);
-static void banktitle (char *);
+static void banktitle (const char *);
 static void obanksub (void);
 static void otradhead (void);
 static void otradiven (void);
@@ -655,7 +655,7 @@ obank2 (void)
 
 
 static void
-banktitle (char *str)
+banktitle (const char *str)
 {
   screen_clear();
   lprcat (str);

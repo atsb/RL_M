@@ -302,7 +302,8 @@ void
 sethard (int hard)
 {
   int j, k;
-  int i;
+  long i;
+  unsigned long xp;
   struct monst *mp;
 
   j = c[HARDGAME];
@@ -350,8 +351,8 @@ sethard (int hard)
 
       i = mp->armorclass - k;
       mp->armorclass = (i < -127) ? -127 : i;
-
-      i = (7 * mp->experience) / (7 + k) + 1;
-      mp->experience = (i <= 0) ? 1 : i;
+      
+      xp = (7UL * mp->experience) / (7UL + (unsigned long)k) + 1UL;
+      mp->experience = (xp == 0UL) ? 1UL : xp;
     }
 }

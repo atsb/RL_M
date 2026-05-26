@@ -46,12 +46,12 @@
 #define KNOWHERE  0x2
 #define KNOWALL   (HAVESEEN | KNOWHERE)
 
-#define PATHLEN   80
+#define PATHLEN   128
 
 #define LARNHOME "."
 
 #ifndef WIZID
-#define WIZID  1000
+#define WIZID   0
 #endif
 
 #define TRUE 1

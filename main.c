@@ -55,11 +55,11 @@ static void wear (void);
 
 static void dropobj (void);
 
-static int floor_consume (int, char *);
+static int floor_consume (int, const char *);
 
-static void consume (int, char *, int (*)(void));
+static void consume (int, const char *, int (*)(void));
 
-static int whatitem (char *);
+static int whatitem (const char *);
 
 int dropflag = 0;		/* if 1 then don't lookforobject() next round */
 int rmst = 80;			/*  random monster creation counter     */
@@ -79,6 +79,19 @@ Cmd line format: larn [-sih] [-##]\n\
 
 signed int save_mode = 0;	/* 1 if doing a save game */
 
+/* Make LARNHOME readable from the larnopt file into a lardir variable.
+ */
+char savefilename[PATHLEN];
+char scorefile[PATHLEN];
+char logfile[PATHLEN];
+char mazefile[PATHLEN];
+char fortfile[PATHLEN];
+char playerids[PATHLEN];
+char diagfile[PATHLEN];		/* the diagnostic filename  */
+char holifile[PATHLEN];
+char optsfile[PATHLEN];
+char ckpfile[PATHLEN];
+
 /*
 ************
 MAIN PROGRAM
@@ -97,36 +110,66 @@ main (int argc, char *argv[])
    * Portable Larn file paths using LARNHOME = "." (same as 12.0)
    * Works on all systems, all architectures.  Using 12.0 names.
    */
+   
+  /* savefilename */
+  strncpy(savefilename, LARNHOME, sizeof(savefilename) - 1);
+  savefilename[sizeof(savefilename) - 1] = '\0';
+  strncat(savefilename, "/Larn.sav",
+        sizeof(savefilename) - strlen(savefilename) - 1);
 
-  strcpy(savefilename, LARNHOME);
-  strcat(savefilename, "/Larn.sav");
+  /* scorefile */
+  strncpy(scorefile, LARNHOME, sizeof(scorefile) - 1);
+  scorefile[sizeof(scorefile) - 1] = '\0';
+  strncat(scorefile, "/lscore",
+        sizeof(scorefile) - strlen(scorefile) - 1);
 
-  strcpy(scorefile, LARNHOME);
-  strcat(scorefile, "/lscore");
+  /* logfile */
+  strncpy(logfile, LARNHOME, sizeof(logfile) - 1);
+  logfile[sizeof(logfile) - 1] = '\0';
+  strncat(logfile, "/llog",
+        sizeof(logfile) - strlen(logfile) - 1);
 
-  strcpy(logfile, LARNHOME);
-  strcat(logfile, "/llog");
+  /* fortfile */
+  strncpy(fortfile, LARNHOME, sizeof(fortfile) - 1);
+  fortfile[sizeof(fortfile) - 1] = '\0';
+  strncat(fortfile, "/lfortune",
+        sizeof(fortfile) - strlen(fortfile) - 1);
 
-  strcpy(fortfile, LARNHOME);
-  strcat(fortfile, "/lfortune");
+  /* playerids */
+  strncpy(playerids, LARNHOME, sizeof(playerids) - 1);
+  playerids[sizeof(playerids) - 1] = '\0';
+  strncat(playerids, "/playerids",
+        sizeof(playerids) - strlen(playerids) - 1);
 
-  strcpy(playerids, LARNHOME);
-  strcat(playerids, "/playerids");
+  /* mazefile */
+  strncpy(mazefile, LARNHOME, sizeof(mazefile) - 1);
+  mazefile[sizeof(mazefile) - 1] = '\0';
+  strncat(mazefile, "/larnmaze",
+        sizeof(mazefile) - strlen(mazefile) - 1);
 
-  strcpy(mazefile, LARNHOME);
-  strcat(mazefile, "/larnmaze");
+  /* diagfile */
+  strncpy(diagfile, LARNHOME, sizeof(diagfile) - 1);
+  diagfile[sizeof(diagfile) - 1] = '\0';
+  strncat(diagfile, "/Diagfile",
+        sizeof(diagfile) - strlen(diagfile) - 1);
 
-  strcpy(diagfile, LARNHOME);
-  strcat(diagfile, "/Diagfile");
+  /* holifile */
+  strncpy(holifile, LARNHOME, sizeof(holifile) - 1);
+  holifile[sizeof(holifile) - 1] = '\0';
+  strncat(holifile, "/holidays",
+        sizeof(holifile) - strlen(holifile) - 1);
 
-  strcpy(holifile, LARNHOME);
-  strcat(holifile, "/holidays");
+  /* optsfile */
+  strncpy(optsfile, LARNHOME, sizeof(optsfile) - 1);
+  optsfile[sizeof(optsfile) - 1] = '\0';
+  strncat(optsfile, "/larnopts",
+        sizeof(optsfile) - strlen(optsfile) - 1);
 
-  strcpy(optsfile, LARNHOME);
-  strcat(optsfile, "/larnopts");
-
-  strcpy(ckpfile, LARNHOME);
-  strcat(ckpfile, "/Larn.ckp");
+  /* ckpfile */
+  strncpy(ckpfile, LARNHOME, sizeof(ckpfile) - 1);
+  ckpfile[sizeof(ckpfile) - 1] = '\0';
+  strncat(ckpfile, "/Larn.ckp",
+        sizeof(ckpfile) - strlen(ckpfile) - 1);
 
   if (argv[i][0] == '+')
   {
@@ -226,6 +269,7 @@ main (int argc, char *argv[])
 		  lprcat("Sorry, Larn can not be played during working hours.\n");
 		  lflush();
 		  nap(3000);
+		  clearvt100();
 		  exit(EXIT_SUCCESS);
 	  }
   }
@@ -297,7 +341,7 @@ main (int argc, char *argv[])
   for (;;)
     {
 	  /* water animation is now in a real time state machine - animates every 2 seconds */
-	  long now = time(NULL);
+	  time_t now = time(NULL);
 	  if (now - last_water_anim >= 2)
 	  {
 		  last_water_anim = now;
@@ -1180,7 +1224,7 @@ dropobj (void)
 
 
 static int
-floor_consume (int search_item, char *cons_verb)
+floor_consume (int search_item, const char *cons_verb)
 {
   int i;
   char tempc;
@@ -1243,7 +1287,7 @@ floor_consume (int search_item, char *cons_verb)
 
 
 static void
-consume (int search_item, char *prompt, int (*showfunc) (void))
+consume (int search_item, const char *prompt, int (*showfunc) (void))
 {
   int i;
 
@@ -1314,7 +1358,7 @@ consume (int search_item, char *prompt, int (*showfunc) (void))
 function to ask what player wants to do
 */
 static int
-whatitem (char *str)
+whatitem (const char *str)
 {
   int i = 0;
 

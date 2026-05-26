@@ -65,8 +65,8 @@
 #include "nap.h"
 
 int water_anim_toggle = 0;
-long last_water_anim = 0;
-long last_lava_anim = 0;
+time_t last_water_anim = 0;
+time_t last_lava_anim = 0;
 int lava_anim_toggle = 0;
 int name_set = 0;
 int use_color = 1;   /* default: colour ON */
@@ -83,14 +83,16 @@ int on_cooledlava = 0;
 * uses c[EXPERIENCE]  c[LEVEL]
 */
 void
-raiselevel (void)
+raiselevel(void)
 {
+  long skillraise;
 
-  if (c[LEVEL] < MAXPLEVEL)
-    raiseexperience ((skill[c[LEVEL]] - c[EXPERIENCE]));
+    if (c[LEVEL] < MAXPLEVEL) {
+        skillraise = skill[c[LEVEL]] - c[EXPERIENCE];
+        if (skillraise > 0)
+            raiseexperience((unsigned long)skillraise);
+    }
 }
-
-
 
 /*
 * loselevel()
@@ -112,31 +114,39 @@ loselevel (void)
 * subroutine to increase experience points
 */
 void
-raiseexperience (long x)
+raiseexperience(unsigned long x)
 {
-  int i, tmp;
+    int i, tmp;
+    unsigned long newexp;
 
-  i = c[LEVEL];
-  c[EXPERIENCE] += x;
-  while (c[EXPERIENCE] >= skill[c[LEVEL]]
-	 && (c[LEVEL] < MAXPLEVEL))
+    i = c[LEVEL];
+
     {
-      tmp = (c[CONSTITUTION] - c[HARDGAME]) >> 1;
-      c[LEVEL]++;
-      raisemhp ((int) (rnd (3) + rnd ((tmp > 0) ? tmp : 1)));
-      raisemspells ((int) rund (3));
-      if (c[LEVEL] < 7 - c[HARDGAME])
-	raisemhp ((int) (c[CONSTITUTION] >> 2));
+        newexp = (unsigned long)c[EXPERIENCE] + x;
+        if (newexp > LONG_MAX)
+            c[EXPERIENCE] = LONG_MAX;
+        else
+            c[EXPERIENCE] = (long)newexp;
     }
-  if (c[LEVEL] != i)
+
+    while (c[EXPERIENCE] >= skill[c[LEVEL]]
+           && (c[LEVEL] < MAXPLEVEL))
     {
-      cursors ();
-      lprintf ("\nWelcome to level %d", (int) c[LEVEL]);	/* if we changed levels */
+        tmp = (c[CONSTITUTION] - c[HARDGAME]) >> 1;
+        c[LEVEL]++;
+        raisemhp((int)(rnd(3) + rnd((tmp > 0) ? tmp : 1)));
+        raisemspells((int)rund(3));
+        if (c[LEVEL] < 7 - c[HARDGAME])
+            raisemhp((int)(c[CONSTITUTION] >> 2));
     }
-  bottomline ();
+
+    if (c[LEVEL] != i) {
+        cursors();
+        lprintf("\nWelcome to level %d", (int)c[LEVEL]); /* if we changed levels */
+    }
+
+    bottomline();
 }
-
-
 
 /*
 * loseexperience(x)

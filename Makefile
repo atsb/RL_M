@@ -1,10 +1,10 @@
 # Makefile for Larn
 
+include mk/objects.mk
+
 CC      = cc
 CFLAGS  = -O3 -fstrict-aliasing -fno-strict-overflow -fno-delete-null-pointer-checks -fno-common -Wall -Wextra -Wshadow -Wstrict-prototypes -Wmissing-prototypes -DMULTIPLE_SCORE_ENTRY
 LDFLAGS = -lm -lncurses
-
-include mk/objects.mk
 
 all: larn
 

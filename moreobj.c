@@ -245,7 +245,7 @@ ofountain (void)
 void
 fntchange (int how)
 {
-  int j;
+  long j;
 
   lprc ('\n');
 
@@ -339,7 +339,7 @@ fntchange (int how)
 	    lprcat ("s!");
 	  else
 	    lprc ('!');
-	  raiseexperience (j);
+	  raiseexperience ((unsigned long)j);
 	}
       break;
     }

@@ -20,6 +20,7 @@
  /* Larn is copyrighted 1986 by Noah Morgan. */
 
 #include <time.h>
+#include "io.h"
 
 /*
 *
@@ -53,7 +54,7 @@ struct sphere
 */
 struct monst
 {
-  char *name;
+  const char *name;
   int level;
   int armorclass;
   int damage;
@@ -90,7 +91,7 @@ extern int course[];
 extern int item[MAXX][MAXY], iven[], know[MAXX][MAXY];
 
 extern char aborted[];
-extern char *classname[];
+extern const char *classname[];
 extern char lastmonst[];
 extern char *lpnt, *lpbuf, *lpend, *inbuffer;
 
@@ -108,7 +109,7 @@ extern int in_lava;
 extern int on_cooledlava;
 
 extern char monstnamelist[];
-extern char *levelname[];
+extern const char *levelname[];
 extern char objnamelist[];
 extern char logname[];
 extern char loginname[];
@@ -129,14 +130,10 @@ extern int scprob[];
 extern int screen[MAXX][MAXY], sex;
 extern int spelknow[];
 
-extern char *spelmes[];
-extern char *speldescript[];
-extern char *spelcode[];
-
-
-
-extern char *spelname[];
-
+extern const char *spelmes[];
+extern const char *speldescript[];
+extern const char *spelcode[];
+extern const char *spelname[];
 
 extern int splev[], stealth[MAXX][MAXY], wizard;
 extern int diroffx[], diroffy[], hitflag, hit2flag, hit3flag,
@@ -169,31 +166,31 @@ extern const struct color_override_entry object_map[];
 
 extern int moncolor[MAXMONST + 9];
 extern int objcolor[MAXOBJECT + 1];
-extern int monattr[MAXMONST + 9];
-extern int objattr[MAXOBJECT + 1];
+extern chtype monattr[MAXMONST + 9];
+extern chtype objattr[MAXOBJECT + 1];
 
 extern int compare_color_better ;
-extern int compare_attr_better;
+extern chtype compare_attr_better;
 
 extern int compare_color_worse;
-extern int compare_attr_worse;
+extern chtype compare_attr_worse;
 
 extern int compare_color_equal;
-extern int compare_attr_equal;
+extern chtype compare_attr_equal;
 
 extern int compare_color_none;
-extern int compare_attr_none;
+extern chtype compare_attr_none;
 
 extern int cookie_color;
-extern int cookie_attr;
+extern chtype cookie_attr;
 
 extern int missile_color;
-extern int missile_attr;
+extern chtype missile_attr;
 
 extern unsigned char erosion[MAXX][MAXY];
-extern long last_simulated_time[MAXLEVEL];
+extern time_t last_simulated_time[MAXLEVEL];
 extern unsigned char lavaheat[MAXX][MAXY];
-extern long last_lava_cool;
+extern time_t last_lava_cool;
 
 /*
 * config.c
@@ -210,7 +207,7 @@ extern int prayed;
 extern char scrollname[MAXSCROLL + 1][MAXSCROLLNAME];
 extern char potionname[MAXPOTION + 1][MAXPOTIONNAME];
 
-extern char *objectname[];
+extern const char *objectname[];
 
 
 extern int spelweird[MAXMONST + 8][SPNUM];

@@ -109,7 +109,7 @@ static struct scofmt sco[SCORESIZE];	/* the structure for the scoreboard  */
 static struct wscofmt winr[SCORESIZE];	/* struct for the winning scoreboard */
 
 static struct log_fmt logg;	/* structure for the log file        */
-static char *whydead[] = {
+static const char *whydead[] = {
   "quit", "suspended", "self - annihilated", "shot by an arrow",
   "hit by a dart", "fell into a pit", "fell into a bottomless pit",
   "a winner", "trapped in solid rock", "killed by a missing save file",
@@ -751,7 +751,7 @@ void
 died (int x)
 {
   int f, win;
-  char i = 0;
+  int i = 0;
   /*char ch, *mod;
      time_t zzz; */
 
@@ -869,7 +869,8 @@ invalid:
 static void
 diedsub (int x)
 {
-  char ch, *mod;
+  const char *mod;
+  char ch;
 
   lprintf ("\nScore: %ld, Diff: %ld,  %s ", c[GOLD], c[HARDGAME],
 	   logname);
@@ -922,7 +923,8 @@ diedlog(void)
     FILE *fp;
     long pos, size;
     int n;
-    char *p;
+    const char *p;
+    char buf[32];
 
     lcreat((char *)0);
 
@@ -969,10 +971,15 @@ diedlog(void)
             break;
 
         p = ctime((time_t *)&logg.diedtime);
+
         if (p)
         {
-            p[16] = '\n';
-            p[17] = 0;
+            strncpy(buf, p, sizeof(buf));
+            buf[sizeof(buf)-1] = '\0';
+            buf[16] = '\n';
+            buf[17] = 0;
+
+            p = buf;
         }
         else
         {

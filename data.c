@@ -27,16 +27,16 @@
 /*
 classname[c[LEVEL]-1] gives the correct name of the players experience level
 */
-static char aa1[] = " mighty evil master";
-static char aa2[] = "apprentice demi-god";
-static char aa3[] = "  minor demi-god   ";
-static char aa4[] = "  major demi-god   ";
-static char aa5[] = "    minor deity    ";
-static char aa6[] = "    major deity    ";
-static char aa7[] = "  novice guardian  ";
-static char aa8[] = "apprentice guardian";
-static char aa9[] = "    The Creator    ";
-char* classname[] = { "  novice explorer  ", "apprentice explorer", " practiced explorer",	/*  -3 */
+static const char aa1[] = " mighty evil master";
+static const char aa2[] = "apprentice demi-god";
+static const char aa3[] = "  minor demi-god   ";
+static const char aa4[] = "  major demi-god   ";
+static const char aa5[] = "    minor deity    ";
+static const char aa6[] = "    major deity    ";
+static const char aa7[] = "  novice guardian  ";
+static const char aa8[] = "apprentice guardian";
+static const char aa9[] = "    The Creator    ";
+const char* classname[] = { "  novice explorer  ", "apprentice explorer", " practiced explorer",	/*  -3 */
 	"   expert explorer ", "  novice adventurer", "     adventurer    ",	/*  -6 */
 	"apprentice conjurer", "     conjurer      ", "  master conjurer  ",	/*  -9 */
 	"  apprentice mage  ", "        mage       ", "  experienced mage ",	/* -12 */
@@ -145,7 +145,7 @@ int enable_scroll = 0;		/* constant for enabled/disabled scrolling regn */
 char aborted[] = " aborted";
 struct sphere* spheres = 0;	/*pointer to linked list for spheres of annihilation */
 
-char* levelname[] =
+const char* levelname[] =
 { " H", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9", "10", "V1",
 	"V2", "V3", "V4"
 };
@@ -155,7 +155,7 @@ char monstnamelist[] = ".BGHJKOScjtAELNQRZabhiCTYdegmvzFWflorXV.pqsyUkMwDDPxnDDu
 
 char floorc = '.';
 
-char* objectname[] =
+const char* objectname[] =
 { 0, "a holy altar", "a handsome jewel encrusted throne", "the orb",
 	"a pit",
 	"a staircase leading upwards", "an elevator going up",
@@ -373,7 +373,7 @@ spell data
 int spelknow[SPNUM];
 int splev[] = { 1, 4, 9, 14, 18, 22, 26, 29, 32, 35, 37, 37, 37, 37, 37 };
 
-char* spelcode[SPNUM + 1] = {
+const char* spelcode[SPNUM + 1] = {
 	"pro", "mle", "dex", "sle", "chm", "ssp",
 	"web", "str", "enl", "hel", "cbl", "cre", "pha", "inv",
 	"bal", "cld", "ply", "can", "has", "ckl", "vpr",
@@ -382,7 +382,7 @@ char* spelcode[SPNUM + 1] = {
 	"sph", "gen", "sum", "wtw", "alt", "per", "zzz"
 };
 
-char* spelname[] = {
+const char* spelname[] = {
 	"protection", "magic missile", "dexterity",
 	"sleep", "charm monster", "sonic spear",
 	
@@ -405,7 +405,7 @@ char* spelname[] = {
 	""
 };
 
-char* speldescript[] = {
+const char* speldescript[] = {
 	/* 1 */
 	"generates a +2 protection field",
 	"creates and hurls a magic missile equivalent to a + 1 magic arrow",
@@ -669,7 +669,7 @@ int spelweird[MAXMONST + 8][SPNUM] = {
 	
 };
 
-char* spelmes[] = { "",
+const char* spelmes[] = { "",
 	/*  1 */ "the web had no effect on the %s",
 	/*  2 */ "the %s changed shape to avoid the web",
 	/*  3 */ "the %s isn't afraid of you",
@@ -891,5 +891,5 @@ const struct color_override_entry object_map[] = {
 
 int moncolor[MAXMONST + 9];
 int objcolor[MAXOBJECT + 1];
-int monattr[MAXMONST + 9] = {0};
-int objattr[MAXOBJECT + 1] = {0};
+chtype monattr[MAXMONST + 9] = {0};
+chtype objattr[MAXOBJECT + 1] = {0};

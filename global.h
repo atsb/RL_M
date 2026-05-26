@@ -21,7 +21,7 @@ void raiselevel (void);
 
 void loselevel (void);
 
-void raiseexperience (long);
+void raiseexperience (unsigned long);
 
 void loseexperience (long);
 
@@ -68,6 +68,6 @@ char getyn (void);
 int packweight (void);
 
 extern int water_anim_toggle;
-extern long last_water_anim;
-extern long last_lava_anim;
+extern time_t last_water_anim;
+extern time_t last_lava_anim;
 extern int lava_anim_toggle;

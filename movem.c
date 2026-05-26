@@ -707,8 +707,8 @@ static void
 mmove (int aa, int bb, int cc, int dd)
 {
   int tmp, i, flag;
-  char *who = "";
-  char *p = "";
+  const char *who = "";
+  const char *p = "";
 
   flag = 0;			/* set to 1 if monster hit by arrow trap */
   if ((cc == playerx) && (dd == playery))

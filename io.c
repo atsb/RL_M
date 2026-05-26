@@ -99,7 +99,7 @@ static int available, tocopy;
 static int ipoint = MAXIBUF, iepoint = MAXIBUF;	/*  input buffering pointers    */
 static int (*getchfn) (void);
 static int scrline = 21;	/* line # for wraparound instead of scrolling if no DL */
-static int io_index = 0;
+static unsigned int io_index = 0;
 
 /* wgetch() is the modern way. -Gibbon */
 static int
@@ -392,10 +392,10 @@ void lprint(int x)
     if (lpnt + 4 > lpend)
         lflush();
 
-    lpnt[0] = b0;
-    lpnt[1] = b1;
-    lpnt[2] = b2;
-    lpnt[3] = b3;
+    lpnt[0] = (char)b0;
+    lpnt[1] = (char)b1;
+    lpnt[2] = (char)b2;
+    lpnt[3] = (char)b3;
 
     lpnt += 4;
 }
@@ -434,7 +434,7 @@ lprc(char ch)
     else if (ch == '\t')
         addstr("    ");
     else
-        addch(ch);
+        addch((chtype)(unsigned char)ch);
 
 #ifdef EXTRA
     c[BYTESOUT]++;
@@ -452,8 +452,8 @@ lprc(char ch)
 void
 lwrite(char* buf, int len)
 {
-    unsigned char* src = (unsigned char*)buf;
-	unsigned char* dst = (unsigned char*)lpnt;
+    char* src = buf;
+	char* dst = lpnt;
 	int num2 = (int)(lpend - lpnt);
     int i;
 
@@ -550,7 +550,7 @@ lrfill(char* adr, int num)
             if (n <= 0)
             {
                 fprintf(stderr, "lrfill: unexpected EOF or read error\n");
-                memset(adr, 0, num);
+                memset(adr, 0, (size_t)num);
                 return;
             }
             ipoint = 0;
@@ -560,7 +560,7 @@ lrfill(char* adr, int num)
         available = iepoint - ipoint;
         tocopy = (available < num) ? available : num;
 
-        memcpy(adr, inbuffer + ipoint, tocopy);
+        memcpy(adr, inbuffer + ipoint, (size_t)tocopy);
 
         adr += tocopy;
         ipoint += tocopy;
@@ -752,25 +752,25 @@ lwclose (void)
 *                                  avoids calls to lprintf (time consuming)
 */
 void
-lprcat(char* str)
+lprcat(const char* str)
 {
     if (lfd > 2) {
-        unsigned char* dst = (unsigned char*)lpnt;
-        unsigned char* src = (unsigned char*)str;
+        char* dst = lpnt;
+        const char* src = str;
 
         while (*src) {
-            if (dst >= (unsigned char*)lpend)
+            if (dst >= lpend)
                 lflush();
 
             *dst++ = *src++;
         }
 
-        if (dst >= (unsigned char*)lpend)
+        if (dst >= lpend)
             lflush();
 
         *dst++ = '\0';
 
-        lpnt = (char*)dst;
+        lpnt = dst;
         lflush();
         return;
     }
@@ -976,7 +976,7 @@ init_colors(void)
 void
 init_term(void)
 {
-    int i, fg;
+    short i, fg;
 
     outbuf = malloc(BUFBIG + 16);
     if (!outbuf) {
@@ -1058,7 +1058,7 @@ cl_dn (int x, int y)
 * lstandout(str)    Print the argument string in inverse video (standout mode).
 */
 void
-lstandout (char *str)
+lstandout (const char *str)
 {
     attron(A_REVERSE);
     lprcat(str);
@@ -1081,29 +1081,37 @@ set_score_output (void)
 *  for termcap version: Flush output in output buffer according to output
 *                       status as indicated by `enable_scroll'
 */
-void
-lflush (void)
+void lflush(void)
 {
-    int lpoint;
-      if (lfd > 2)
-	{
-        if ((lpoint = lpnt - lpbuf) > 0) {
-#ifdef EXTRA
-        c[BYTESOUT] += lpoint;
-#endif
-            if (write(lfd, lpbuf, lpoint) != lpoint)
-            {
-              fprintf(stderr,"Error writing output file\n");
-            }
-          lpnt = lpbuf;		/* point back to beginning of buffer */
-            }
-	  flush_buf(); 
+    ptrdiff_t lpoint;
+    unsigned int count;
+    ssize_t w;
 
-	  /* Catch write errors on save files
-	   */
-	  return;
-	}
-    else {
+    if (lfd > 2)
+    {
+        if ((lpoint = lpnt - lpbuf) > 0)
+        {
+#ifdef EXTRA
+            c[BYTESOUT] += lpoint;
+#endif
+                count = (unsigned int)lpoint;
+                w = write(lfd, lpbuf, count);
+
+                if ((ptrdiff_t)w != lpoint)
+                {
+                    fprintf(stderr, "Error writing output file\n");
+                }
+
+            lpnt = lpbuf;
+        }
+        flush_buf();
+
+        /* Catch write errors on save files
+         */
+        return;
+    }
+    else
+    {
         refresh();
     }
 }
@@ -1114,9 +1122,11 @@ lflush (void)
 static void
 flush_buf (void)
 {
-      if (lfd > 2)
+    ssize_t w;
+
+    if (lfd > 2)
 	{
-        ssize_t w = write(lfd, outbuf, io_index);
+        w = write(lfd, outbuf, io_index);
         if (w < 0)
         {
             /* flush failure is not a problem */

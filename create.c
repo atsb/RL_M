@@ -41,9 +41,9 @@ static void cavernsmoothing(void);
 static void worldboundary(void);
 
 unsigned char erosion[MAXX][MAXY];
-long last_simulated_time[MAXLEVEL];
+time_t last_simulated_time[MAXLEVEL];
 unsigned char lavaheat[MAXX][MAXY];
-long last_lava_cool = 0;
+time_t last_lava_cool = 0;
 
 /*
 makeplayer()
@@ -125,9 +125,9 @@ void
 newcavelevel(int x)
 {
     int i, j, t, n, cx, cy, ponds;
-    long now = time(NULL);
-    long elapsed = now - last_simulated_time[x];
-    int water_ticks = elapsed / 3;
+    time_t now = time(NULL);
+    time_t elapsed = now - last_simulated_time[x];
+    time_t water_ticks = elapsed / 3;
 
     if (beenhere[level])
     {
@@ -782,7 +782,7 @@ make_lavapool(int cx, int cy)
                 if (item[x][y] != OWALL && !lava_blocked(x, y))
                 {
                     item[x][y] = OLAVA;
-                    lavaheat[x][y] = rnd(100) + 50;   /* stays hot */
+                    lavaheat[x][y] = (unsigned char)rnd(100) + 50;   /* stays hot */
                 }
         }
     }
@@ -825,7 +825,7 @@ make_cryinglava(int cx, int cy)
             if (item[x][y] != OWALL && mitem[x][y] == 0 && !lava_blocked(x, y))
             {
                 item[x][y] = OLAVA;
-                lavaheat[x][y] = rnd(20) + 30;   /* arms cool quicker */
+                lavaheat[x][y] = (unsigned char)rnd(20) + 30;   /* arms cool quicker */
             }
 
             /* wiggle */

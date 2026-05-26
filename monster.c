@@ -752,7 +752,7 @@ static int
 spattack (int x, int xx, int yy)
 {
   int i, j = 0, k, m;
-  char *p = 0;
+  const char *p = 0;
 
   if (c[CANCELLATION])
     return (0);

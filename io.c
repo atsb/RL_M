@@ -197,12 +197,12 @@ cleanup_term(void)
     echo();
     nl();
 
+    endwin();
+    
     /* ensure cursor is visible again */
     printf("\033[0m");
     printf("\033[?25h");
     fflush(stdout);
-
-    endwin();
 }
 
 /*
@@ -235,25 +235,22 @@ clearvt100 (void)
 * ttgetch()       Routine to read in one character from the terminal
 */
 char
-ttgetch (void)
+ttgetch(void)
 {
-  char byt;
+    int k;
 
 #ifdef EXTRA
-  c[BYTESIN]++;
+    c[BYTESIN]++;
 #endif
 
-  lflush ();			/* be sure output buffer is flushed */
+    lflush();
 
-  byt = (char) (*getchfn) ();
+    k = getch();
 
-  if (byt == '\r')
-    {
+    if (k == '\r')
+        k = '\n';
 
-      byt = '\n';
-    }
-
-  return byt;
+    return (char)k;
 }
 
 /* non‑blocking ttgetch: returns -1 if no key available */
@@ -1136,49 +1133,48 @@ flush_buf (void)
 }
 
 void
-enter_name (void)
+enter_name(void)
 {
     int i;
     char characternamestring;
 
-  if (name_set)
-  {
-      /* Name already loaded from larnopts */
-      return;
-  }
+    if (name_set)
+        return;
 
-  lprcat ("\n\nEnter character name:\n");
+    lprcat("\n\nEnter character name:\n");
 
-  sncbr ();
+    sncbr();
 
-  i = 0;
+    i = 0;
 
-  do
+    do
     {
-      characternamestring = ttgetch ();
+        characternamestring = ttgetch();
 
-      if (characternamestring == '\n')
-	break;
-      if (characternamestring == 8)
-	{
-	  if (i > 0)
-	    {
-	      --i;
-	      term_delch ();
-	    }
-	}
-      else if (isprint (characternamestring))
-	{
-	  logname[i] = characternamestring;
-	  ++i;
-	}
+        if (characternamestring == '\n')
+            break;
 
-    }
-  while (i < LOGNAMESIZE - 1);
+        if (characternamestring == 8)
+        {
+            if (i > 0)
+            {
+                --i;
+                term_delch();
+            }
+        }
+        else if (isprint(characternamestring))
+        {
+            logname[i] = characternamestring;
+            lprc(characternamestring);
+            lflush(); /* be sure output buffer is flushed */
+            ++i;
+        }
 
-  logname[i] = '\0';
+    } while (i < LOGNAMESIZE - 1);
 
-  scbr ();
+    logname[i] = '\0';
+
+    scbr();
 }
 
 void

@@ -748,119 +748,118 @@ new2sub (int score, int i, char *whoo, int whyded)
 static int scorerror;
 
 void
-died (int x)
+died(int x)
 {
-  int f, win;
-  int i = 0;
-  /*char ch, *mod;
-     time_t zzz; */
+    int f, win, ch;
 
-  if (c[LIFEPROT] > 0)	/* if life protection */
+    if (c[LIFEPROT] > 0) /* if life protection */
     {
-      switch ((x > 0) ? x : -x)
-	{
-	case 256:
-	case 257:
-	case 262:
-	case 263:
-	case 265:
-	case 266:
-	case 267:
-	case 268:
-	case 269:
-	case 271:
-	case 282:
-	case 284:
-	case 285:
-	case 300:
-	  goto invalid;		/* can't be saved */
-	};
-      --c[LIFEPROT];
-      c[HP] = c[HPMAX];
-      --c[CONSTITUTION];
-      cursors ();
-      lprcat ("\nYou feel wiiieeeeerrrrrd all over! ");
-      lflush ();
-      nap (3000);
-
-      return;			/* only case where died() returns */
+        switch ((x > 0) ? x : -x)
+        {
+        case 256:
+        case 257:
+        case 262:
+        case 263:
+        case 265:
+        case 266:
+        case 267:
+        case 268:
+        case 269:
+        case 271:
+        case 282:
+        case 284:
+        case 285:
+        case 300:
+            goto invalid; /* can't be saved */
+        }
+        --c[LIFEPROT];
+        c[HP] = c[HPMAX];
+        --c[CONSTITUTION];
+        cursors();
+        lprcat("\nYou feel wiiieeeeerrrrrd all over! ");
+        lflush();
+        nap(3000);
+        return; /* only case where died() returns */
     }
 
-  cursors();
-  lflush();
-  refresh();
-  cursors ();
-  lprcat("\nPress 'ESC' to continue.\n");
-  while ((i = getch()) != 27)
-      i = ttgetch();
+    cursors();
+    lflush();
+    refresh();
+    cursors();
+    lprcat("\nPress 'ESC' to continue.\n");
+    do
+    {
+        ch = ttgetch();
+    } while (ch != 27);
 
 invalid:
-  clearvt100();
-  lflush ();
-  f = 0;
-  if (ckpflag)
-  {
-      unlink(ckpfile); /* remove checkpoint file if used */
-  }
+    f = 0;
+    if (ckpflag)
+        unlink(ckpfile); /* remove checkpoint file if used */
 
-  /* if we are not to display the scores */
-  if (x < 0)
+    /* if we are not to display the scores */
+    if (x < 0)
     {
-      f++;
-      x = -x;
+        f = 1;
+        x = -x;
     }
 
-  /* for quick exit or saved game */
-  if ((x == 300) || (x == 257))
+     /* for quick exit or saved game */
+    if (x == 300 || x == 257)
     {
-      clearvt100 ();
-      exit (EXIT_SUCCESS);
+        clearvt100();
+        exit(EXIT_SUCCESS);
     }
 
-  if (x == 263)
-    win = 1;
-  else
-    win = 0;
+    if (x == 263)
+        win = 1;
+    else
+        win = 0;
 
-  c[GOLD] += c[BANKACCOUNT];
-  c[BANKACCOUNT] = 0;
+    c[GOLD] += c[BANKACCOUNT];
+    c[BANKACCOUNT] = 0;
 
-  /*  now enter the player at the end of the scoreboard */
-  newscore (c[GOLD], logname, x, win);
-  diedsub (x);			/* print out the score line */
-  lflush ();
+    /*  now enter the player at the end of the scoreboard */
+    newscore(c[GOLD], logname, x, win);
+    diedsub(x); /* print out the score line */
+    lflush();
 
-  set_score_output ();
-  if ((wizard == 0) && (c[GOLD] > 0))	/*  wizards can't score     */
+    set_score_output();
+    if (wizard == 0 && c[GOLD] > 0)
     {
       /*  now for the scoreboard maintenance -- not for a suspended game  */
-      if (x != 257)
-	{
-	  if (sortboard ())
-	    scorerror = writeboard ();
-	}
+        if (x != 257)
+        {
+            if (sortboard())
+                scorerror = writeboard();
+        }
     }
-  if ((x == 256) || (x == 257) || (f != 0))
+
+    if (x == 256 || x == 257 || f != 0)
     {
-      clearvt100 ();
-      exit (EXIT_SUCCESS);
+        clearvt100();
+        exit(EXIT_SUCCESS);
     }
-  if (scorerror == 0)
+
+    if (scorerror == 0)
     {
-      lflush ();
-      screen_clear();
-      resetscroll ();
-      showscores ();		/* if we updated the scoreboard */
-      cursors ();
-      lprcat ("\nPress any key to exit. ");
-      scbr ();
-      ttgetch ();
+        lflush();
+        screen_clear();
+        resetscroll();
+        showscores(); /* if we updated the scoreboard */
+        cursors();
+        lprcat("\nPress 'ENTER' key to exit. ");
+        for (;;)
+        {
+            ch = ttgetch();
+            if (ch == '\n' || ch == '\r' || ch == KEY_ENTER)
+                break;
+        }
     }
-  clearvt100 ();
-  exit (EXIT_SUCCESS);
+
+    clearvt100();
+    exit(EXIT_SUCCESS);
 }
-
-
 
 /*
 *  diedsub(x) Subroutine to print out the line showing the player when he is killed

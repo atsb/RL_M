@@ -197,7 +197,7 @@ newcavelevel(int x)
     {
         getlevel();
 
-        for (t = 0; t < water_ticks; t++)
+        for (t = 0; t < (int)water_ticks; t++)
             expand_puddle();
 
         last_simulated_time[x] = now;

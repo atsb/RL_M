@@ -379,14 +379,15 @@ compareequipped(int obj)
     case OLANCE:
     case OVORPAL:
     case OSLAYER:
-    default:
-        break;
 
         if (wielded <= 0)
         {
             isnone();
             return;
         }
+
+    default:
+        break;
 
         switch (obj)
         {
@@ -520,14 +521,15 @@ compareequipped(int obj)
     case OPLATEARMOR:
     case OSSPLATE:
     case OELVENCHAIN:
-    default:
-        break;
 
         if (worn <= 0)
         {
             isnone();
             return;
         }
+
+    default:
+        break;
 
         switch (obj)
         {
@@ -686,8 +688,11 @@ showcell(int x, int y)
                         int id = k;
 
                         if (has_colors())
+                        #if !defined(_WIN32) || defined(__DOS4G__) || defined(__OS2V2__)
+                            attrset((int)(COLOR_PAIR(moncolor[id]) | monattr[id]));
+                        #else
                             attrset(COLOR_PAIR(moncolor[id]) | monattr[id]);
-
+                        #endif
                         lprc(monstnamelist[id]);
 
                         if (has_colors())
@@ -698,8 +703,11 @@ showcell(int x, int y)
                         int id = item[i][j];
 
                         if (has_colors())
+                        #if !defined(_WIN32) || defined(__DOS4G__) || defined(__OS2V2__)
+                            attrset((int)(COLOR_PAIR(objcolor[id]) | objattr[id]));
+                        #else
                             attrset(COLOR_PAIR(objcolor[id]) | objattr[id]);
-
+                        #endif
                         lprc(objnamelist[id]);
 
                         if (has_colors())

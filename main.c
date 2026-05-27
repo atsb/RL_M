@@ -847,11 +847,14 @@ parse (void)
 		}
 	    }
 
+	  if (flag == 0)
+	  {
+	    lprcat ("\nNo traps are visible");
+	  }
+
 	default:
 		break;
 
-	  if (flag == 0)
-	    lprcat ("\nNo traps are visible");
 	  return;
 
 #if WIZID

@@ -500,7 +500,7 @@ lgetc(void)
         int n = read(fd, inbuffer, MAXIBUF);
         if (n <= 0)
         {
-            return EOF;   /* distinguishable */
+            return 0;   /* distinguishable */
         }
         ipoint = 0;
         iepoint = n;

@@ -25,11 +25,11 @@
 void
 nap(int milliseconds)
 {
-    clock_t start, now;
-    long ticks = (milliseconds * CLOCKS_PER_SEC) / 1000;
+    clock_t start, now, ticks;
+    ticks = (clock_t)((long)milliseconds * (long)CLOCKS_PER_SEC / 1000L);
 
     start = clock();
     do {
         now = clock();
-    } while ((now - start) < ticks);
+    } while ((clock_t)(now - start) < ticks);
 }

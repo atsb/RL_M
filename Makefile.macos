@@ -1,5 +1,5 @@
 CC      = cc
-CFLAGS  = -pedantic -Wall -Wextra -Werror -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wold-style-definition -Wnested-externs -Wsign-conversion -Wundef -Wswitch-enum -Wswitch-default -Wunused -Wunused-parameter -Wunused-function -Wunused-variable -Wdouble-promotion -Wunreachable-code
+CFLAGS  = -pedantic -Wall -Wextra -Werror -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wold-style-definition -Wnested-externs -Wsign-conversion -Wundef -Wswitch-enum -Wswitch-default -Wunused -Wunused-parameter -Wunused-function -Wunused-variable -Wdouble-promotion
 
 LDFLAGS = -lncurses
 

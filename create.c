@@ -144,7 +144,9 @@ makeplayer(void)
         iven[0] = OLEATHER;
         iven[1] = ODAGGER;
         iven[2] = 0;
-        ivenarg[1] = ivenarg[0] = c[WEAR] = 0;
+        c[WEAR] = 0;
+        ivenarg[0] = 0;
+        ivenarg[1] = 0;
         c[WIELD] = 1;
     }
 

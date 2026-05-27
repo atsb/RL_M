@@ -686,24 +686,24 @@ showcell(int x, int y)
                         int id = k;
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(moncolor[id]) | monattr[id]);
+                            attrset((chtype)(COLOR_PAIR(moncolor[id]) | monattr[id]));
 
                         lprc(monstnamelist[id]);
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(0));
+                            attrset((chtype)COLOR_PAIR(0));
                     }
                     else
                     {
                         int id = item[i][j];
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(objcolor[id]) | objattr[id]);
+                            attrset((chtype)(COLOR_PAIR(objcolor[id]) | objattr[id]));
 
                         lprc(objnamelist[id]);
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(0));
+                            attrset((chtype)COLOR_PAIR(0));
                     }
 
                     know[i][j] = KNOWALL;

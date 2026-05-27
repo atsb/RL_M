@@ -686,7 +686,7 @@ showcell(int x, int y)
                         int id = k;
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(moncolor[id]) | monattr[id]);
+                            attrset((int)(COLOR_PAIR(moncolor[id]) | monattr[id]));
 
                         lprc(monstnamelist[id]);
 
@@ -698,7 +698,7 @@ showcell(int x, int y)
                         int id = item[i][j];
 
                         if (has_colors())
-                            attrset(COLOR_PAIR(objcolor[id]) | objattr[id]);
+                            attrset((int)(COLOR_PAIR(objcolor[id]) | objattr[id]));
 
                         lprc(objnamelist[id]);
 
@@ -896,8 +896,8 @@ moveplayer(int dir)
 if direction=0, don't move--just show where he is */
 {
     int k, m, i, j;
-    int worn_armor_idx = c[WEAR];
-    int shield_idx = c[SHIELD];
+    long worn_armor_idx = c[WEAR];
+    long shield_idx = c[SHIELD];
     int rusted_something = 0;
 
     if (c[CONFUSE])

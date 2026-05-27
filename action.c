@@ -411,7 +411,8 @@ donation.
 void
 act_donation_pray (void)
 {
-  int k, temp;
+  int k;
+  long temp;
 
   for (;;)
     {
@@ -594,7 +595,7 @@ act_open_chest (int x, int y)
 	  c[HALFDAM] += rnd (1600) + 200;
 	  lprcat ("\nA sickness engulfs you!");
 	  break;
-    
+
   default:
     break;
 

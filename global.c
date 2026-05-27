@@ -117,8 +117,7 @@ loselevel (void)
 void
 raiseexperience(unsigned long x)
 {
-    int tmp;
-    long i;
+    long tmp, i;
     unsigned long newexp;
 
     i = c[LEVEL];
@@ -158,8 +157,7 @@ raiseexperience(unsigned long x)
 void
 loseexperience (long x)
 {
-  int tmp;
-  long i;
+  long i, tmp;
 
   i = c[LEVEL];
   c[EXPERIENCE] -= x;
@@ -848,7 +846,7 @@ getyn (void)
 * function to calculate the pack weight of the player
 * returns the number of pounds the player is carrying
 */
-int
+long
 packweight (void)
 {
   int i, j = 25;

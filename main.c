@@ -587,8 +587,7 @@ parse (void)
 	case 'g':
 	  yrepcount = 0;
 	  cursors ();
-	  lprintf ("\nThe stuff you are carrying presently weighs %d units",
-		   (int) packweight ());
+	  lprintf ("\nThe stuff you are carrying presently weighs %d units", packweight ());
 	  break;
 
 	case 'i':		/* inventory */

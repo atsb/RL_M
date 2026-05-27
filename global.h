@@ -65,7 +65,7 @@ int getpassword (void);
 
 char getyn (void);
 
-int packweight (void);
+long packweight (void);
 
 extern int water_anim_toggle;
 extern time_t last_water_anim;

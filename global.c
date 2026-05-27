@@ -117,7 +117,8 @@ loselevel (void)
 void
 raiseexperience(unsigned long x)
 {
-    int i, tmp;
+    int tmp;
+    long i;
     unsigned long newexp;
 
     i = c[LEVEL];
@@ -157,7 +158,8 @@ raiseexperience(unsigned long x)
 void
 loseexperience (long x)
 {
-  int i, tmp;
+  int tmp;
+  long i;
 
   i = c[LEVEL];
   c[EXPERIENCE] -= x;
@@ -849,7 +851,8 @@ getyn (void)
 int
 packweight (void)
 {
-  int i, j = 25, k;
+  int i, j = 25;
+  long k;
 
   k = c[GOLD] / 1000;
   while ((iven[j] == 0) && (j > 0))

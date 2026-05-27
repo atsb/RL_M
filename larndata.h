@@ -161,26 +161,26 @@ extern const struct color_override_entry object_map[];
 
 extern int moncolor[MAXMONST + 9];
 extern int objcolor[MAXOBJECT + 1];
-extern int monattr[MAXMONST + 9];
-extern int objattr[MAXOBJECT + 1];
+extern chtype monattr[MAXMONST + 9];
+extern chtype objattr[MAXOBJECT + 1];
 
 extern int compare_color_better ;
-extern int compare_attr_better;
+extern chtype compare_attr_better;
 
 extern int compare_color_worse;
-extern int compare_attr_worse;
+extern chtype compare_attr_worse;
 
 extern int compare_color_equal;
-extern int compare_attr_equal;
+extern chtype compare_attr_equal;
 
 extern int compare_color_none;
-extern int compare_attr_none;
+extern chtype compare_attr_none;
 
 extern int cookie_color;
-extern int cookie_attr;
+extern chtype cookie_attr;
 
 extern int missile_color;
-extern int missile_attr;
+extern chtype missile_attr;
 
 extern unsigned char erosion[MAXX][MAXY];
 extern time_t last_simulated_time[MAXLEVEL];

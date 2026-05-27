@@ -59,7 +59,7 @@ static void o_open_door (void);
 static void o_closed_door (void);
 
 int cookie_color = COLOR_YELLOW;
-int cookie_attr  = A_BOLD;
+chtype cookie_attr  = A_BOLD;
 
 /* LOOK_FOR_OBJECT
 subroutine to look for an object and give the player his options if an object

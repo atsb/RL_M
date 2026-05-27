@@ -64,7 +64,7 @@ struct isave
 };
 
 int missile_color = COLOR_YELLOW;
-int missile_attr  = A_BOLD;
+chtype missile_attr  = A_BOLD;
 
 static void speldamage (int);
 

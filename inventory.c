@@ -187,6 +187,8 @@ iswearable(int obj)
     case OSSPLATE:
     case OSHIELD:
         return 1;
+      default:
+        break;
     }
     return 0;
 }
@@ -208,6 +210,8 @@ iswieldable(int obj)
     case OPOTION:
     case OSCROLL:
         return 0;
+    default:
+      break;
     }
     return 1;
 }
@@ -435,6 +439,9 @@ take (int itm, int arg)
 	    c[DEXTERITY] += 5;
 	    limit = 1;
 	    break;
+      
+    default:
+      break;
 	  };
 	lprcat ("\nYou pick up: ");
 	inventoryline_print (i);

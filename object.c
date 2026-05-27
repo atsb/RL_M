@@ -535,6 +535,9 @@ ostairs (int dir)
 	  lprcat ("go down");
 	  act_down_stairs ();
 	  return;
+
+  default:
+		break;
 	};
     }
 }
@@ -618,6 +621,9 @@ opotion (int pot)
 	  if (take (OPOTION, pot) == 0)
 	    forget ();
 	  return;
+
+  default:
+		break;
 	};
     }
 }
@@ -631,7 +637,7 @@ opotion (int pot)
 * invisible capability when drinking from a fountain). 
 */
 void
-quaffpotion (int pot, int set_known)
+quaffpotion(int pot, int set_known)
 {
   int i, j, k;
 
@@ -641,236 +647,241 @@ quaffpotion (int pot, int set_known)
 
   /*
    * if player is to know this potion (really quaffing one), make it
-   * known 
+   * known
    */
   if (set_known)
     potionname[pot][0] = ' ';
 
   switch (pot)
+  {
+  case 0:
+    lprcat("\nYou fall asleep. . .");
+    i = rnd(11) - (c[CONSTITUTION] >> 2) + 2;
+    while (--i > 0)
     {
-    case 0:
-      lprcat ("\nYou fall asleep. . .");
-      i = rnd (11) - (c[CONSTITUTION] >> 2) + 2;
-      while (--i > 0)
-	{
-	  parse2 ();
-	  nap (NAPTIME);
-	}
-      cursors ();
-      lprcat ("\nYou woke up!");
-      return;
+      parse2();
+      nap(NAPTIME);
+    }
+    cursors();
+    lprcat("\nYou woke up!");
+    return;
 
-    case 1:
-      lprcat ("\nYou feel better");
-      if (c[HP] == c[HPMAX])
-	raisemhp (1);
-      else if ((c[HP] += rnd (20) + 20 + c[LEVEL]) > c[HPMAX])
-	c[HP] = c[HPMAX];
-      break;
-
-    case 2:
-      lprcat ("\nSuddenly, you feel much more skillful!");
-      raiselevel ();
-      raisemhp (1);
-      return;
-
-    case 3:
-      lprcat ("\nYou feel strange for a moment");
-      c[rund (6)]++;
-      break;
-
-    case 4:
-      lprcat ("\nYou feel more self confident!");
-      c[WISDOM] += rnd (2);
-      break;
-
-    case 5:
-      lprcat ("\nWow!  You feel great!");
-      if (c[STRENGTH] < 12)
-	c[STRENGTH] = 12;
-      else
-	c[STRENGTH]++;
-      break;
-
-    case 6:
-      lprcat ("\nYour charm went up by one!");
-      c[CHARISMA]++;
-      break;
-
-    case 7:
-      lprcat ("\nYou become dizzy!");
-      if (--c[STRENGTH] < 3)
-	c[STRENGTH] = 3;
-      break;
-
-    case 8:
-      lprcat ("\nYour intelligence went up by one!");
-      c[INTELLIGENCE]++;
-      break;
-
-    case 9:
-      lprcat ("\nYou sense the presence of objects!");
-      nap (NAPTIME);
-      if (c[BLINDCOUNT])
-	return;
-      for (i = 0; i < MAXY; i++)
-	for (j = 0; j < MAXX; j++)
-	  switch (item[j][i])
-	    {
-	    case OPLATE:
-	    case OCHAIN:
-	    case OLEATHER:
-	    case ORING:
-	    case OSTUDLEATHER:
-	    case OSPLINT:
-	    case OPLATEARMOR:
-	    case OSSPLATE:
-	    case OSHIELD:
-	    case OSWORDofSLASHING:
-	    case OHAMMER:
-	    case OSWORD:
-	    case O2SWORD:
-	    case OHSWORD:
-	    case OSPEAR:
-	    case ODAGGER:
-	    case OBATTLEAXE:
-	    case OLONGSWORD:
-	    case OLANCE:
-	    case ORINGOFEXTRA:
-	    case OREGENRING:
-	    case OPROTRING:
-	    case OENERGYRING:
-	    case ODEXRING:
-	    case OSTRRING:
-	    case OCLEVERRING:
-	    case ODAMRING:
-	    case OBELT:
-	    case OSCROLL:
-	    case OPOTION:
-	    case OBOOK:
-	    case OCHEST:
-	    case OAMULET:
-	    case OORBOFDRAGON:
-	    case OSPIRITSCARAB:
-	    case OCUBEofUNDEAD:
-	    case ONOTHEFT:
-	    case OCOOKIE:
-	      know[j][i] = HAVESEEN;
-	      show1cell (j, i);
-	      break;
-	    }
-      showplayer ();
-      return;
-
-    case 10:			/* monster detection */
-      lprcat ("\nYou detect the presence of monsters!");
-      nap (NAPTIME);
-      if (c[BLINDCOUNT])
-	return;
-      for (i = 0; i < MAXY; i++)
-	for (j = 0; j < MAXX; j++)
-	  if (mitem[j][i] && (monstnamelist[mitem[j][i]] != floorc))
-	    {
-	      know[j][i] = HAVESEEN;
-	      show1cell (j, i);
-	    }
-      return;
-
-    case 11:
-      lprcat ("\nYou stagger for a moment . .");
-      for (i = 0; i < MAXY; i++)
-	for (j = 0; j < MAXX; j++)
-	  know[j][i] = 0;
-      nap (1000);
-      draws (0, MAXX, 0, MAXY);	/* potion of forgetfulness */
-      return;
-
-    case 12:
-      lprcat ("\nThis potion has no taste to it");
-      return;
-
-    case 13:
-      lprcat ("\nYou can't see anything!");	/* blindness */
-      c[BLINDCOUNT] += 500;
-      return;
-
-    case 14:
-      lprcat ("\nYou feel confused");
-      c[CONFUSE] += 20 + rnd (9);
-      return;
-
-    case 15:
-      lprcat ("\nWOW!!!  You feel Super-fantastic!!!");
-      if (c[HERO] == 0)
-	for (i = 0; i < 6; i++)
-	  c[i] += 11;
-      c[HERO] += 250;
-      break;
-
-    case 16:
-      lprcat ("\nYou have a greater intestinal constitude!");
-      c[CONSTITUTION]++;
-      break;
-
-    case 17:
-      lprcat ("\nYou now have incredibly bulging muscles!!!");
-      if (c[GIANTSTR] == 0)
-	c[STREXTRA] += 21;
-      c[GIANTSTR] += 700;
-      break;
-
-    case 18:
-      lprcat ("\nYou feel a chill run up your spine!");
-      c[FIRERESISTANCE] += 1000;
-      break;
-
-    case 19:
-      lprcat ("\nYou feel greedy . . .");
-      nap (NAPTIME);
-      if (c[BLINDCOUNT])
-	return;
-      for (i = 0; i < MAXY; i++)
-	for (j = 0; j < MAXX; j++)
-	  {
-	    k = item[j][i];
-	    if ((k == ODIAMOND) ||
-		(k == ORUBY) ||
-		(k == OEMERALD) ||
-		(k == OMAXGOLD) ||
-		(k == OSAPPHIRE) || (k == OLARNEYE) || (k == OGOLDPILE))
-	      {
-		know[j][i] = HAVESEEN;
-		show1cell (j, i);
-	      }
-	  }
-      showplayer ();
-      return;
-
-    case 20:
-      lprcat ("\nYou feel all better now!");
+  case 1:
+    lprcat("\nYou feel better");
+    if (c[HP] == c[HPMAX])
+      raisemhp(1);
+    else if ((c[HP] += rnd(20) + 20 + c[LEVEL]) > c[HPMAX])
       c[HP] = c[HPMAX];
-      break;			/* instant healing */
+    break;
 
-    case 21:
-      lprcat ("\nYou don't seem to be affected");
-      return;			/* cure dianthroritis */
+  case 2:
+    lprcat("\nSuddenly, you feel much more skillful!");
+    raiselevel();
+    raisemhp(1);
+    return;
 
-    case 22:
-      lprcat ("\nYou feel a sickness engulf you");	/* poison */
-      c[HALFDAM] += 200 + rnd (200);
+  case 3:
+    lprcat("\nYou feel strange for a moment");
+    c[rund(6)]++;
+    break;
+
+  case 4:
+    lprcat("\nYou feel more self confident!");
+    c[WISDOM] += rnd(2);
+    break;
+
+  case 5:
+    lprcat("\nWow!  You feel great!");
+    if (c[STRENGTH] < 12)
+      c[STRENGTH] = 12;
+    else
+      c[STRENGTH]++;
+    break;
+
+  case 6:
+    lprcat("\nYour charm went up by one!");
+    c[CHARISMA]++;
+    break;
+
+  case 7:
+    lprcat("\nYou become dizzy!");
+    if (--c[STRENGTH] < 3)
+      c[STRENGTH] = 3;
+    break;
+
+  case 8:
+    lprcat("\nYour intelligence went up by one!");
+    c[INTELLIGENCE]++;
+    break;
+
+  case 9:
+    lprcat("\nYou sense the presence of objects!");
+    nap(NAPTIME);
+    if (c[BLINDCOUNT])
       return;
 
-    case 23:
-      lprcat ("\nYou feel your vision sharpen");	/* see invisible */
-      c[SEEINVISIBLE] += rnd (1000) + 400;
-      monstnamelist[INVISIBLESTALKER] = 'I';
+    for (i = 0; i < MAXY; i++)
+      for (j = 0; j < MAXX; j++)
+        switch (item[j][i])
+        {
+        case OPLATE:
+        case OCHAIN:
+        case OLEATHER:
+        case ORING:
+        case OSTUDLEATHER:
+        case OSPLINT:
+        case OPLATEARMOR:
+        case OSSPLATE:
+        case OSHIELD:
+        case OSWORDofSLASHING:
+        case OHAMMER:
+        case OSWORD:
+        case O2SWORD:
+        case OHSWORD:
+        case OSPEAR:
+        case ODAGGER:
+        case OBATTLEAXE:
+        case OLONGSWORD:
+        case OLANCE:
+        case ORINGOFEXTRA:
+        case OREGENRING:
+        case OPROTRING:
+        case OENERGYRING:
+        case ODEXRING:
+        case OSTRRING:
+        case OCLEVERRING:
+        case ODAMRING:
+        case OBELT:
+        case OSCROLL:
+        case OPOTION:
+        case OBOOK:
+        case OCHEST:
+        case OAMULET:
+        case OORBOFDRAGON:
+        case OSPIRITSCARAB:
+        case OCUBEofUNDEAD:
+        case ONOTHEFT:
+        case OCOOKIE:
+          know[j][i] = HAVESEEN;
+          show1cell(j, i);
+          break;
+
+        default:
+			    break;
+        }
+    showplayer();
+    return;
+
+  case 10: /* monster detection */
+    lprcat("\nYou detect the presence of monsters!");
+    nap(NAPTIME);
+    if (c[BLINDCOUNT])
       return;
-    };
-  bottomline ();		/* show new stats      */
+    for (i = 0; i < MAXY; i++)
+      for (j = 0; j < MAXX; j++)
+        if (mitem[j][i] && (monstnamelist[mitem[j][i]] != floorc))
+        {
+          know[j][i] = HAVESEEN;
+          show1cell(j, i);
+        }
+    return;
+
+  case 11:
+    lprcat("\nYou stagger for a moment . .");
+    for (i = 0; i < MAXY; i++)
+      for (j = 0; j < MAXX; j++)
+        know[j][i] = 0;
+    nap(1000);
+    draws(0, MAXX, 0, MAXY); /* potion of forgetfulness */
+    return;
+
+  case 12:
+    lprcat("\nThis potion has no taste to it");
+    return;
+
+  case 13:
+    lprcat("\nYou can't see anything!"); /* blindness */
+    c[BLINDCOUNT] += 500;
+    return;
+
+  case 14:
+    lprcat("\nYou feel confused");
+    c[CONFUSE] += 20 + rnd(9);
+    return;
+
+  case 15:
+    lprcat("\nWOW!!!  You feel Super-fantastic!!!");
+    if (c[HERO] == 0)
+      for (i = 0; i < 6; i++)
+        c[i] += 11;
+    c[HERO] += 250;
+    break;
+
+  case 16:
+    lprcat("\nYou have a greater intestinal constitude!");
+    c[CONSTITUTION]++;
+    break;
+
+  case 17:
+    lprcat("\nYou now have incredibly bulging muscles!!!");
+    if (c[GIANTSTR] == 0)
+      c[STREXTRA] += 21;
+    c[GIANTSTR] += 700;
+    break;
+
+  case 18:
+    lprcat("\nYou feel a chill run up your spine!");
+    c[FIRERESISTANCE] += 1000;
+    break;
+
+  case 19:
+    lprcat("\nYou feel greedy . . .");
+    nap(NAPTIME);
+    if (c[BLINDCOUNT])
+      return;
+    for (i = 0; i < MAXY; i++)
+      for (j = 0; j < MAXX; j++)
+      {
+        k = item[j][i];
+        if ((k == ODIAMOND) ||
+            (k == ORUBY) ||
+            (k == OEMERALD) ||
+            (k == OMAXGOLD) ||
+            (k == OSAPPHIRE) || (k == OLARNEYE) || (k == OGOLDPILE))
+        {
+          know[j][i] = HAVESEEN;
+          show1cell(j, i);
+        }
+      }
+    showplayer();
+    return;
+
+  case 20:
+    lprcat("\nYou feel all better now!");
+    c[HP] = c[HPMAX];
+    break; /* instant healing */
+
+  case 21:
+    lprcat("\nYou don't seem to be affected");
+    return; /* cure dianthroritis */
+
+  case 22:
+    lprcat("\nYou feel a sickness engulf you"); /* poison */
+    c[HALFDAM] += 200 + rnd(200);
+    return;
+
+  case 23:
+    lprcat("\nYou feel your vision sharpen"); /* see invisible */
+    c[SEEINVISIBLE] += rnd(1000) + 400;
+    monstnamelist[INVISIBLESTALKER] = 'I';
+    return;
+
+  default:
+    break;
+  };
+  bottomline(); /* show new stats      */
   return;
 }
-
-
 
 /*
 * function to process a magic scroll 
@@ -910,6 +921,9 @@ oscroll (int typ)
 	  if (take (OSCROLL, typ) == 0)
 	    forget ();		/* destroy it  */
 	  return;
+
+  default:
+		break;
 	};
     }
 }
@@ -1082,6 +1096,7 @@ read_scroll (int typ)
     case 17:
       lprcat ("\nYou feel someone eyeing your belongings");
       for (i = 0; i < 26; i++)	/* gem perfection */
+
 	switch (iven[i])
 	  {
 	  case ODIAMOND:
@@ -1095,6 +1110,9 @@ read_scroll (int typ)
 	      j = 255;		/* double value */
 	    ivenarg[i] = j;
 	    break;
+
+    default:
+			break;
 	  }
       break;
 
@@ -1133,6 +1151,9 @@ read_scroll (int typ)
       lprcat ("\nYou sense a benign presence");
       c[LIFEPROT]++;
       break;			/* life protection */
+
+    default:
+			break;
     };
 }
 
@@ -1232,6 +1253,9 @@ obook (void)
 	  if (take (OBOOK, iarg[playerx][playery]) == 0)
 	    forget ();		/* no more book */
 	  return;
+
+  default:
+		break;
 	};
     }
 }
@@ -1329,6 +1353,9 @@ ocookie(void)
             if (take(OCOOKIE, 0) == 0)
                 forget();
             return;
+
+        default:
+			    break;
         }
     }
 }

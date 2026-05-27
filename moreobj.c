@@ -66,49 +66,52 @@ static void move_cursor (int *, int *, int);
 /*
 * subroutine to process an altar object
 */
-void
-oaltar (void)
+void oaltar(void)
 {
 
-  lprcat ("\nDo you (p) pray  (d) desecrate");
-  iopts ();
+  lprcat("\nDo you (p) pray  (d) desecrate");
+  iopts();
   for (;;)
+  {
+    switch (ttgetch())
     {
-      switch (ttgetch ())
-	{
-	case 'p':
-	  lprcat (" pray\nDo you (m) give money or (j) just pray? ");
-	  for (;;)
-	    switch (ttgetch ())
-	      {
-	      case 'j':
-		lprcat ("\n");
-		act_just_pray ();
-		return;
+    case 'p':
+      lprcat(" pray\nDo you (m) give money or (j) just pray? ");
+      for (;;)
+        switch (ttgetch())
+        {
+        case 'j':
+          lprcat("\n");
+          act_just_pray();
+          return;
 
-	      case 'm':
-		act_donation_pray ();
-		return;
+        case 'm':
+          act_donation_pray();
+          return;
 
-	      case '\33':
-		return;
-	      };
+        case '\33':
+          return;
 
-	case 'd':
-	  lprcat (" desecrate");
-	  act_desecrate_altar ();
-	  return;
+        default:
+			    break;
+        };
 
-	case 'i':
-	case '\33':
-	  ignore ();
-	  act_ignore_altar ();
-	  return;
-	};
-    }
+    case 'd':
+      lprcat(" desecrate");
+      act_desecrate_altar();
+      return;
+
+    case 'i':
+    case '\33':
+      ignore();
+      act_ignore_altar();
+      return;
+
+    default:
+      break;
+    };
+  }
 }
-
-
 
 /*
 subroutine to process a throne object
@@ -139,6 +142,9 @@ othrone (int arg)
 	    case '\33':
 	      ignore ();
 	      return;
+
+      default:
+			  break;
 	    };
 	}
     }
@@ -166,6 +172,9 @@ odeadthrone (void)
 	    case '\33':
 	      ignore ();
 	      return;
+
+      default:
+			  break;
 	    };
 	}
     }
@@ -201,6 +210,9 @@ ochest (void)
 	case '\33':
 	  ignore ();
 	  return;
+
+  default:
+			break;
 	};
     }
 }
@@ -232,6 +244,9 @@ ofountain (void)
 	case 'w':
 	  act_wash_fountain ();
 	  return;
+
+  default:
+		 break;
 	}
     }
 }
@@ -342,6 +357,9 @@ fntchange (int how)
 	  raiseexperience ((unsigned long)j);
 	}
       break;
+
+    default:
+			  break;
     }
   cursors ();
 }
@@ -731,6 +749,9 @@ specify_object (void)
 	case 'N':
 	  specify_obj_nocurs ();
 	  return;
+
+  default:
+			break;
 	}
     }
 }

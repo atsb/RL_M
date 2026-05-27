@@ -52,6 +52,9 @@
 #include "scores.h"
 #include "nap.h"
 #include "io.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
 
 struct scofmt			/*  This is the structure for the scoreboard        */
 {
@@ -771,6 +774,8 @@ died(int x)
         case 285:
         case 300:
             goto invalid; /* can't be saved */
+        default:
+			    break;
         }
         --c[LIFEPROT];
         c[HP] = c[HPMAX];
@@ -921,7 +926,7 @@ diedlog(void)
 {
     FILE *fp;
     long pos, size;
-    int n;
+    int n, i;
     const char *p;
     char buf[32];
 
@@ -973,10 +978,12 @@ diedlog(void)
 
         if (p)
         {
-            strncpy(buf, p, sizeof(buf));
-            buf[sizeof(buf)-1] = '\0';
+            for (i = 0; i < (int)sizeof(buf) - 1 && p[i] != '\0'; ++i)
+                buf[i] = p[i];
+
+            buf[i] = '\0';
             buf[16] = '\n';
-            buf[17] = 0;
+            buf[17] = '\0';
 
             p = buf;
         }

@@ -20,7 +20,6 @@
 void bottomline (void);
 void bottomhp (void);
 void bottomspell (void);
-void bottomline (void);
 void bottomgold (void);
 void draws (int, int, int, int);
 void drawscreen (void);

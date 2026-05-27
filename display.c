@@ -26,6 +26,9 @@
 #include "global.h"
 #include "io.h"
 #include "monster.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
 
 #define nlprc(_ch) lprc(_ch)
 
@@ -376,6 +379,8 @@ compareequipped(int obj)
     case OLANCE:
     case OVORPAL:
     case OSLAYER:
+    default:
+        break;
 
         if (wielded <= 0)
         {
@@ -431,6 +436,9 @@ compareequipped(int obj)
 
         case OSLAYER:
             newv = 50;
+            break;
+
+        default:
             break;
         }
         newv += ivenarg[obj];
@@ -512,6 +520,8 @@ compareequipped(int obj)
     case OPLATEARMOR:
     case OSSPLATE:
     case OELVENCHAIN:
+    default:
+        break;
 
         if (worn <= 0)
         {
@@ -555,6 +565,9 @@ compareequipped(int obj)
 
         case OELVENCHAIN:
             newv = 10;
+            break;
+
+        default:
             break;
         }
         newv += ivenarg[obj];
@@ -836,6 +849,15 @@ show1cell(int x, int y)
     }
 
     know[x][y] = KNOWALL;
+}
+
+static void
+cursor_block(void)
+{
+    curs_set(0);
+    attron(A_REVERSE);
+    addch(' ');
+    attroff(A_REVERSE);
 }
 
 /*

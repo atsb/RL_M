@@ -37,6 +37,9 @@
 #include "spells.h"
 #include "spheres.h"
 #include "nap.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
 
 		/* needed for hack fix to handle endwin()
 				   not being called after process commandline */	
@@ -838,9 +841,16 @@ parse (void)
 		      lprcat ("\nIts ");
 		      lprcat (objectname[item[i][j]]);
 		      flag++;
+
+			default:
+				break;
 		    };
 		}
 	    }
+
+	default:
+		break;
+
 	  if (flag == 0)
 	    lprcat ("\nNo traps are visible");
 	  return;
@@ -1280,6 +1290,9 @@ floor_consume (int search_item, const char *cons_verb)
       item[playerx][playery] = iarg[playerx][playery] = 0;
       read_scroll (i);
       break;
+
+	default:
+		break;
     }
   return (1);
 }

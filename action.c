@@ -594,6 +594,10 @@ act_open_chest (int x, int y)
 	  c[HALFDAM] += rnd (1600) + 200;
 	  lprcat ("\nA sickness engulfs you!");
 	  break;
+    
+  default:
+    break;
+
 	};
       item[x][y] = know[x][y] = 0;	/* destroy the chest */
       if (rnd (100) < 69)

@@ -463,6 +463,9 @@ move_scared (int i, int j)
     case ICELIZARD:
       if ((gtime & 1) == 1)
 	return;
+
+    default:
+			break;
     };
 
   if ((xl = i + rnd (3) - 2) < 0)
@@ -482,7 +485,19 @@ move_scared (int i, int j)
 	  mmove (i, j, xl, yl);
 }
 
-
+static int
+lava_safe_monster(int mid)
+{
+    switch (mid)
+    {
+    case REDDRAGON:
+    case DEMONLORD:
+    case DEMONPRINCE:
+        return 1;
+    default:
+        return 0;
+    }
+}
 
 /*
 Move monsters that are moving intelligently, using the proximity
@@ -518,6 +533,9 @@ move_smart(int i, int j)
     case ICELIZARD:
         if ((gtime & 1) == 1)
             return;
+
+    default:
+			break;
     }
 
     for (z = 1; z < 9; z++)
@@ -572,20 +590,6 @@ move_smart(int i, int j)
     mmove(i, j, w1x[0] = x, w1y[0] = y);
 }
 
-int
-lava_safe_monster(int mid)
-{
-    switch (mid)
-    {
-    case REDDRAGON:
-    case DEMONLORD:
-    case DEMONPRINCE:
-        return 1;
-    default:
-        return 0;
-    }
-}
-
 /*
 For monsters that are not moving in an intelligent fashion.  Move
 in a direct fashion toward the player's current position.
@@ -614,6 +618,9 @@ move_dumb(int i, int j)
     case ICELIZARD:
         if ((gtime & 1) == 1)
             return;
+
+    default:
+			break;
     }
 
     /* search window */
@@ -770,6 +777,9 @@ mmove (int aa, int bb, int cc, int dd)
       case OEMERALD:
       case OSAPPHIRE:
 	item[cc][dd] = 0;	/* leprechaun takes gold */
+
+      default:
+			  break;
       };
 
   if (tmp == TROLL)		/* if a troll regenerate him */
@@ -824,6 +834,9 @@ mmove (int aa, int bb, int cc, int dd)
 	  p = "\nThe %s%s gets teleported";
 	  who = "";
 	  break;
+
+  default:
+		break;
 	};
       if (p)
 	{

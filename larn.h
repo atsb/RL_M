@@ -31,8 +31,3 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-/* includes of other header files */
-#include "larncons.h"
-#include "larndata.h"
-#include "larnfunc.h"

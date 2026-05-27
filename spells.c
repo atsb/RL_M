@@ -161,400 +161,405 @@ cast (void)
 *  Please insure that there are 2 spaces before all messages here
 */
 static void
-speldamage (int x)
+speldamage(int x)
 {
   int i, j, clev;
   int xl, xh, yl, yh;
   int *kn, *pm, *p;
 
   if (x >= SPNUM)
-    return;			/* no such spell */
+    return; /* no such spell */
   if (c[TIMESTOP])
-    {
-      lprcat ("  It didn't seem to work");
-      return;
-    }				/* not if time stopped */
+  {
+    lprcat("  It didn't seem to work");
+    return;
+  } /* not if time stopped */
   clev = c[LEVEL];
-  if ((rnd (23) == 7) || (rnd (18) > c[INTELLIGENCE]))
-    {
-      lprcat ("  It didn't work!");
-      return;
-    }
+  if ((rnd(23) == 7) || (rnd(18) > c[INTELLIGENCE]))
+  {
+    lprcat("  It didn't work!");
+    return;
+  }
   if (clev * 3 + 2 < x)
-    {
-      lprcat ("  Nothing happens.  You seem inexperienced at this");
-      return;
-    }
+  {
+    lprcat("  Nothing happens.  You seem inexperienced at this");
+    return;
+  }
 
   switch (x)
-    {
-      /* ----- LEVEL 1 SPELLS ----- */
+  {
+    /* ----- LEVEL 1 SPELLS ----- */
 
-    case 0:
-      if (c[PROTECTIONTIME] == 0)
-	c[MOREDEFENSES] += 2;	/* protection field +2 */
-      c[PROTECTIONTIME] += 250;
-      return;
+  case 0:
+    if (c[PROTECTIONTIME] == 0)
+      c[MOREDEFENSES] += 2; /* protection field +2 */
+    c[PROTECTIONTIME] += 250;
+    return;
 
-    case 1:
-      i = rnd (((clev + 1) << 1)) + clev + 3;
-      godirect (x, i, (clev >= 2) ? "  Your missiles hit the %s" : "  Your missile hit the %s", 100, '+');	/* magic missile */
+  case 1:
+    i = rnd(((clev + 1) << 1)) + clev + 3;
+    godirect(x, i, (clev >= 2) ? "  Your missiles hit the %s" : "  Your missile hit the %s", 100, '+'); /* magic missile */
 
-      return;
+    return;
 
-    case 2:
-      if (c[DEXCOUNT] == 0)
-	c[DEXTERITY] += 3;	/* dexterity   */
-      c[DEXCOUNT] += 400;
-      return;
+  case 2:
+    if (c[DEXCOUNT] == 0)
+      c[DEXTERITY] += 3; /* dexterity   */
+    c[DEXCOUNT] += 400;
+    return;
 
-	/*Further fixes below for issue #36.  Removed crusty old 'C' and replaced with
-		direct function calls. -Gibbon*/
-    case 3:
-      i = rnd (3) + 1;
-      /*Fix for bug #24 added newlines to the 'msg' for web and sleep spells.
-      Removed the msg and used lprcat instead plus color. ~Gibbon*/
-      direct (x, fullhit (i), "\nwhile the %s slept, you hit %d times ", i);	/*    sleep   */
-      return;
+    /*Further fixes below for issue #36.  Removed crusty old 'C' and replaced with
+      direct function calls. -Gibbon*/
+  case 3:
+    i = rnd(3) + 1;
+    /*Fix for bug #24 added newlines to the 'msg' for web and sleep spells.
+    Removed the msg and used lprcat instead plus color. ~Gibbon*/
+    direct(x, fullhit(i), "\nwhile the %s slept, you hit %d times ", i); /*    sleep   */
+    return;
 
-    case 4:			/*  charm monster   */
-      c[CHARMCOUNT] += c[CHARISMA] << 1;
-      return;
+  case 4: /*  charm monster   */
+    c[CHARMCOUNT] += c[CHARISMA] << 1;
+    return;
 
-    case 5:
-      godirect (x, rnd (10) + 15 + clev, "  The sound damages the %s", 70, '@');	/* sonic spear */
-      return;
+  case 5:
+    godirect(x, rnd(10) + 15 + clev, "  The sound damages the %s", 70, '@'); /* sonic spear */
+    return;
 
+    /* ----- LEVEL 2 SPELLS ----- */
 
-      /* ----- LEVEL 2 SPELLS ----- */
+  case 6:
+    i = rnd(3) + 2;
+    direct(x, fullhit(i), "\nYou damage the %s and hit %d times ", i); /* web */
+    return;
 
-    case 6:
-      i = rnd (3) + 2;
-      direct (x, fullhit (i),"\nYou damage the %s and hit %d times ", i);			/* web */
-	  return;
+  case 7:
+    if (c[STRCOUNT] == 0)
+      c[STREXTRA] += 3; /*  strength    */
+    c[STRCOUNT] += 150 + rnd(100);
+    return;
 
-    case 7:
-      if (c[STRCOUNT] == 0)
-	c[STREXTRA] += 3;	/*  strength    */
-      c[STRCOUNT] += 150 + rnd (100);
-      return;
+  case 8:
+    yl = playery - 5; /* enlightenment */
+    yh = playery + 6;
+    xl = playerx - 15;
+    xh = playerx + 16;
+    vxy(&xl, &yl);
+    vxy(&xh, &yh);             /* check bounds */
+    for (i = yl; i <= yh; i++) /* enlightenment */
+      for (j = xl; j <= xh; j++)
+        know[j][i] = KNOWALL;
+    draws(xl, xh + 1, yl, yh + 1);
+    return;
 
-    case 8:
-      yl = playery - 5;		/* enlightenment */
-      yh = playery + 6;
-      xl = playerx - 15;
-      xh = playerx + 16;
-      vxy (&xl, &yl);
-      vxy (&xh, &yh);		/* check bounds */
-      for (i = yl; i <= yh; i++)	/* enlightenment */
-	for (j = xl; j <= xh; j++)
-	  know[j][i] = KNOWALL;
-      draws (xl, xh + 1, yl, yh + 1);
-      return;
+  case 9:
+    raisehp(20 + (clev << 1));
+    return; /* healing */
 
-    case 9:
-      raisehp (20 + (clev << 1));
-      return;			/* healing */
+  case 10:
+    c[BLINDCOUNT] = 0;
+    return; /* cure blindness   */
 
-    case 10:
-      c[BLINDCOUNT] = 0;
-      return;			/* cure blindness   */
+  case 11:
+    createmonster(makemonst(level + 1) + 8);
+    return;
 
-    case 11:
-      createmonster (makemonst (level + 1) + 8);
-      return;
+  case 12:
+    if (rnd(11) + 7 <= c[WISDOM])
+      direct(x, rnd(20) + 20 + clev, "\nThe %s believed!", 0);
+    else
+      lprcat("\n It didn't believe the illusions!");
+    return;
 
-    case 12:
-      if (rnd (11) + 7 <= c[WISDOM])
-	direct (x, rnd (20) + 20 + clev, "\nThe %s believed!", 0);
-      else
-	lprcat ("\n It didn't believe the illusions!");
-      return;
+  case 13: /* if he has the amulet of invisibility then add more time */
+    for (j = i = 0; i < 26; i++)
+      if (iven[i] == OAMULET)
+        j += 1 + ivenarg[i];
+    c[INVISIBILITY] += (j << 7) + 12;
+    return;
 
-    case 13:			/* if he has the amulet of invisibility then add more time */
-      for (j = i = 0; i < 26; i++)
-	if (iven[i] == OAMULET)
-	  j += 1 + ivenarg[i];
-      c[INVISIBILITY] += (j << 7) + 12;
-      return;
+    /* ----- LEVEL 3 SPELLS ----- */
 
-      /* ----- LEVEL 3 SPELLS ----- */
+  case 14:
+    godirect(x, rnd(25 + clev) + 25 + clev, "\nThe fireball hits the %s",
+             40, '*');
+    return; /*    fireball */
 
-    case 14:
-      godirect (x, rnd (25 + clev) + 25 + clev, "\nThe fireball hits the %s",
-		40, '*');
-      return;			/*    fireball */
+  case 15:
+    godirect(x, rnd(25) + 20 + clev, "\nYour cone of cold strikes the %s", 60, 'O'); /*  cold */
+    return;
 
-    case 15:
-      godirect (x, rnd (25) + 20 + clev, "\nYour cone of cold strikes the %s", 60, 'O');	/*  cold */
-      return;
+  case 16:
+    dirpoly(x);
+    return; /*  polymorph */
 
-    case 16:
-      dirpoly (x);
-      return;			/*  polymorph */
+  case 17:
+    c[CANCELLATION] += 5 + clev;
+    return; /*  cancellation    */
 
-    case 17:
-      c[CANCELLATION] += 5 + clev;
-      return;			/*  cancellation    */
+  case 18:
+    c[HASTESELF] += 7 + clev;
+    return; /* haste self  */
 
-    case 18:
-      c[HASTESELF] += 7 + clev;
-      return;			/* haste self  */
+  case 19:
+    omnidirect(x, 30 + rnd(10), "\nThe %s gasps for air"); /* cloud kill */
+    return;
 
-    case 19:
-      omnidirect (x, 30 + rnd (10), "\nThe %s gasps for air");	/* cloud kill */
-      return;
-
-    case 20:
-      xh = min_math_larn (playerx + 1, MAXX - 2);
-      yh = min_math_larn (playery + 1, MAXY - 2);
-      for (i = max_math_larn (playerx - 1, 1); i <= xh; i++)	/* vaporize rock */
-	for (j = max_math_larn (playery - 1, 1); j <= yh; j++)
-	  {
-	    kn = &know[i][j];
-	    pm = &mitem[i][j];
-	    switch (*(p = &item[i][j]))
-	      {
-	      case OWALL:
-        case OINNERWALL:
-		if (level < MAXLEVEL + MAXVLEVEL - 1)
-		  *p = *kn = 0;
-		break;
-
-	      case OSTATUE:
-		if (c[HARDGAME] < 3)
-		  {
-		    *p = OBOOK;
-		    iarg[i][j] = level;
-		    *kn = 0;
-		  }
-		break;
-
-	      case OTHRONE:
-		*p = OTHRONE2;
-		create_guardian (GNOMEKING, i, j);
-		break;
-
-	      case OALTAR:
-		create_guardian (DEMONPRINCE, i, j);
-		break;
-
-	      case OFOUNTAIN:
-		create_guardian (WATERLORD, i, j);
-		break;
-	      };
-	    switch (*pm)
-	      {
-	      case XORN:
-		ifblind (i, j);
-		hitm (i, j, 200);
-		break;		/* Xorn takes damage from vpr */
-	      }
-	  }
-      return;
-
-      /* ----- LEVEL 4 SPELLS ----- */
-
-    case 21:
-      direct (x, 100 + clev, "\nThe %s shrivels up", 0);	/* dehydration */
-      return;
-
-    case 22:
-      godirect (x, rnd (25) + 20 + (clev << 1), "\nA lightning bolt hits the %s", 1, '~');	/*  lightning */
-      return;
-
-    case 23:
-      i = min_math_larn (c[HP] - 1, c[HPMAX] / 2);	/* drain life */
-      direct (x, i + i, "", 0);
-      c[HP] -= i;
-      return;
-
-    case 24:
-      if (c[GLOBE] == 0)
-	c[MOREDEFENSES] += 10;
-      c[GLOBE] += 200;
-      loseint ();		/* globe of invulnerability */
-      return;
-
-    case 25:
-      omnidirect (x, 32 + clev, "\nThe %s struggles for air in your flood!");	/* flood */
-      return;
-
-    case 26:
-      if (rnd (151) == 63)
-	{
-	  lprcat ("\nYour heart stopped!\n");
-	  nap (NAPTIME);
-	  died (270);
-	  return;
-	}
-      if (c[WISDOM] > rnd (10) + 10)
-	direct (x, 2000, " \nThe %s's heart stopped", 0);	/* finger of death */
-      else
-	lprcat (" It didn't work");
-      return;
-
-      /* ----- LEVEL 5 SPELLS ----- */
-
-    case 27:
-      c[SCAREMONST] += rnd (10) + clev;
-      return;			/* scare monster */
-
-    case 28:
-      c[HOLDMONST] += rnd (10) + clev;
-      return;			/* hold monster */
-
-    case 29:
-      c[TIMESTOP] += rnd (20) + (clev << 1);
-      return;			/* time stop */
-
-    case 30:
-      tdirect (x);
-      return;			/* teleport away */
-
-    case 31:
-      omnidirect (x, 35 + rnd (10) + clev, "\nThe %s cringes from the flame");	/* magic fire */
-      return;
-
-      /* ----- LEVEL 6 SPELLS ----- */
-
-    case 32:
-      if ((rnd (23) == 5) && (wizard == 0))	/* sphere of annihilation */
-	{
-	  lprcat ("\n You have been enveloped by the zone of nothingness!\n");
-	  nap (NAPTIME);
-	  died (258);
-	  return;
-	}
-      xl = playerx;
-      yl = playery;
-      loseint ();
-      i = dirsub (&xl, &yl);	/* get direction of sphere */
-      newsphere (xl, yl, i, rnd (20) + 11);	/* make a sphere */
-      return;
-
-    case 33:
-      genmonst ();
-      spelknow[33] = 0;		/* genocide */
-      loseint ();
-      return;
-
-    case 34:			/* summon demon */
-      if (rnd (100) > 30)
-	{
-	  direct (x, 150, "\n The demon strikes at the %s", 0);
-	  return;
-	}
-      if (rnd (100) > 15)
-	{
-	  lprcat (" Nothing seems to have happened");
-	  return;
-	}
-      lprcat (" The");
-      lprcat(" demon ");
-      lprcat("turned on you and vanished!");
-      i = rnd (40) + 30;
-      lastnum = 277;
-      losehp (i);		/* must say killed by a demon */
-      return;
-
-    case 35:			/* walk through walls */
-      c[WTW] += rnd (10) + 5;
-      return;
-
-    case 36:			/* alter reality */
+  case 20:
+    xh = min_math_larn(playerx + 1, MAXX - 2);
+    yh = min_math_larn(playery + 1, MAXY - 2);
+    for (i = max_math_larn(playerx - 1, 1); i <= xh; i++) /* vaporize rock */
+      for (j = max_math_larn(playery - 1, 1); j <= yh; j++)
       {
-	struct isave *save;	/* pointer to item save structure */
-	int sc;
-	sc = 0;			/* # items saved */
-	save =
-	  (struct isave *) malloc (sizeof (struct isave) * MAXX * MAXY * 2);
-	if (save == NULL)
-	  {
-	    lprcat ("\n Polinneaus won't let you mess with his dungeon!");
-	    return;
-	  }
-	for (j = 0; j < MAXY; j++)
-	  for (i = 0; i < MAXX; i++)	/* save all items and monsters */
-	    {
-	      xl = item[i][j];
-	      if ( (xl && xl != OWALL) || (OINNERWALL && xl != OANNIHILATION) )
-		{
-		  save[sc].type = 0;
-		  save[sc].id = item[i][j];
-		  save[sc++].arg = iarg[i][j];
-		}
-	      if (mitem[i][j])
-		{
-		  save[sc].type = 1;
-		  save[sc].id = mitem[i][j];
-		  save[sc++].arg = hitp[i][j];
-		}
-	      if (item[i][j] == OWALL || item[i][j] == OINNERWALL)
-            item[i][j] = item[i][j];
-            
-	      mitem[i][j] = 0;
-	      if (wizard)
-		know[i][j] = KNOWALL;
-	      else
-		know[i][j] = 0;
-	    }
-	eat (1, 1);
-	if (level == 1)
-	  item[33][MAXY - 1] = OENTRANCE;
-	for (j = rnd (MAXY - 2), i = 1; i < MAXX - 1; i++)
-	  item[i][j] = 0;
-	while (sc > 0)		/* put objects back in level */
-	  {
-	    --sc;
-	    if (save[sc].type == 0)
-	      {
-		int trys;
-		for (trys = 100, i = j = 1; --trys > 0 && item[i][j];
-		     i = rnd (MAXX - 1), j = rnd (MAXY - 1));
-		if (trys)
-		  {
-		    item[i][j] = save[sc].id;
-		    iarg[i][j] = save[sc].arg;
-		  }
-	      }
-	    else
-	      {			/* put monsters back in */
-		int trys;
-		for (trys = 100, i = j = 1; (--trys > 0) &&
-      (item[i][j] == OWALL ||
-      item[i][j] == OINNERWALL ||
-      mitem[i][j] != 0);
-		     i = rnd (MAXX - 1), j = rnd (MAXY - 1));
-		if (trys)
-		  {
-		    mitem[i][j] = save[sc].id;
-		    hitp[i][j] = save[sc].arg;
-		  }
-	      }
-	  }
-	loseint ();
-	draws (0, MAXX, 0, MAXY);
-	if (wizard == 0)
-	  spelknow[36] = 0;
-	free ((char *) save);
-	positionplayer ();
-	return;
+        kn = &know[i][j];
+        pm = &mitem[i][j];
+        switch (*(p = &item[i][j]))
+        {
+        case OWALL:
+        case OINNERWALL:
+          if (level < MAXLEVEL + MAXVLEVEL - 1)
+            *p = *kn = 0;
+          break;
+
+        case OSTATUE:
+          if (c[HARDGAME] < 3)
+          {
+            *p = OBOOK;
+            iarg[i][j] = level;
+            *kn = 0;
+          }
+          break;
+
+        case OTHRONE:
+          *p = OTHRONE2;
+          create_guardian(GNOMEKING, i, j);
+          break;
+
+        case OALTAR:
+          create_guardian(DEMONPRINCE, i, j);
+          break;
+
+        case OFOUNTAIN:
+          create_guardian(WATERLORD, i, j);
+          break;
+
+        default:
+			    break;
+        };
+        switch (*pm)
+        {
+        case XORN:
+          ifblind(i, j);
+          hitm(i, j, 200);
+          break; /* Xorn takes damage from vpr */
+
+        default:
+          break;
+        }
       }
+    return;
 
-    case 37:			/* permanence */
-      adjtimel (-99999L);
-      spelknow[37] = 0;		/* forget */
-      loseint ();
-      return;
+    /* ----- LEVEL 4 SPELLS ----- */
 
-    default:
-      lprintf ("spell %d not available!", (int) x);
+  case 21:
+    direct(x, 100 + clev, "\nThe %s shrivels up", 0); /* dehydration */
+    return;
+
+  case 22:
+    godirect(x, rnd(25) + 20 + (clev << 1), "\nA lightning bolt hits the %s", 1, '~'); /*  lightning */
+    return;
+
+  case 23:
+    i = min_math_larn(c[HP] - 1, c[HPMAX] / 2); /* drain life */
+    direct(x, i + i, "", 0);
+    c[HP] -= i;
+    return;
+
+  case 24:
+    if (c[GLOBE] == 0)
+      c[MOREDEFENSES] += 10;
+    c[GLOBE] += 200;
+    loseint(); /* globe of invulnerability */
+    return;
+
+  case 25:
+    omnidirect(x, 32 + clev, "\nThe %s struggles for air in your flood!"); /* flood */
+    return;
+
+  case 26:
+    if (rnd(151) == 63)
+    {
+      lprcat("\nYour heart stopped!\n");
+      nap(NAPTIME);
+      died(270);
       return;
-    };
+    }
+    if (c[WISDOM] > rnd(10) + 10)
+      direct(x, 2000, " \nThe %s's heart stopped", 0); /* finger of death */
+    else
+      lprcat(" It didn't work");
+    return;
+
+    /* ----- LEVEL 5 SPELLS ----- */
+
+  case 27:
+    c[SCAREMONST] += rnd(10) + clev;
+    return; /* scare monster */
+
+  case 28:
+    c[HOLDMONST] += rnd(10) + clev;
+    return; /* hold monster */
+
+  case 29:
+    c[TIMESTOP] += rnd(20) + (clev << 1);
+    return; /* time stop */
+
+  case 30:
+    tdirect(x);
+    return; /* teleport away */
+
+  case 31:
+    omnidirect(x, 35 + rnd(10) + clev, "\nThe %s cringes from the flame"); /* magic fire */
+    return;
+
+    /* ----- LEVEL 6 SPELLS ----- */
+
+  case 32:
+    if ((rnd(23) == 5) && (wizard == 0)) /* sphere of annihilation */
+    {
+      lprcat("\n You have been enveloped by the zone of nothingness!\n");
+      nap(NAPTIME);
+      died(258);
+      return;
+    }
+    xl = playerx;
+    yl = playery;
+    loseint();
+    i = dirsub(&xl, &yl);               /* get direction of sphere */
+    newsphere(xl, yl, i, rnd(20) + 11); /* make a sphere */
+    return;
+
+  case 33:
+    genmonst();
+    spelknow[33] = 0; /* genocide */
+    loseint();
+    return;
+
+  case 34: /* summon demon */
+    if (rnd(100) > 30)
+    {
+      direct(x, 150, "\n The demon strikes at the %s", 0);
+      return;
+    }
+    if (rnd(100) > 15)
+    {
+      lprcat(" Nothing seems to have happened");
+      return;
+    }
+    lprcat(" The");
+    lprcat(" demon ");
+    lprcat("turned on you and vanished!");
+    i = rnd(40) + 30;
+    lastnum = 277;
+    losehp(i); /* must say killed by a demon */
+    return;
+
+  case 35: /* walk through walls */
+    c[WTW] += rnd(10) + 5;
+    return;
+
+  case 36: /* alter reality */
+  {
+    struct isave *save; /* pointer to item save structure */
+    int sc;
+    sc = 0; /* # items saved */
+    save =
+        (struct isave *)malloc(sizeof(struct isave) * MAXX * MAXY * 2);
+    if (save == NULL)
+    {
+      lprcat("\n Polinneaus won't let you mess with his dungeon!");
+      return;
+    }
+    for (j = 0; j < MAXY; j++)
+      for (i = 0; i < MAXX; i++) /* save all items and monsters */
+      {
+        xl = item[i][j];
+        if ((xl && xl != OWALL) || (OINNERWALL && xl != OANNIHILATION))
+        {
+          save[sc].type = 0;
+          save[sc].id = item[i][j];
+          save[sc++].arg = iarg[i][j];
+        }
+        if (mitem[i][j])
+        {
+          save[sc].type = 1;
+          save[sc].id = mitem[i][j];
+          save[sc++].arg = hitp[i][j];
+        }
+        if (item[i][j] == OWALL || item[i][j] == OINNERWALL)
+          item[i][j] = item[i][j];
+
+        mitem[i][j] = 0;
+        if (wizard)
+          know[i][j] = KNOWALL;
+        else
+          know[i][j] = 0;
+      }
+    eat(1, 1);
+    if (level == 1)
+      item[33][MAXY - 1] = OENTRANCE;
+    for (j = rnd(MAXY - 2), i = 1; i < MAXX - 1; i++)
+      item[i][j] = 0;
+    while (sc > 0) /* put objects back in level */
+    {
+      --sc;
+      if (save[sc].type == 0)
+      {
+        int trys;
+        for (trys = 100, i = j = 1; --trys > 0 && item[i][j];
+             i = rnd(MAXX - 1), j = rnd(MAXY - 1))
+          ;
+        if (trys)
+        {
+          item[i][j] = save[sc].id;
+          iarg[i][j] = save[sc].arg;
+        }
+      }
+      else
+      { /* put monsters back in */
+        int trys;
+        for (trys = 100, i = j = 1; (--trys > 0) &&
+                                    (item[i][j] == OWALL ||
+                                     item[i][j] == OINNERWALL ||
+                                     mitem[i][j] != 0);
+             i = rnd(MAXX - 1), j = rnd(MAXY - 1))
+          ;
+        if (trys)
+        {
+          mitem[i][j] = save[sc].id;
+          hitp[i][j] = save[sc].arg;
+        }
+      }
+    }
+    loseint();
+    draws(0, MAXX, 0, MAXY);
+    if (wizard == 0)
+      spelknow[36] = 0;
+    free((char *)save);
+    positionplayer();
+    return;
+  }
+
+  case 37: /* permanence */
+    adjtimel(-99999L);
+    spelknow[37] = 0; /* forget */
+    loseint();
+    return;
+
+  default:
+    lprintf("spell %d not available!", (int)x);
+    return;
+  };
 }
-
-
 
 /*
 * Create a guardian for a throne/altar/fountain, as a result of the player
@@ -983,6 +988,9 @@ godirect (int spnum, int dam, const char *str, int delay, const char cshow)
                 }
             }
             break;
+
+          default:
+			      break;
             }
         }
 
@@ -1190,6 +1198,9 @@ dirsub (int *x, int *y)
 	case '\33':
 		drawscreen();
 	  goto out;
+    
+  default:
+		break;
 	};
     }
 

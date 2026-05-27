@@ -17,6 +17,7 @@
  * See the 'LICENSE.txt' file in the 'docs' folder.
  */
 
+#include <ctype.h>
 #include "create.h"
 #include "display.h"
 #include "larn.h"
@@ -25,6 +26,9 @@
 #include "monster.h"
 #include "savelev.h"
 #include "scores.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
 
 static void makemaze(int);
 static int cannedlevel(int);
@@ -44,6 +48,57 @@ unsigned char erosion[MAXX][MAXY];
 time_t last_simulated_time[MAXLEVEL];
 unsigned char lavaheat[MAXX][MAXY];
 time_t last_lava_cool = 0;
+
+static void
+term_delch(void)
+{
+    delch();
+}
+
+static void
+enter_name(void)
+{
+    int i;
+    char characternamestring;
+
+    if (name_set)
+        return;
+
+    lprcat("\n\nEnter character name:\n");
+
+    sncbr();
+
+    i = 0;
+
+    do
+    {
+        characternamestring = ttgetch();
+
+        if (characternamestring == '\n')
+            break;
+
+        if (characternamestring == 8)
+        {
+            if (i > 0)
+            {
+                --i;
+                term_delch();
+            }
+        }
+        else if (isprint(characternamestring))
+        {
+            logname[i] = characternamestring;
+            lprc(characternamestring);
+            lflush(); /* be sure output buffer is flushed */
+            ++i;
+        }
+
+    } while (i < LOGNAMESIZE - 1);
+
+    logname[i] = '\0';
+
+    scbr();
+}
 
 /*
 makeplayer()
@@ -631,9 +686,9 @@ void
 eat(int xx, int yy)
 {
     int dir = rnd(4);
-    int try = 2;
+    int tryeat = 2;
 
-    while (try)
+    while (tryeat)
     {
         switch (dir)
         {
@@ -698,12 +753,15 @@ eat(int xx, int yy)
             item[xx][yy + 2] = 0;
             eat(xx, yy + 2);
             break;
+
+        default:
+            break;
         }
 
         if (++dir > 4)
         {
             dir = 1;
-            --try;
+            --tryeat;
         }
     }
 }
@@ -726,6 +784,8 @@ lava_blocked(int x, int y)
     case OSTAIRSDOWN:
     case OVOLUP:
         return 1;
+    default:
+        break;
     }
     return 0;
 }
@@ -914,6 +974,8 @@ makestream(int lvl)
                 case OSTAIRSDOWN:
                 case OVOLUP:
                     continue;
+                default:
+                    break;
                 }
 
                 item[sx][sy] = OWATER;
@@ -1016,6 +1078,8 @@ makestream(int lvl)
             case OSTAIRSDOWN:
             case OVOLUP:
                 continue;
+            default:
+                break;
             }
 
             item[sx][sy] = OWATER;
@@ -1093,6 +1157,8 @@ expand_puddle(void)
                 case OSTAIRSDOWN:
                 case OVOLUP:
                     continue;
+                default:
+                    break;
                 }
 
                 if (item[nx][ny] == OWALL)
@@ -1309,6 +1375,8 @@ cannedlevel(int k)
             case '-':
                 it = newobject(k + 1, &arg);
                 break;
+            default:
+                break;
             }
 
             /* enforce boundary walls */
@@ -1410,6 +1478,8 @@ troom(int lv, int xsize, int ysize, int tx, int ty, int glyph)
         item[i = tx + (xsize - 1) * rund(2)][j = ty + rund(ysize)] =
             OCLOSEDDOOR;
         iarg[i][j] = glyph;	/* on vertical walls */
+        break;
+    default:
         break;
     };
 

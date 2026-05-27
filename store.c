@@ -607,6 +607,9 @@ oschool (void)
 		("by a platinum dragon who possesses psionic abilities. ");
 	      cl_line (16, 14);
 	      break;
+
+      	default:
+			break;
 	    }
 	  time_used += coursetime[i - 'a'] * 100;
 	  if (time_used > 0)
@@ -870,6 +873,9 @@ obanksub (void)
 
 	case '\33':
 	  return;
+
+    default:
+		break;
 	};
 	/*Fix for #38 -Gibbon*/
 		cursor(1,16);
@@ -1196,6 +1202,9 @@ olrs (void)
 		setscroll();
 	  	drawscreen();
 	  	return;
+
+    default:
+		break;
 	  };
 
     nxt:

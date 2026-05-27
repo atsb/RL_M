@@ -26,4 +26,3 @@ void cool_lava(void);
 void make_cryinglava(int cx, int cy);
 void make_lavapool(int cx, int cy);
 int lava_blocked(int x, int y);
-int lava_safe_monster(int mid);

@@ -19,8 +19,8 @@
 
  /* Larn is copyrighted 1986 by Noah Morgan. */
 
+#include <curses.h>
 #include <time.h>
-#include "io.h"
 
 /*
 *
@@ -148,13 +148,8 @@ extern time_t initialtime;
 extern unsigned long lrandx;
 extern struct cel *cell;
 extern struct sphere *spheres;
-
 extern struct monst monster[];
-
 extern struct _itm dnd_item[];
-
-extern int moncolor[MAXMONST + 9];
-extern int objcolor[MAXOBJECT + 1];
 
 struct color_override_entry {
     const char* name;

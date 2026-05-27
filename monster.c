@@ -119,6 +119,8 @@ createmonster (int mon)
 	    case POLTERGEIST:
 	    case VAMPIRE:
 	      stealth[x][y] = 1;
+      default:
+			  break;
 	    };
 	  return;
 	}
@@ -188,6 +190,8 @@ cgood (int x, int y, int itm, int monst)
 	case ODARTRAP:
 	case OTRAPDOOR:
 	  return FALSE;
+  default:
+			break;
 	}
     }
 
@@ -329,6 +333,9 @@ hitmonster (int x, int y)
 	      case OCLEVERRING:
 		c[INTELLIGENCE]--;
 		break;
+
+    default:
+			  break;
 	      }
 	    /* */
 	  }
@@ -377,6 +384,9 @@ hitm (int x, int y, int amt)
     case SILVERDRAGON:
       amt *= 1 + (c[SLAYING] << 1);
       break;
+
+    default:
+			  break;
     }
   /* invincible monster fix is here */
   if (hitp[x][y] > monster[monst].hitpoints)
@@ -529,6 +539,9 @@ dropsomething (int monst)
       if (rnd (5) == 1)
 	dropsomething (LEPRECHAUN);
       return;
+
+    default:
+			break;
     }
 }
 
@@ -694,6 +707,9 @@ newobject (int lev, int *i)
     case 41:			/* longsword */
       *i = newsword ();
       break;
+
+    default:
+			break;
     }
   return (j);
 }
@@ -800,6 +816,9 @@ spattack (int x, int xx, int yy)
 	    p =
 	      "\nThe %s hit you -- Your fortunate to have stainless steel armor!";
 	    break;
+      
+    default:
+			  break;
 	  }
       else
 	{
@@ -939,6 +958,9 @@ spattack (int x, int xx, int yy)
     case 16:
       i = rnd (15) + 10 - c[AC];
       goto spout3;
+
+    default:
+			break;
     };
   if (p)
     {

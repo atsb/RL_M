@@ -319,7 +319,7 @@ makemonst (int lev)
 void
 positionplayer (void)
 {
-  int z, try = 2;
+  int z, positiontry = 2;
 
   /* set the previous player x,y position to the new one, so that
      clearing the player indicator from the previous location will
@@ -363,11 +363,11 @@ positionplayer (void)
 	  if (++playery >= MAXY - 1)
 	    {
 	      playery = 1;
-	      try--;
+	      positiontry--;
 	    }
 	}
     }
-  while (try);
+  while (positiontry);
 
   /* no spot found.
    */
@@ -415,6 +415,8 @@ recalc (void)
       case OSSPLATE:
 	c[AC] += 12 + ivenarg[c[WEAR]];
 	break;
+      default:
+        break;
       }
 
   if (c[SHIELD] >= 0)
@@ -502,6 +504,8 @@ recalc (void)
 	case OENERGYRING:
 	  c[ENERGY] += ivenarg[i] + 1;
 	  break;
+  default:
+     break;
 	}
     }
 }

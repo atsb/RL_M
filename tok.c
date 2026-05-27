@@ -39,14 +39,31 @@ sethard()
 #include "diag.h"
 #include "main.h"
 
-#define CHKPTINT   400
-
 static char lastok = 0;
 int yrepcount = 0, dayplay = 0;
 #define MAXUM 52 /* maximum number of user re-named monsters */
 #define MAXMNAME 40 /* max length of a monster re-name */
 static char usermonster[MAXUM][MAXMNAME]; /* the user named monster name goes here */
 static int usermpoint = 0; /* the user monster pointer */
+
+static int
+lstrcasecmp(const char* a, const char* b)
+{
+    unsigned char ca, cb;
+
+    while (*a && *b) {
+        ca = (unsigned char)tolower((unsigned char)*a);
+        cb = (unsigned char)tolower((unsigned char)*b);
+
+        if (ca != cb)
+            return ca - cb;
+
+        a++;
+        b++;
+    }
+
+    return (unsigned char)*a - (unsigned char)*b;
+}
 
 void
 readopts(void)

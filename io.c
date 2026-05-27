@@ -84,6 +84,9 @@
 #include "io.h"
 #include "monster.h"
 #include "scores.h"
+#include "larncons.h"
+#include "larndata.h"
+#include "larnfunc.h"
 
 #define LINBUFSIZE 128		/* size of the lgetw() and lgetl() buffer       */
 
@@ -106,36 +109,13 @@ static int
 llgetch(void)
 {
     int key;
+
     key = wgetch(stdscr);
 
-#ifdef PDC_KEY_MODIFIER_SHIFT
-    if (PDC_get_key_modifiers() & PDC_KEY_MODIFIER_SHIFT)
-    {
-        switch (key)
-        {
-        case '1':
-            return 'B';
-        case '2':
-            return 'J';
-        case '3':
-            return 'N';
-        case '4':
-            return 'H';
-        case '5':
-            return '.';
-        case '6':
-            return 'L';
-        case '7':
-            return 'Y';
-        case '8':
-            return 'K';
-        case '9':
-            return 'U';
-        }
-    }
-#endif
     switch (key)
     {
+    
+    /* Arrow keys */
     case KEY_UP:
         return 'k';
     case KEY_DOWN:
@@ -144,18 +124,44 @@ llgetch(void)
         return 'h';
     case KEY_RIGHT:
         return 'l';
-    case KEY_A1:
+
+    /* Keypad diagonals */
+    case KEY_A1:    /* upper left */
         return 'y';
-    case KEY_A3:
+    case KEY_A3:    /* upper right */
         return 'u';
-    case KEY_C1:
+    case KEY_C1:    /* lower left */
         return 'b';
-    case KEY_C3:
+    case KEY_C3:    /* lower right */
         return 'n';
-    case KEY_B2:
+    case KEY_B2:    /* centre */
         return '.';
+
+    /* Keypad digits */
+    case '1':
+        return 'b';
+    case '2':
+        return 'j';
+    case '3':
+        return 'n';
+    case '4':
+        return 'h';
+    case '5':
+        return '.';
+    case '6':
+        return 'l';
+    case '7':
+        return 'y';
+    case '8':
+        return 'k';
+    case '9':
+        return 'u';
+
     case KEY_ENTER:
+    case '\n':
+    case '\r':
         return 13;
+
     default:
         return key;
     }
@@ -164,7 +170,7 @@ llgetch(void)
 /*
 * get char
 */
-int
+static int
 term_getch(void)
 {
     return llgetch();
@@ -173,7 +179,7 @@ term_getch(void)
 /*
 * get char (with echo)
 */
-int
+static int
 term_getche(void)
 {
     int key;
@@ -181,12 +187,6 @@ term_getche(void)
     key = llgetch();
     noecho();
     return key;
-}
-
-void
-term_delch(void)
-{
-    delch();
 }
 
 static void
@@ -198,7 +198,7 @@ cleanup_term(void)
     nl();
 
     endwin();
-    
+
     /* ensure cursor is visible again */
     printf("\033[0m");
     printf("\033[?25h");
@@ -342,22 +342,27 @@ newgame (void)
 *  Returns nothing of value.
 */
 void
-lprintf (const char *fmt, ...)
+lprintf(const char *fmt, ...)
 {
-  va_list vl;
-  char buffer[STRING_BUFFER_SIZE];
-  const char *p;
+    va_list vl;
+    char tmp[4096];
+    char buffer[STRING_BUFFER_SIZE];
+    const char *p;
+    int i;
 
-  va_start (vl, fmt);
-  vsprintf (buffer, fmt, vl);
-  va_end (vl);
+    va_start(vl, fmt);
+    vsprintf(tmp, fmt, vl);
+    va_end(vl);
+    
+    for (i = 0; i < STRING_BUFFER_SIZE - 1 && tmp[i] != '\0'; ++i)
+        buffer[i] = tmp[i];
 
-  p = buffer;
-
-  while (*p != '\0')
+    buffer[i] = '\0';
+    p = buffer;
+    while (*p != '\0')
     {
-      lprc (*p);
-      ++p;
+        lprc(*p);
+        ++p;
     }
 }
 
@@ -1130,77 +1135,4 @@ flush_buf (void)
         }
 	}
     io_index = 0;
-}
-
-void
-enter_name(void)
-{
-    int i;
-    char characternamestring;
-
-    if (name_set)
-        return;
-
-    lprcat("\n\nEnter character name:\n");
-
-    sncbr();
-
-    i = 0;
-
-    do
-    {
-        characternamestring = ttgetch();
-
-        if (characternamestring == '\n')
-            break;
-
-        if (characternamestring == 8)
-        {
-            if (i > 0)
-            {
-                --i;
-                term_delch();
-            }
-        }
-        else if (isprint(characternamestring))
-        {
-            logname[i] = characternamestring;
-            lprc(characternamestring);
-            lflush(); /* be sure output buffer is flushed */
-            ++i;
-        }
-
-    } while (i < LOGNAMESIZE - 1);
-
-    logname[i] = '\0';
-
-    scbr();
-}
-
-void
-cursor_block(void)
-{
-    curs_set(0);
-    attron(A_REVERSE);
-    addch(' ');
-    attroff(A_REVERSE);
-}
-
-int
-lstrcasecmp(const char* a, const char* b)
-{
-    unsigned char ca, cb;
-
-    while (*a && *b) {
-        ca = (unsigned char)tolower((unsigned char)*a);
-        cb = (unsigned char)tolower((unsigned char)*b);
-
-        if (ca != cb)
-            return ca - cb;
-
-        a++;
-        b++;
-    }
-
-    return (unsigned char)*a - (unsigned char)*b;
 }

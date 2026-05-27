@@ -19,9 +19,6 @@
 
 #include <curses.h>
 
-int term_getch(void);
-int term_getche(void);
-void term_delch(void);
 void setupvt100 (void);
 void clearvt100 (void);
 int ttgetch_noblock(void);
@@ -54,6 +51,3 @@ void lstandout (const char *);
 void set_score_output (void);
 void lflush (void);
 char *tmcapcnv (char *, char *);
-void enter_name (void);
-void cursor_block (void);
-int lstrcasecmp(const char*, const char*);

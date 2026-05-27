@@ -64,7 +64,7 @@ struct isave
 };
 
 int missile_color = COLOR_YELLOW;
-chtype missile_attr  = A_BOLD;
+int missile_attr  = A_BOLD;
 
 static void speldamage (int);
 
@@ -1198,7 +1198,7 @@ dirsub (int *x, int *y)
 	case '\33':
 		drawscreen();
 	  goto out;
-    
+
   default:
 		break;
 	};

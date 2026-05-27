@@ -436,7 +436,7 @@ lprc(char ch)
     else if (ch == '\t')
         addstr("    ");
     else
-        addch((chtype)(unsigned char)ch);
+        addch((int)(unsigned char)ch);
 
 #ifdef EXTRA
     c[BYTESOUT]++;

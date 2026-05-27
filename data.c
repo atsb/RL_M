@@ -891,5 +891,5 @@ const struct color_override_entry object_map[] = {
 
 int moncolor[MAXMONST + 9];
 int objcolor[MAXOBJECT + 1];
-chtype monattr[MAXMONST + 9] = {0};
-chtype objattr[MAXOBJECT + 1] = {0};
+int monattr[MAXMONST + 9] = {0};
+int objattr[MAXOBJECT + 1] = {0};

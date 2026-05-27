@@ -43,16 +43,16 @@ int diroffx[] = { 0, 0, 1, 0, -1, 1, -1, 1, -1 };
 int diroffy[] = { 0, 1, 0, -1, 0, -1, -1, 1, 1 };
 
 int compare_color_better = COLOR_GREEN;
-chtype compare_attr_better  = 0;
+int compare_attr_better  = 0;
 
 int compare_color_worse  = COLOR_RED;
-chtype compare_attr_worse   = 0;
+int compare_attr_worse   = 0;
 
 int compare_color_equal  = COLOR_CYAN;
-chtype compare_attr_equal   = 0;
+int compare_attr_equal   = 0;
 
 int compare_color_none = COLOR_YELLOW;
-chtype compare_attr_none  = 0;
+int compare_attr_none  = 0;
 
 /* The entire bot_xx rendering has been rewritten
 * it was a legacy of the 80's and assumptions about terminal
@@ -1195,7 +1195,7 @@ readcolors(void)
     char *rhs;
     char *tok;
     int color;
-    chtype attr;
+    int attr;
     size_t i;
 
     fp = fopen("larn.clr", "r");

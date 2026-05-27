@@ -686,7 +686,7 @@ showcell(int x, int y)
                         int id = k;
 
                         if (has_colors())
-                            attrset((int)(COLOR_PAIR(moncolor[id]) | monattr[id]));
+                            attrset(COLOR_PAIR(moncolor[id]) | monattr[id]);
 
                         lprc(monstnamelist[id]);
 
@@ -698,7 +698,7 @@ showcell(int x, int y)
                         int id = item[i][j];
 
                         if (has_colors())
-                            attrset((int)(COLOR_PAIR(objcolor[id]) | objattr[id]));
+                            attrset(COLOR_PAIR(objcolor[id]) | objattr[id]);
 
                         lprc(objnamelist[id]);
 

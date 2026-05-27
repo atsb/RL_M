@@ -687,43 +687,24 @@ showcell(int x, int y)
 
                         /* below are a few things to allow C89 and modern C */
                         if (has_colors())
-                            #if !defined(__STDC_VERSION__)
-                            /* Strict ANSI C89 */
-                            attrset((chtype)COLOR_PAIR(moncolor[id]) | (chtype)monattr[id]);
-                        #else
-                            /* Modern GCC/Clang */
-                            attrset((int)(COLOR_PAIR(moncolor[id]) | monattr[id]));
-                        #endif
+                            attrset((COLOR_PAIR(moncolor[id]) | monattr[id]));
 
                         lprc(monstnamelist[id]);
 
                         if (has_colors())
-                        #if !defined(__STDC_VERSION__)
-                            attrset((chtype)COLOR_PAIR(0));
-                        #else
-                            attrset((int)COLOR_PAIR(0));
-                        #endif
-
+                            attrset(COLOR_PAIR(0));
                     }
                     else
                     {
                         int id = item[i][j];
 
                         if (has_colors())
-                        #if !defined(__STDC_VERSION__)
-                            attrset((chtype)COLOR_PAIR(objcolor[id]) | (chtype)objattr[id]);
-                        #else
-                            attrset((int)(COLOR_PAIR(objcolor[id]) | objattr[id]));
-                        #endif
+                            attrset((COLOR_PAIR(objcolor[id]) | objattr[id]));
 
                         lprc(objnamelist[id]);
 
                         if (has_colors())
-                        #if !defined(__STDC_VERSION__)
-                            attrset((chtype)COLOR_PAIR(0));
-                        #else
-                            attrset((int)COLOR_PAIR(0));
-                        #endif
+                            attrset(COLOR_PAIR(0));
                     }
 
                     know[i][j] = KNOWALL;

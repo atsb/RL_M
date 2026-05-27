@@ -69,6 +69,7 @@ static void cleartradiven (int);
 static void cnsitm (void);
 
 static int dndcount = 0, dnditm = 0;
+long lasttime = 0;		/* last time he was in bank */
 
 /* new function for displaying gold in inventory inside trading posts.
  * part of feature request by hymie0. ~Gibbon */
@@ -633,8 +634,6 @@ oschool (void)
 /*
 *  for the first national bank of Larn
 */
-int lasttime = 0;		/* last time he was in bank */
-
 void
 obank (void)
 {

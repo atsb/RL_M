@@ -220,4 +220,4 @@ extern int save_mode;
 /*
 * store.c
 */
-extern int lasttime;
+extern long lasttime;

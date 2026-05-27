@@ -1,0 +1,15 @@
+CC      = cc
+CFLAGS  = -pedantic -Wall -Wextra -Werror -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wold-style-definition -Wnested-externs -Wconversion -Wsign-conversion -Wundef -Wswitch-enum -Wswitch-default -Wunused -Wunused-parameter -Wunused-function -Wunused-variable -Wdouble-promotion -Wunreachable-code
+
+LDFLAGS = -lncurses
+
+SRC = $(wildcard *.c)
+OBJ = $(SRC:.c=.o)
+
+all: larn
+
+larn: $(OBJ)
+	$(CC) -o $@ $(OBJ) $(LDFLAGS)
+
+clean:
+	rm -f $(OBJ) larn

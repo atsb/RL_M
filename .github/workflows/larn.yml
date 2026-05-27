@@ -58,7 +58,7 @@ jobs:
 
     - name: Build (macOS)
       if: matrix.os == 'macos-latest'
-      run: make
+      run: make -f Makefile.macos
 
     - name: Package (macOS)
       if: matrix.os == 'macos-latest'

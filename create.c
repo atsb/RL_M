@@ -50,12 +50,6 @@ unsigned char lavaheat[MAXX][MAXY];
 time_t last_lava_cool = 0;
 
 static void
-term_delch(void)
-{
-    delch();
-}
-
-static void
 enter_name(void)
 {
     int i;
@@ -65,15 +59,12 @@ enter_name(void)
         return;
 
     lprcat("\n\nEnter character name:\n");
-
     sncbr();
-
     i = 0;
 
     do
     {
         characternamestring = ttgetch();
-
         if (characternamestring == '\n')
             break;
 
@@ -82,7 +73,11 @@ enter_name(void)
             if (i > 0)
             {
                 --i;
-                term_delch();
+                logname[i] = '\0';
+                lprc('\b');
+                lprc(' ');
+                lprc('\b');
+                lflush();
             }
         }
         else if (isprint(characternamestring))
@@ -92,13 +87,11 @@ enter_name(void)
             lflush(); /* be sure output buffer is flushed */
             ++i;
         }
-
     } while (i < LOGNAMESIZE - 1);
-
     logname[i] = '\0';
-
     scbr();
 }
+
 
 /*
 makeplayer()

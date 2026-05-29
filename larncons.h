@@ -51,7 +51,7 @@
 #define LARNHOME "."
 
 #ifndef WIZID
-#define WIZID   0
+#define WIZID   1000
 #endif
 
 #define TRUE 1

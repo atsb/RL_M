@@ -27,7 +27,6 @@
 * types
 *
 */
-
 /*  this is the structure that holds the entire dungeon specifications  */
 struct cel
 {
@@ -48,7 +47,6 @@ struct sphere
   int dir;			/* direction sphere is going in */
   int lifetime;			/* duration of the sphere */
 };
-
 
 /*  this is the structure definition of the monster data
 */
@@ -77,24 +75,20 @@ struct _itm
   int qty;
 };
 
-
 /*
 *
 * data declarations
 *
 */
 extern char floorc;
-
 extern int VERSION, SUBVERSION;
 extern int beenhere[], cheat;
 extern int course[];
 extern int item[MAXX][MAXY], iven[], know[MAXX][MAXY];
-
 extern char aborted[];
 extern const char *classname[];
 extern char lastmonst[];
 extern char *lpnt, *lpbuf, *lpend, *inbuffer;
-
 extern int level;
 extern int mitem[MAXX][MAXY], monstlevel[];
 extern int nch[], ndgg[], nlpts[], nomove;
@@ -158,56 +152,35 @@ struct color_override_entry {
 
 extern const struct color_override_entry monster_map[];
 extern const struct color_override_entry object_map[];
-
 extern int moncolor[MAXMONST + 9];
 extern int objcolor[MAXOBJECT + 1];
+extern int compare_color_better ;
+extern int compare_color_worse;
+extern int compare_color_equal;
+extern int compare_color_none;
+extern int cookie_color;
+extern int missile_color;
 extern chtype monattr[MAXMONST + 9];
 extern chtype objattr[MAXOBJECT + 1];
-
-extern int compare_color_better ;
 extern chtype compare_attr_better;
-
-extern int compare_color_worse;
 extern chtype compare_attr_worse;
-
-extern int compare_color_equal;
 extern chtype compare_attr_equal;
-
-extern int compare_color_none;
 extern chtype compare_attr_none;
-
-extern int cookie_color;
 extern chtype cookie_attr;
-
-extern int missile_color;
 extern chtype missile_attr;
-
 extern unsigned char erosion[MAXX][MAXY];
 extern time_t last_simulated_time[MAXLEVEL];
 extern unsigned char lavaheat[MAXX][MAXY];
 extern time_t last_lava_cool;
 
 /*
-* config.c
-*/
-extern char *password;
-
-
-
-/*
 * data.c
 */
 extern int prayed;
-
 extern char scrollname[MAXSCROLL + 1][MAXSCROLLNAME];
 extern char potionname[MAXPOTION + 1][MAXPOTIONNAME];
-
 extern const char *objectname[];
-
-
 extern int spelweird[MAXMONST + 8][SPNUM];
-
-
 
 /*
 * main.c
@@ -215,7 +188,6 @@ extern int spelweird[MAXMONST + 8][SPNUM];
 extern int rmst;
 extern int dropflag;
 extern int save_mode;
-
 
 /*
 * store.c

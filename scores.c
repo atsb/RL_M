@@ -791,7 +791,9 @@ died(int x)
     lflush();
     refresh();
     cursors();
-    lprcat("\nPress 'ESC' to continue.\n");
+    lprcat ("\n  --- press ");
+    lstandout ("escape");
+    lprcat (" to continue --- \n");
     do
     {
         ch = ttgetch();
@@ -853,7 +855,9 @@ invalid:
         resetscroll();
         showscores(); /* if we updated the scoreboard */
         cursors();
-        lprcat("\nPress 'ENTER' key to exit. ");
+        lprcat ("\n  --- press ");
+        lstandout ("enter");
+        lprcat (" to continue --- \n");
         for (;;)
         {
             ch = ttgetch();

@@ -1398,32 +1398,44 @@ and allow * to mean return amt, else return the number entered
 int
 readnum (int mx)
 {
-  int i;
-  int amt = 0;
+    int i;
+    int amt = 0;
 
-  sncbr ();
-  /* allow him to say * for all gold 
-   */
-  if ((i = ttgetch ()) == '*')
-    amt = mx;
-  else
-    /* read chars into buffer, deleting when requested */
-    while (i != '\n')
-      {
-	if (i == '\033')
-	  {
-	    scbr ();
-	    lprcat (" aborted");
-	    return (0);
-	  }
-	if ((i <= '9') && (i >= '0') && (amt < 999999999))
-	  amt = amt * 10 + i - '0';
-	if ((i == '\010') || (i == '\177'))
-	  amt = (int) (amt / 10);
-	i = ttgetch ();
-      }
-  scbr ();
-  return (amt);
+    sncbr();
+
+	/* allow him to say * for all gold */
+    i = ttgetch();
+    if (i == '*') {
+        lprc('*');
+        scbr();
+        return mx;
+    }
+
+	/* read chars into buffer, deleting when requested */
+    while (i != '\n') {
+        if (i == '\033') {
+            scbr();
+            lprcat(" aborted");
+            return 0;
+        }
+
+        if (i >= '0' && i <= '9' && amt < 999999999) {
+            amt = amt * 10 + (i - '0');
+            lprc((char)i);
+        }
+
+        else if (i == '\010' || i == '\177') {
+            amt = amt / 10;
+            lprc('\010');
+            lprc(' ');
+            lprc('\010');
+        }
+
+        i = ttgetch();
+    }
+
+    scbr();
+    return amt;
 }
 
 /*

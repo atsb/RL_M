@@ -4,6 +4,7 @@
 I am the official maintainer of Larn.
 
 Expanding water in the dungeon.
+
 <img width="633" height="320" alt="larn_water" src="https://github.com/user-attachments/assets/ec0b29c5-c947-42b3-a1e3-ee80499afa30" />
 
 This document describes how to build Larn 26.4.0 across a wide range of CPU architectures and operating systems.  

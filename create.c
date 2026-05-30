@@ -190,6 +190,10 @@ newcavelevel(int x)
     {
         getlevel();
 
+        /* Prevent crash on game load inside a dungeon/volcano */
+        if (water_ticks > 1000) 
+            water_ticks = 1000;
+
         for (t = 0; t < (int)water_ticks; t++)
             expand_puddle();
 

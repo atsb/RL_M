@@ -16,12 +16,13 @@ enable-checkpointing
 # monster: Aardvark
 # monster: "Charlie Chan"
 #                         You can specify your character's name.
-name: Gibbon
 #                         Note that names with spaces must be quoted
 #name: "Mr. Wizard"
-no-introduction
+#wallchar: <-- there is a space here, this simulates the 'hashtag-less' walls on some old versions
+#no-introduction
 savefile: larn.sav
 play-day-play
 male
 checkpoint: lcpfile
 color: off
+wallchar: #

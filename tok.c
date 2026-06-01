@@ -221,6 +221,35 @@ readopts(void)
             dayplay = 1;
             continue;
         }
+
+        /* wall replacement character */
+        if (strncmp(p, "wallchar:", 9) == 0) {
+            char* value = p + 9;
+
+            /* trim leading whitespace */
+            while (*value == ' ' || *value == '\t')
+                value++;
+
+            /* trim newline */
+            value[strcspn(value, "\r\n")] = '\0';
+
+            /* trim whitespace */
+            {
+                char *end = value + strlen(value) - 1;
+                while (end >= value && (*end == ' ' || *end == '\t')) {
+                    *end-- = '\0';
+                }
+            }
+
+            /* empty = space */
+            if (*value == '\0') {
+                strcpy(wallchar, " ");
+            } else {
+                strncpy(wallchar, value, sizeof(wallchar)-1);
+                wallchar[sizeof(wallchar)-1] = '\0';
+            }
+            continue;
+        }
     }
 
     fclose(fp);

@@ -54,6 +54,9 @@ chtype compare_attr_equal   = 0;
 int compare_color_none = COLOR_YELLOW;
 chtype compare_attr_none  = 0;
 
+int player_color = COLOR_WHITE;
+chtype player_attr = 0;
+
 /* The entire bot_xx rendering has been rewritten
 * it was a legacy of the 80's and assumptions about terminal
 * windows and saving CPU cycles (updating incrementally).
@@ -838,6 +841,27 @@ show1cell(int x, int y)
         return;
     }
 
+    /* OWALL and OINNER WALL */
+    if (item[x][y] == OWALL || item[x][y] == OINNERWALL)
+    {
+        int id = item[x][y];
+
+        if (has_colors()) {
+            attron(COLOR_PAIR(objcolor[id]));
+            attron(objattr[id]);
+        }
+        
+        lprcat(wallchar);
+
+        if (has_colors()) {
+            attroff(objattr[id]);
+            attroff(COLOR_PAIR(objcolor[id]));
+        }
+
+        know[x][y] = KNOWALL;
+        return;
+    }
+
     /* object tiles */
     k = item[x][y];
     {
@@ -863,9 +887,20 @@ static void
 cursor_block(void)
 {
     curs_set(0);
-    attron(A_REVERSE);
-    addch(' ');
-    attroff(A_REVERSE);
+
+    if (has_colors())
+    {
+        attron(COLOR_PAIR(player_color));
+        attron(player_attr);
+    }
+
+    addch(' ' | A_REVERSE);
+
+    if (has_colors())
+    {
+        attroff(player_attr);
+        attroff(COLOR_PAIR(player_color));
+    }
 }
 
 /*
@@ -1302,8 +1337,11 @@ readcolors(void)
             missile_color = color;
             missile_attr  = attr;
         }
+        else if (!strcmp(key, "PLAYER")) {
+            player_color = color;
+            player_attr  = attr;
+        }
     }
-
     fclose(fp);
 }
 

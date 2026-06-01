@@ -1343,8 +1343,10 @@ cannedlevel(int k)
 
             switch (*row++)
             {
-            case '#': it = OINNERWALL; break;
-            case 'D': it = OCLOSEDDOOR; arg = rnd(30); break;
+            case '#': it = OINNERWALL;
+                break;
+            case 'D': it = OCLOSEDDOOR; arg = rnd(30);
+                break;
             case '~':
                 if (k == MAXLEVEL - 1)
                 {

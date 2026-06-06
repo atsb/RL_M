@@ -702,7 +702,6 @@ parse (void)
 	  quit();
 	  nomove = 1;
 	  clearvt100();
-	  exit(EXIT_SUCCESS);
 	  return;
 
 	case 'R':		/* remove gems from a throne */

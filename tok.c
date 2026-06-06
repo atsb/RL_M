@@ -260,7 +260,8 @@ readopts(void)
 
 /*
 * lexical analyzer for larn
-*/int
+*/
+int
 yylex(void)
 {
     char cc = 0;
@@ -272,6 +273,7 @@ yylex(void)
         return ' ';
     }
 
+    /* if we are in repeat mode, return last command */
     if (yrepcount > 0) {
         --yrepcount;
         return lastok;
@@ -308,12 +310,11 @@ yylex(void)
             }
         }
 
+        /* read one key, flush extras */
         {
             int ch = ttgetch_noblock();
-
-            if (ch == -1) {
+            if (ch == -1)
                 return 0;
-            }
 
             while (ttgetch_noblock() != -1) { }
 
@@ -332,11 +333,14 @@ yylex(void)
                 firsttime = FALSE;
                 lflush();
             }
-        } else {
-            if (yrepcount > 0)
-                --yrepcount;
-            return (lastok = cc);
+
+            continue;
         }
+
+        if (yrepcount > 0)
+            --yrepcount;
+
+        return (lastok = cc);
     }
 }
 

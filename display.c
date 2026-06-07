@@ -912,15 +912,13 @@ cursor values start from 1 up
 void
 showplayer(void)
 {
-    chtype curch;
-
     curs_set(0);
 
-    curch = mvinch(oldy, oldx);
-    if (curch & A_STANDOUT) {
-        show1cell(oldx, oldy);
-    }
+    move(oldy, oldx);
+    attrset(A_NORMAL);
+    show1cell(oldx, oldy);
 
+    /* draw player */
     cursor(playerx + 1, playery + 1);
     cursor_block();
 
